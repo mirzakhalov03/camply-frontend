@@ -1,1 +1,154 @@
 @import 'tailwindcss';
+
+/*
+  Camply design tokens (Context.md §5). Wired into Tailwind v4's @theme so every
+  screen inherits `bg-paper`, `text-pine`, `font-display`, etc. Group colors and
+  future tokens extend this same block — this is the single source of truth.
+*/
+@theme {
+  --color-pine: #0f6b4f; /* primary */
+  --color-deep: #0a5039; /* theme / darker surfaces */
+  --color-amber: #e0982a; /* accent */
+  --color-sky: #5aa9c4; /* secondary */
+  --color-paper: #f4f1ea; /* app background */
+  --color-ink: #16271f; /* text */
+
+  /* Dawn gradient stops — warm arrival-at-camp sky. */
+  --color-dawn-top: #faf7ef;
+  --color-dawn-mid: #f4ecde;
+  --color-dawn-glow: #f6dcae;
+
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, monospace;
+
+  --radius-card: 1.5rem;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Cross-fade + rise used by the cycling welcome headline. */
+@keyframes welcome-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-welcome-in {
+  animation: welcome-in 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* One-time spring the moment the CTA becomes valid/enabled. */
+@keyframes cta-pop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.035);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-cta-pop {
+  animation: cta-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Arrow keeps nudging once the number is complete — invites the tap. */
+@keyframes arrow-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+}
+
+.animate-arrow-nudge {
+  animation: arrow-nudge 1s ease-in-out infinite;
+}
+
+/* Celebratory entrance for the success screen. */
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-pop-in {
+  animation: pop-in 620ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise-in {
+  animation: rise-in 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* The sun's slow rise on page load. */
+@keyframes sun-rise {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 24px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.animate-sun-rise {
+  animation: sun-rise 1400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-welcome-in,
+  .animate-cta-pop,
+  .animate-sun-rise,
+  .animate-arrow-nudge,
+  .animate-pop-in,
+  .animate-rise-in {
+    animation: none;
+  }
+}
