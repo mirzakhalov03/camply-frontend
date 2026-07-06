@@ -1,6 +1,7 @@
 import { useTranslation } from '../../i18n/useTranslation'
 import { ResultScreen } from './ResultScreen'
 import { PartyPopper } from './PartyPopper'
+import { OnboardingProgress } from '../OnboardingProgress'
 
 type Props = {
   /** Advance to the next step. Optional while the next screen doesn't exist. */
@@ -22,6 +23,7 @@ export function CongratulationsScreen({ onContinue }: Props) {
       illustration={<PartyPopper className="h-full w-full" />}
       actionLabel={t.congrats.continue}
       onAction={onContinue}
+      topRight={<OnboardingProgress step={1} />}
     />
   )
 }

@@ -38,7 +38,7 @@ export function ParticipantLogin({ onSubmit }: Props) {
       <PineRidge />
 
       {/* Top bar */}
-      <header className="relative z-10 flex items-center justify-between px-5 py-5 sm:px-8">
+      <header className="relative z-10 flex items-center justify-between px-5 py-3.5 sm:px-8">
         <a href="/" className="font-display text-xl font-bold tracking-tight text-deep">
           Camply
         </a>
@@ -49,8 +49,9 @@ export function ParticipantLogin({ onSubmit }: Props) {
         />
       </header>
 
-      {/* Center */}
-      <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-5 pb-16 pt-4">
+      {/* Center — anchored a touch above true center so the Welcome word and
+          phone form sit higher, closer to the top bar. */}
+      <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-5 pb-28 pt-2">
         <div className="w-full max-w-md">
           <p className="mb-3 text-center font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-pine/70">
             {t.login.eyebrow}

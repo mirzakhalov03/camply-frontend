@@ -6,6 +6,8 @@ type Props = {
   illustration: ReactNode
   actionLabel: string
   onAction?: () => void
+  /** Optional element pinned to the top-right (e.g. onboarding progress). */
+  topRight?: ReactNode
 }
 
 /*
@@ -14,7 +16,14 @@ type Props = {
   success (Congratulations) and empty (Not found) screens are the same shape with
   different content, so they compose this instead of duplicating it.
 */
-export function ResultScreen({ title, message, illustration, actionLabel, onAction }: Props) {
+export function ResultScreen({
+  title,
+  message,
+  illustration,
+  actionLabel,
+  onAction,
+  topRight,
+}: Props) {
   return (
     <div className="relative flex min-h-dvh flex-col overflow-hidden bg-[linear-gradient(160deg,#0a5039_0%,#0f6b4f_55%,#0c4231_100%)] px-6 text-paper">
       {/* Warm glow behind the illustration. */}
@@ -22,6 +31,14 @@ export function ResultScreen({ title, message, illustration, actionLabel, onActi
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-[38%] h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber/20 blur-3xl"
       />
+
+      {/* top offset mirrors the sign-up hero's top padding so the shared
+          progress figure stays at the same height across the two screens. */}
+      {topRight && (
+        <div className="absolute right-6 top-[max(1.25rem,env(safe-area-inset-top))] z-10">
+          {topRight}
+        </div>
+      )}
 
       {/* Headline. Entrance delays are set inline because Tailwind's `animation`
           shorthand in the animate-* classes resets animation-delay, so a
