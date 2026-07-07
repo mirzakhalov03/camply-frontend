@@ -38,18 +38,25 @@ export function MemberSheet({ member, onClose }: Props) {
 
         <div className="flex flex-col items-center text-center">
           <span
-            className="flex h-20 w-20 items-center justify-center rounded-full text-2xl font-bold text-white"
+            className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full text-2xl font-bold text-white"
             style={{ backgroundColor: member.color }}
           >
-            {member.initials}
+            {member.photo ? (
+              <img src={member.photo} alt={member.name} className="h-full w-full object-cover" />
+            ) : (
+              member.initials
+            )}
           </span>
-          <div className="mt-3 text-[19px] font-bold text-content">
-            {member.isMe ? t.chat.you : member.name}
-          </div>
+          <div className="mt-3 text-[19px] font-bold text-content">{member.name}</div>
           <div className="mt-0.5 text-[13px] text-muted">
             {member.city} · {interpolate(t.chat.ageYears, { age: member.age })}
           </div>
           <div className="mt-2 flex items-center gap-2">
+            {member.isMe && (
+              <span className="rounded-full bg-green-tint px-3 py-1 text-[11px] font-bold text-pine">
+                {t.chat.you}
+              </span>
+            )}
             {member.role === 'leader' && (
               <span className="rounded-full bg-amber-tint px-3 py-1 text-[11px] font-bold text-amber">
                 ★ {t.chat.leaderBadge}

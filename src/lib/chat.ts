@@ -14,6 +14,8 @@ export type ChatMember = {
   initials: string
   /** Avatar background — runtime data, applied as an inline style. */
   color: string
+  /** Avatar photo URL if the member has one; the avatar falls back to `initials`. */
+  photo?: string
   city: string
   age: number
   role: 'leader' | 'member'
@@ -94,4 +96,38 @@ export async function fetchGroupChat(): Promise<GroupChat> {
 // React Query hook. Cached by queryKey so header + list + composer share one fetch.
 export function useChat() {
   return useQuery({ queryKey: ['groupChat'], queryFn: fetchGroupChat })
+}
+
+/*
+  The current participant's real identity, sourced from useProfileStore (what they
+  entered at registration). The mock roster ships a PLACEHOLDER "me" member; this
+  overlay replaces it with the user's actual name/photo/city so the chat shows the
+  real person — not seed data. When the backend serves the roster it already knows
+  who I am, so this overlay simply stops being applied.
+*/
+export type MeIdentity = {
+  name: string
+  initials: string
+  photo: string | null
+  city: string
+  age: number
+  socials?: ChatMember['socials']
+}
+
+/** Overlay my profile onto the `isMe` member; other members pass through. */
+export function withMyProfile(members: ChatMember[], me: MeIdentity): ChatMember[] {
+  if (!me.name) return members // not registered yet → keep the seed member
+  return members.map((m) =>
+    m.isMe
+      ? {
+          ...m,
+          name: me.name,
+          initials: me.initials || m.initials,
+          photo: me.photo ?? undefined,
+          city: me.city || m.city,
+          age: me.age || m.age,
+          socials: me.socials ?? m.socials,
+        }
+      : m,
+  )
 }

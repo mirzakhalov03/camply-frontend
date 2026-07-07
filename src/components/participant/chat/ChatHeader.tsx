@@ -86,10 +86,14 @@ export function ChatHeader({ group, members, onMemberTap, groupPhoto, onChangePh
           >
             <span className="relative">
               <span
-                className="flex h-11 w-11 items-center justify-center rounded-full text-sm font-bold text-white"
+                className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full text-sm font-bold text-white"
                 style={{ backgroundColor: m.color }}
               >
-                {m.initials}
+                {m.photo ? (
+                  <img src={m.photo} alt={m.name} className="h-full w-full object-cover" />
+                ) : (
+                  m.initials
+                )}
               </span>
               <span
                 className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-surface-2 ${

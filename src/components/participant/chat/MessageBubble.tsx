@@ -149,10 +149,14 @@ export function MessageBubble({
         type="button"
         onClick={onAuthorTap}
         aria-label={author?.name}
-        className="flex h-8 w-8 flex-none items-center justify-center rounded-full text-[11px] font-bold text-white"
+        className="flex h-8 w-8 flex-none items-center justify-center overflow-hidden rounded-full text-[11px] font-bold text-white"
         style={{ backgroundColor: author?.color ?? '#5aa9c4' }}
       >
-        {author?.initials ?? '?'}
+        {author?.photo ? (
+          <img src={author.photo} alt={author.name} className="h-full w-full object-cover" />
+        ) : (
+          (author?.initials ?? '?')
+        )}
       </button>
       <div className="flex max-w-[76%] flex-col items-start">
         <button

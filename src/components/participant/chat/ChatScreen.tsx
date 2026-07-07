@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
-import { useChat, type ChatMember, type ChatMessage } from '../../../lib/chat'
+import { useChat, withMyProfile, type ChatMember, type ChatMessage } from '../../../lib/chat'
 import { useChatStore } from '../../../store/useChatStore'
 import { useGroupStore } from '../../../store/useGroupStore'
+import { useProfileStore } from '../../../store/useProfileStore'
 import { ChatHeader } from './ChatHeader'
 import { MessageList } from './MessageList'
 import { Composer } from './Composer'
@@ -21,6 +22,15 @@ export function ChatScreen() {
   // Group photo is shared identity (also shown on Ranks), so it lives in useGroupStore.
   const groupPhoto = useGroupStore((s) => s.photo)
   const setGroupPhoto = useGroupStore((s) => s.setPhoto)
+  // My real identity (name/photo/city…) lives in useProfileStore; it overlays the
+  // placeholder "me" member the mock ships with (see withMyProfile).
+  const myName = useProfileStore((s) => s.name)
+  const mySurname = useProfileStore((s) => s.surname)
+  const myInitials = useProfileStore((s) => s.initials)
+  const myPhoto = useProfileStore((s) => s.photo)
+  const myCity = useProfileStore((s) => s.city)
+  const myAge = useProfileStore((s) => s.age)
+  const mySocials = useProfileStore((s) => s.socials)
   const [selected, setSelected] = useState<ChatMember | null>(null)
   const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null)
 
@@ -40,9 +50,20 @@ export function ChatScreen() {
     )
   }
 
+  // Overlay my profile onto the placeholder "me" member so the roster, rail, and
+  // member sheet all show my real name/photo/city instead of mock seed data.
+  const members = withMyProfile(data.members, {
+    name: `${myName} ${mySurname}`.trim(),
+    initials: myInitials,
+    photo: myPhoto,
+    city: myCity?.name ?? '',
+    age: myAge,
+    socials: mySocials,
+  })
+
   // Who wrote a message (for the reply quote): "You" for mine, else their name.
   const authorNameOf = (msg: ChatMessage) =>
-    msg.sentByMe ? t.chat.you : (data.members.find((m) => m.id === msg.authorId)?.name ?? '')
+    msg.sentByMe ? t.chat.you : (members.find((m) => m.id === msg.authorId)?.name ?? '')
 
   // A short preview of a message, used in the reply quote (handles attachments).
   const snippetOf = (msg: ChatMessage) =>
@@ -66,13 +87,13 @@ export function ChatScreen() {
     <div className="flex h-full flex-col bg-canvas">
       <ChatHeader
         group={data.group}
-        members={data.members}
+        members={members}
         onMemberTap={setSelected}
         groupPhoto={groupPhoto}
         onChangePhoto={setGroupPhoto}
       />
       <MessageList
-        members={data.members}
+        members={members}
         serverMessages={data.messages}
         onMemberTap={setSelected}
         onReply={setReplyingTo}
