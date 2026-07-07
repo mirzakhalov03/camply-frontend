@@ -5,11 +5,13 @@ import { NotFoundScreen } from './components/auth/NotFoundScreen'
 import { SignUpScreen } from './components/signup/SignUpScreen'
 import { OrganizerInfoForm } from './components/organizer/OrganizerInfoForm'
 import { OnboardingPager } from './components/OnboardingPager'
+import { ParticipantDashboard } from './components/participant/ParticipantDashboard'
 import { isKnownParticipant } from './lib/mockParticipants'
 import { isKnownOrganizer } from './lib/mockOrganizers'
 
-// Which onboarding step is showing. `congrats` + `form` ride the pager together.
-type Screen = 'login' | 'congrats' | 'form' | 'notfound'
+// Which onboarding step is showing. `congrats` + `form` ride the pager together;
+// `dashboard` is the participant app the camper lands in after "Enter the camp".
+type Screen = 'login' | 'congrats' | 'form' | 'notfound' | 'dashboard'
 // Which role's flow we're in — decided at login by which roster matched.
 type Flow = 'participant' | 'organizer'
 
@@ -35,6 +37,11 @@ function App() {
 
   if (screen === 'notfound') {
     return <NotFoundScreen onBack={() => setScreen('login')} />
+  }
+
+  // The camper has finished onboarding and stepped into camp.
+  if (screen === 'dashboard') {
+    return <ParticipantDashboard />
   }
 
   // Congrats → profile form live in a horizontal pager so pressing Continue slides
@@ -66,10 +73,7 @@ function App() {
               key="form"
               active={screen === 'form'}
               onBack={() => setScreen('congrats')}
-              onEnterCamp={() => {
-                // The camp home screen doesn't exist yet — placeholder.
-                console.log('enter the camp')
-              }}
+              onEnterCamp={() => setScreen('dashboard')}
             />
           ),
         ]}

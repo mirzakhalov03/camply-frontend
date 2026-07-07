@@ -103,6 +103,68 @@ type OrganizerStrings = {
   editDetails: string
 }
 
+// Bottom-nav tab labels (also reused as the ComingSoon screen titles).
+type NavStrings = {
+  home: string
+  map: string
+  ranks: string
+  chat: string
+  profile: string
+}
+
+// Participant home screen chrome. {tokens} are filled per-language.
+type HomeStrings = {
+  liveNow: string
+  dayProgress: string // 'Day {current} of {total}'
+  upNext: string
+  upNextWith: string // 'with {group}'
+  todaySchedule: string
+  seeAll: string
+  statusDone: string
+  statusNow: string
+  latestAnnouncement: string
+  all: string
+  pinned: string
+  minutesAgo: string // '{minutes} min ago'
+  myGroup: string
+  membersCount: string // '{count} members'
+}
+
+// SOS flow — reason picker → press-and-hold → sending → active tracking.
+type SosStrings = {
+  title: string
+  subtitle: string
+  whatsHappening: string
+  reasons: Record<'medical' | 'lost' | 'unsafe' | 'other', string>
+  reasonDefault: string
+  locationSuffix: string // '<location> · location shared live'
+  alertsBefore: string // 'Alerts'
+  alertsLeader: string // 'leader'
+  holdToSend: string
+  keepHolding: string
+  holdHint: string
+  sendingTitle: string
+  sendingSub: string // 'Sending {reason} · sharing your live location'
+  helpComing: string
+  helpOnWay: string
+  stayPut: string
+  activeSub: string // 'Sending {reason} · {location}'
+  responderRole: string
+  eta: string
+  teamNotified: string // '{team} notified'
+  leaderAlerted: string // 'Group leader {leader} alerted'
+  sharingLocation: string
+  now: string
+  callOrganizer: string
+  imSafe: string
+}
+
+// Shared bits (empty states for the not-yet-built tabs).
+type CommonStrings = {
+  comingSoon: string
+  comingSoonBody: string
+}
+
 export const translations: Record<
   Lang,
   {
@@ -111,6 +173,10 @@ export const translations: Record<
     notfound: NotFoundStrings
     signup: SignUpStrings
     organizer: OrganizerStrings
+    nav: NavStrings
+    home: HomeStrings
+    sos: SosStrings
+    common: CommonStrings
   }
 > = {
   uz: {
@@ -188,6 +254,65 @@ export const translations: Record<
       enterDashboard: 'Boshqaruv paneliga',
       editDetails: 'Maʼlumotlarni tahrirlash',
     },
+    nav: {
+      home: 'Asosiy',
+      map: 'Xarita',
+      ranks: 'Reyting',
+      chat: 'Chat',
+      profile: 'Profil',
+    },
+    home: {
+      liveNow: 'Jonli efir',
+      dayProgress: '{total} kundan {current}-kun',
+      upNext: 'Keyingisi',
+      upNextWith: '{group} bilan',
+      todaySchedule: 'Bugungi jadval',
+      seeAll: 'Barchasi',
+      statusDone: 'Tugadi',
+      statusNow: 'Hozir',
+      latestAnnouncement: 'Soʻnggi eʼlon',
+      all: 'Hammasi',
+      pinned: 'Qadalgan',
+      minutesAgo: '{minutes} daqiqa oldin',
+      myGroup: 'Mening guruhim',
+      membersCount: '{count} ta aʼzo',
+    },
+    sos: {
+      title: 'Favqulodda yordam',
+      subtitle: 'Tashkilotchi va guruh sardori darhol xabardor qilinadi.',
+      whatsHappening: 'Nima boʻlyapti?',
+      reasons: {
+        medical: 'Tibbiy yordam',
+        lost: 'Adashib qoldim',
+        unsafe: 'Xavf his qilyapman',
+        other: 'Boshqa sabab',
+      },
+      reasonDefault: 'Favqulodda',
+      locationSuffix: 'joylashuv jonli ulashilmoqda',
+      alertsBefore: 'Xabar beriladi:',
+      alertsLeader: 'sardor',
+      holdToSend: 'SOS yuborish uchun bosib turing',
+      keepHolding: 'Bosib turing…',
+      holdHint: 'Bir lahza bosib turing — bu tasodifiy signalning oldini oladi.',
+      sendingTitle: 'Tashkilotchilar xabardor qilinmoqda…',
+      sendingSub: '{reason} yuborilmoqda · joylashuvingiz ulashilmoqda',
+      helpComing: 'Yordam kelmoqda',
+      helpOnWay: 'Yordam yoʻlda',
+      stayPut: 'Joyingizda qoling',
+      activeSub: '{reason} yuborilmoqda · {location}',
+      responderRole: 'Tashkilotchi · siz tomon yoʻlda',
+      eta: 'Taxminan',
+      teamNotified: '{team} xabardor qilindi',
+      leaderAlerted: 'Guruh sardori {leader} xabardor qilindi',
+      sharingLocation: 'Joylashuvingiz ulashilmoqda',
+      now: 'hozir',
+      callOrganizer: 'Tashkilotchiga qoʻngʻiroq',
+      imSafe: 'Endi xavfsizman',
+    },
+    common: {
+      comingSoon: 'Tez kunda',
+      comingSoonBody: 'Oromgohning bu qismi tayyorlanmoqda. Tez orada qayting!',
+    },
   },
   ru: {
     login: {
@@ -263,6 +388,65 @@ export const translations: Record<
       enterDashboard: 'В панель управления',
       editDetails: 'Изменить данные',
     },
+    nav: {
+      home: 'Главная',
+      map: 'Карта',
+      ranks: 'Рейтинг',
+      chat: 'Чат',
+      profile: 'Профиль',
+    },
+    home: {
+      liveNow: 'В эфире',
+      dayProgress: 'День {current} из {total}',
+      upNext: 'Далее',
+      upNextWith: 'с группой {group}',
+      todaySchedule: 'Расписание на сегодня',
+      seeAll: 'Всё',
+      statusDone: 'Завершено',
+      statusNow: 'Сейчас',
+      latestAnnouncement: 'Последнее объявление',
+      all: 'Все',
+      pinned: 'Закреплено',
+      minutesAgo: '{minutes} мин назад',
+      myGroup: 'Моя группа',
+      membersCount: '{count} участников',
+    },
+    sos: {
+      title: 'Экстренная помощь',
+      subtitle: 'Организатор и лидер группы будут оповещены мгновенно.',
+      whatsHappening: 'Что случилось?',
+      reasons: {
+        medical: 'Медпомощь',
+        lost: 'Я потерялся',
+        unsafe: 'Мне небезопасно',
+        other: 'Другое',
+      },
+      reasonDefault: 'Тревога',
+      locationSuffix: 'геопозиция передаётся в реальном времени',
+      alertsBefore: 'Оповещаем:',
+      alertsLeader: 'лидер',
+      holdToSend: 'Удерживайте, чтобы отправить SOS',
+      keepHolding: 'Удерживайте…',
+      holdHint: 'Удерживайте пару секунд — это защищает от случайных сигналов.',
+      sendingTitle: 'Оповещаем команду организаторов…',
+      sendingSub: 'Отправляем {reason} · передаём вашу геопозицию',
+      helpComing: 'Помощь идёт',
+      helpOnWay: 'Помощь в пути',
+      stayPut: 'Оставайтесь на месте',
+      activeSub: 'Отправлено {reason} · {location}',
+      responderRole: 'Организатор · направляется к вам',
+      eta: 'Прибытие',
+      teamNotified: '{team} оповещена',
+      leaderAlerted: 'Лидер группы {leader} оповещён',
+      sharingLocation: 'Передаём вашу геопозицию',
+      now: 'сейчас',
+      callOrganizer: 'Позвонить организатору',
+      imSafe: 'Я в безопасности',
+    },
+    common: {
+      comingSoon: 'Скоро',
+      comingSoonBody: 'Эта часть лагеря ещё в разработке. Загляните позже!',
+    },
   },
   en: {
     login: {
@@ -337,6 +521,65 @@ export const translations: Record<
       welcome: "You're all set, {name}!",
       enterDashboard: 'Go to dashboard',
       editDetails: 'Edit my details',
+    },
+    nav: {
+      home: 'Home',
+      map: 'Map',
+      ranks: 'Ranks',
+      chat: 'Chat',
+      profile: 'Profile',
+    },
+    home: {
+      liveNow: 'Live now',
+      dayProgress: 'Day {current} of {total}',
+      upNext: 'Up next',
+      upNextWith: 'with {group}',
+      todaySchedule: "Today's schedule",
+      seeAll: 'See all',
+      statusDone: 'Done',
+      statusNow: 'Now',
+      latestAnnouncement: 'Latest announcement',
+      all: 'All',
+      pinned: 'Pinned',
+      minutesAgo: '{minutes} min ago',
+      myGroup: 'My group',
+      membersCount: '{count} members',
+    },
+    sos: {
+      title: 'Emergency help',
+      subtitle: 'Your organizer & group leader are alerted instantly.',
+      whatsHappening: "What's happening?",
+      reasons: {
+        medical: 'Medical',
+        lost: "I'm lost",
+        unsafe: 'Feel unsafe',
+        other: 'Something else',
+      },
+      reasonDefault: 'Emergency',
+      locationSuffix: 'location shared live',
+      alertsBefore: 'Alerts',
+      alertsLeader: 'leader',
+      holdToSend: 'Hold to send SOS',
+      keepHolding: 'Keep holding…',
+      holdHint: 'Press and hold for a moment — this prevents accidental alerts.',
+      sendingTitle: 'Alerting the organizer team…',
+      sendingSub: 'Sending {reason} · sharing your live location',
+      helpComing: 'Help coming',
+      helpOnWay: 'Help on the way',
+      stayPut: 'Stay where you are',
+      activeSub: 'Sending {reason} · {location}',
+      responderRole: 'Organizer · en route to you',
+      eta: 'ETA',
+      teamNotified: '{team} notified',
+      leaderAlerted: 'Group leader {leader} alerted',
+      sharingLocation: 'Sharing your live location',
+      now: 'now',
+      callOrganizer: 'Call organizer',
+      imSafe: "I'm safe now",
+    },
+    common: {
+      comingSoon: 'Coming soon',
+      comingSoonBody: 'This part of camp is being built. Check back soon!',
     },
   },
 }

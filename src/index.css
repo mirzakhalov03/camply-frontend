@@ -1,6 +1,13 @@
 @import 'tailwindcss';
 
 /*
+  Class-based dark mode. `dark:` utilities apply when any ancestor carries the
+  `.dark` class (toggled on <html> by useThemeStore). This overrides Tailwind v4's
+  default, which keys off the OS `prefers-color-scheme` — we want a manual toggle.
+*/
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
   Camply design tokens (Context.md §5). Wired into Tailwind v4's @theme so every
   screen inherits `bg-paper`, `text-pine`, `font-display`, etc. Group colors and
   future tokens extend this same block — this is the single source of truth.
@@ -18,6 +25,22 @@
   --color-dawn-mid: #f4ecde;
   --color-dawn-glow: #f6dcae;
 
+  /*
+    Semantic surface tokens. Components use these (`bg-surface`, `text-content`,
+    `border-line`…) instead of raw colors so the whole app re-themes from ONE
+    place: the `.dark` block below overrides the same variables. This mirrors the
+    prototype's --hcard/--htext approach.
+  */
+  --color-canvas: #f4f1ea; /* app background */
+  --color-surface: #ffffff; /* cards */
+  --color-surface-2: #fffdf8; /* raised: bottom nav, sheets */
+  --color-content: #16271f; /* primary text */
+  --color-muted: #6c7a71; /* secondary text */
+  --color-line: #ece7db; /* borders & dividers */
+  --color-soft: #eef4f0; /* subtle chip / icon bg */
+  --color-green-tint: #e7f1ec; /* pine-tinted card */
+  --color-amber-tint: #fbf3e2; /* amber-tinted card */
+
   --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'DM Mono', ui-monospace, monospace;
@@ -29,6 +52,20 @@
   color-scheme: light;
 }
 
+/* Dark palette — same token names, night values. Toggled by adding `.dark`. */
+.dark {
+  color-scheme: dark;
+  --color-canvas: #0e1613;
+  --color-surface: #16211c;
+  --color-surface-2: #1a2620;
+  --color-content: #eaf1ec;
+  --color-muted: #93a49a;
+  --color-line: #26332c;
+  --color-soft: #1e2c25;
+  --color-green-tint: #143528;
+  --color-amber-tint: #2f2614;
+}
+
 html,
 body,
 #root {
@@ -37,8 +74,8 @@ body,
 
 body {
   font-family: var(--font-sans);
-  color: var(--color-ink);
-  background-color: var(--color-paper);
+  color: var(--color-content);
+  background-color: var(--color-canvas);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -192,6 +229,104 @@ body {
   animation: caret-blink 900ms step-end infinite;
 }
 
+/* ── Participant dashboard motion ──────────────────────────────────────── */
+
+/* Slow blink for "live" dots (day pill, SOS location sharing). */
+@keyframes livedot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.7);
+  }
+}
+
+.animate-livedot {
+  animation: livedot 1.4s ease-in-out infinite;
+}
+
+/* Expanding ring on the current ("Now") schedule item. */
+@keyframes now-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(15, 107, 79, 0.4);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 8px rgba(15, 107, 79, 0);
+  }
+}
+
+.animate-now-ring {
+  animation: now-ring 2.2s ease-out infinite;
+}
+
+/* SOS idle: gentle breathing so the button reads as "ready". */
+@keyframes sos-idle {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+.animate-sos-idle {
+  animation: sos-idle 3s ease-in-out infinite;
+}
+
+/* SOS active: pulsing halo on the "Help coming" pill. */
+@keyframes sos-breath {
+  0%,
+  100% {
+    box-shadow:
+      0 8px 20px rgba(224, 73, 47, 0.4),
+      0 0 0 0 rgba(224, 73, 47, 0.5);
+  }
+  50% {
+    box-shadow:
+      0 8px 20px rgba(224, 73, 47, 0.4),
+      0 0 0 12px rgba(224, 73, 47, 0);
+  }
+}
+
+.animate-sos-breath {
+  animation: sos-breath 1.8s ease-in-out infinite;
+}
+
+/* Radar ping while the SOS alert is being sent. */
+@keyframes radar {
+  0% {
+    transform: scale(0.35);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+.animate-radar {
+  animation: radar 1.6s ease-out infinite;
+}
+
+/* Bottom sheet sliding up from the screen edge. */
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-sheet-up {
+  animation: sheet-up 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-welcome-in,
   .animate-cta-pop,
@@ -201,7 +336,13 @@ body {
   .animate-rise-in,
   .animate-drop,
   .animate-amber-glow,
-  .animate-caret {
+  .animate-caret,
+  .animate-livedot,
+  .animate-now-ring,
+  .animate-sos-idle,
+  .animate-sos-breath,
+  .animate-radar,
+  .animate-sheet-up {
     animation: none;
   }
 }

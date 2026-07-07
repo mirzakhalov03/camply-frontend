@@ -1,7 +1,7 @@
 import { useTranslation } from '../../i18n/useTranslation'
 
 // Quick-pick shortcuts shown as chips under the stepper (from the design).
-const AGE_CHIPS = [12, 14, 16, 18, 21, 25]
+const AGE_CHIPS = [12, 14, 16, 18, 20, 22]
 export const AGE_MIN = 7
 export const AGE_MAX = 75
 
