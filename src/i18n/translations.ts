@@ -199,6 +199,30 @@ type ProfileStrings = {
   logout: string
 }
 
+// Participant group chat — header, composer, attachment menu, member profile sheet.
+type ChatStrings = {
+  membersOnline: string // '{members} members · {online} online'
+  messagePlaceholder: string // 'Message {group}…'
+  changePhoto: string // aria-label for the group photo button
+  attach: string // aria-label for the + button
+  photo: string
+  file: string
+  send: string // aria-label for send
+  call: string
+  reply: string
+  emptyThread: string
+  loading: string
+  loadError: string
+  // Member profile sheet
+  leaderRole: string // 'Group leader'
+  memberRole: string // 'Member'
+  you: string
+  leaderBadge: string // 'Leader'
+  ageYears: string // '{age} years'
+  socials: string
+  noSocials: string
+}
+
 // Shared bits (empty states for the not-yet-built tabs).
 type CommonStrings = {
   comingSoon: string
@@ -217,6 +241,7 @@ export const translations: Record<
     home: HomeStrings
     sos: SosStrings
     profile: ProfileStrings
+    chat: ChatStrings
     common: CommonStrings
   }
 > = {
@@ -381,6 +406,27 @@ export const translations: Record<
       chooseLanguage: 'Oʻzingizga qulay tilni tanlang',
       locationSharing: 'Joylashuvni ulashish',
       logout: 'Chiqish',
+    },
+    chat: {
+      membersOnline: '{members} aʼzo · {online} onlayn',
+      messagePlaceholder: '{group} guruhiga yozing…',
+      changePhoto: 'Guruh rasmini oʻzgartirish',
+      attach: 'Biriktirish',
+      photo: 'Rasm',
+      file: 'Fayl',
+      send: 'Yuborish',
+      call: 'Qoʻngʻiroq qilish',
+      reply: 'Javob berish',
+      emptyThread: 'Hali xabar yoʻq. Birinchi boʻlib salom bering!',
+      loading: 'Yuklanmoqda…',
+      loadError: 'Chatni yuklab boʻlmadi',
+      leaderRole: 'Guruh sardori',
+      memberRole: 'Ishtirokchi',
+      you: 'Siz',
+      leaderBadge: 'Sardor',
+      ageYears: '{age} yosh',
+      socials: 'Ijtimoiy tarmoqlar',
+      noSocials: 'Havolalar yoʻq',
     },
     common: {
       comingSoon: 'Tez kunda',
@@ -548,6 +594,27 @@ export const translations: Record<
       locationSharing: 'Геолокация',
       logout: 'Выйти',
     },
+    chat: {
+      membersOnline: '{members} участников · {online} онлайн',
+      messagePlaceholder: 'Написать {group}…',
+      changePhoto: 'Изменить фото группы',
+      attach: 'Прикрепить',
+      photo: 'Фото',
+      file: 'Файл',
+      send: 'Отправить',
+      call: 'Позвонить',
+      reply: 'Ответить',
+      emptyThread: 'Сообщений пока нет. Напишите первым!',
+      loading: 'Загрузка…',
+      loadError: 'Не удалось загрузить чат',
+      leaderRole: 'Лидер группы',
+      memberRole: 'Участник', // participant
+      you: 'Вы',
+      leaderBadge: 'Лидер',
+      ageYears: '{age} лет',
+      socials: 'Соцсети',
+      noSocials: 'Нет ссылок',
+    },
     common: {
       comingSoon: 'Скоро',
       comingSoonBody: 'Эта часть лагеря ещё в разработке. Загляните позже!',
@@ -713,6 +780,27 @@ export const translations: Record<
       chooseLanguage: 'Choose your preferred language',
       locationSharing: 'Location sharing',
       logout: 'Log out',
+    },
+    chat: {
+      membersOnline: '{members} members · {online} online',
+      messagePlaceholder: 'Message {group}…',
+      changePhoto: 'Change group photo',
+      attach: 'Attach',
+      photo: 'Photo',
+      file: 'File',
+      send: 'Send',
+      call: 'Call',
+      reply: 'Reply',
+      emptyThread: 'No messages yet. Say hi!',
+      loading: 'Loading…',
+      loadError: "Couldn't load chat",
+      leaderRole: 'Group leader',
+      memberRole: 'Participant',
+      you: 'You',
+      leaderBadge: 'Leader',
+      ageYears: '{age} years',
+      socials: 'Socials',
+      noSocials: 'No links yet',
     },
     common: {
       comingSoon: 'Coming soon',

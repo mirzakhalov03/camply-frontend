@@ -5,6 +5,7 @@ import { HomeScreen } from './HomeScreen'
 import { ComingSoon } from './ComingSoon'
 import { BottomNav, type ParticipantTab } from './BottomNav'
 import { ProfileScreen } from './profile/ProfileScreen'
+import { ChatScreen } from './chat/ChatScreen'
 import { SosButton } from './sos/SosButton'
 import { SosSheet } from './sos/SosSheet'
 import { useSos } from './sos/useSos'
@@ -29,6 +30,9 @@ export function ParticipantDashboard({ onLogout }: Props) {
   const { t } = useTranslation()
   const [tab, setTab] = useState<ParticipantTab>('home')
   const [soon, setSoon] = useState<SoonView | null>(null)
+  // Once the participant opens Chat, the unread badge is cleared (they've "read"
+  // it). Real read-state is server-owned; this is the client stand-in until then.
+  const [chatSeen, setChatSeen] = useState(false)
   const sos = useSos()
   // Same cached query HomeScreen uses — here just for the Chat tab's unread badge.
   const { data: home } = useCampHome()
@@ -36,7 +40,11 @@ export function ParticipantDashboard({ onLogout }: Props) {
   const goTab = (next: ParticipantTab) => {
     setSoon(null)
     setTab(next)
+    if (next === 'chat') setChatSeen(true)
   }
+
+  // Show the unread count until Chat has been opened, then hide it.
+  const chatBadge = chatSeen ? undefined : home?.unreadChat
 
   // Titles resolved at render (not stored in state) so they stay reactive to the
   // active language. `soon` holds a stable key; the label is looked up here.
@@ -70,6 +78,8 @@ export function ParticipantDashboard({ onLogout }: Props) {
             onNotifications={() => setSoon('notifications')}
             onLogout={onLogout}
           />
+        ) : tab === 'chat' ? (
+          <ChatScreen />
         ) : (
           <ComingSoon title={tabTitles[tab]} />
         )}
@@ -91,7 +101,7 @@ export function ParticipantDashboard({ onLogout }: Props) {
         onCancelHelp={sos.cancelHelp}
       />
 
-      <BottomNav active={tab} onSelect={goTab} chatBadge={home?.unreadChat} />
+      <BottomNav active={tab} onSelect={goTab} chatBadge={chatBadge} />
     </div>
   )
 }
