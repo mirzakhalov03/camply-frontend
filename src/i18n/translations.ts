@@ -78,6 +78,31 @@ type SignUpStrings = {
   editDetails: string
 }
 
+// Organizer flow copy. Shares the generic field labels with `signup` (name,
+// city, age…) via ProfileForm; only the role-specific pieces live here.
+type OrganizerStrings = {
+  congratsMessage: string // organizer-flavored congratulations message
+  eyebrow: string
+  title: string
+  subtitle: string
+  roleLabel: string
+  roles: {
+    projectManager: string
+    coordinator: string
+    admin: string
+    media: string
+    brandFace: string
+    eventManager: string
+    photographer: string
+  }
+  enterValid: string
+  enterInvalid: string
+  badgeCreated: string
+  welcome: string // 'You're all set, {name}!'
+  enterDashboard: string
+  editDetails: string
+}
+
 export const translations: Record<
   Lang,
   {
@@ -85,6 +110,7 @@ export const translations: Record<
     congrats: CongratsStrings
     notfound: NotFoundStrings
     signup: SignUpStrings
+    organizer: OrganizerStrings
   }
 > = {
   uz: {
@@ -137,6 +163,29 @@ export const translations: Record<
       badgeCreated: 'Profil yaratildi',
       welcome: 'Oromgohga xush kelibsiz, {name}!',
       enterCamp: 'Oromgohga kirish',
+      editDetails: 'Maʼlumotlarni tahrirlash',
+    },
+    organizer: {
+      congratsMessage: 'Jamoaga xush kelibsiz — siz oromgoh tashkilotchisisiz!',
+      eyebrow: 'Tashkilotchi profili',
+      title: 'Profilingizni sozlaymiz',
+      subtitle:
+        'Bir necha maʼlumot — jamoa va ishtirokchilar oromgohni kim boshqarayotganini bilishi uchun.',
+      roleLabel: 'Rolingiz qanday?',
+      roles: {
+        projectManager: 'Loyiha menejeri',
+        coordinator: 'Koordinator',
+        admin: 'Administrator',
+        media: 'Media',
+        brandFace: 'Brend yuzi',
+        eventManager: 'Tadbir menejeri',
+        photographer: 'Fotograf',
+      },
+      enterValid: 'Profil yaratish',
+      enterInvalid: 'Profilni toʻldiring',
+      badgeCreated: 'Profil yaratildi',
+      welcome: 'Hammasi tayyor, {name}!',
+      enterDashboard: 'Boshqaruv paneliga',
       editDetails: 'Maʼlumotlarni tahrirlash',
     },
   },
@@ -192,6 +241,28 @@ export const translations: Record<
       enterCamp: 'Войти в лагерь',
       editDetails: 'Изменить данные',
     },
+    organizer: {
+      congratsMessage: 'Добро пожаловать в команду лагеря!',
+      eyebrow: 'Профиль организатора',
+      title: 'Настроим ваш профиль',
+      subtitle: 'Пара деталей, чтобы команда и участники знали, кто ведёт лагерь.',
+      roleLabel: 'Какая у вас роль?',
+      roles: {
+        projectManager: 'Проектный менеджер',
+        coordinator: 'Координатор',
+        admin: 'Администратор',
+        media: 'Медиа',
+        brandFace: 'Лицо бренда',
+        eventManager: 'Ивент-менеджер',
+        photographer: 'Фотограф',
+      },
+      enterValid: 'Создать профиль',
+      enterInvalid: 'Заполните профиль',
+      badgeCreated: 'Профиль создан',
+      welcome: 'Всё готово, {name}!',
+      enterDashboard: 'В панель управления',
+      editDetails: 'Изменить данные',
+    },
   },
   en: {
     login: {
@@ -243,6 +314,28 @@ export const translations: Record<
       badgeCreated: 'Profile created',
       welcome: 'Welcome to camp, {name}!',
       enterCamp: 'Enter the camp',
+      editDetails: 'Edit my details',
+    },
+    organizer: {
+      congratsMessage: "Welcome aboard — you're part of the camp team!",
+      eyebrow: 'Organizer setup',
+      title: "Let's set up your profile",
+      subtitle: "A few details so your team and campers know who's running the show.",
+      roleLabel: 'What is your role?',
+      roles: {
+        projectManager: 'Project Manager',
+        coordinator: 'Coordinator',
+        admin: 'Admin',
+        media: 'Media',
+        brandFace: 'Brand Face',
+        eventManager: 'Event Manager',
+        photographer: 'Photographer',
+      },
+      enterValid: 'Create profile',
+      enterInvalid: 'Complete your profile',
+      badgeCreated: 'Profile created',
+      welcome: "You're all set, {name}!",
+      enterDashboard: 'Go to dashboard',
       editDetails: 'Edit my details',
     },
   },

@@ -1,4 +1,3 @@
-import { useTranslation } from '../../i18n/useTranslation'
 import { interpolate } from '../../lib/interpolate'
 
 type Props = {
@@ -6,19 +5,38 @@ type Props = {
   /** Uploaded photo as a data URL, or null. Shown on the badge if present. */
   photo: string | null
   name: string
-  onEnterCamp?: () => void
+  /** Small confirmation pill, e.g. "Profile created". */
+  badgeCreated: string
+  /** Headline template with a {name} token, e.g. "Welcome to camp, {name}!". */
+  welcome: string
+  /** Primary CTA label (e.g. "Enter the camp" / "Go to dashboard"). */
+  primaryLabel: string
+  onPrimary?: () => void
+  /** Secondary "edit" link label. */
+  editLabel: string
   onEdit: () => void
 }
 
 /*
   Full-screen confirmation shown after a valid profile is submitted. Celebrates
-  the created camp badge (initials on the amber square), greets the camper by
-  name, and offers the final "Enter the camp" step plus a way back to edit. Sits
-  on the same deep-green gradient as the other result screens for continuity.
-*/
-export function SignUpSuccess({ initials, photo, name, onEnterCamp, onEdit }: Props) {
-  const { t } = useTranslation()
+  the created badge (photo or initials on the amber square), greets the person by
+  name, and offers the primary next step plus a way back to edit. Sits on the
+  same deep-green gradient as the other result screens for continuity.
 
+  Shared by the participant (SignUpScreen) and organizer (OrganizerInfoForm)
+  flows — only the copy and the primary action differ, so they're props.
+*/
+export function ProfileSuccess({
+  initials,
+  photo,
+  name,
+  badgeCreated,
+  welcome,
+  primaryLabel,
+  onPrimary,
+  editLabel,
+  onEdit,
+}: Props) {
   return (
     <div className="animate-rise-in absolute inset-0 z-30 flex flex-col items-center justify-center overflow-hidden bg-[linear-gradient(180deg,#0f6b4f_0%,#0a5039_100%)] px-8 text-white">
       <div className="relative flex flex-col items-center">
@@ -40,26 +58,26 @@ export function SignUpSuccess({ initials, photo, name, onEnterCamp, onEdit }: Pr
               strokeLinejoin="round"
             />
           </svg>
-          {t.signup.badgeCreated}
+          {badgeCreated}
         </div>
 
         <h2 className="mt-4 text-center font-display text-[26px] font-bold leading-tight tracking-tight">
-          {interpolate(t.signup.welcome, { name })}
+          {interpolate(welcome, { name })}
         </h2>
 
         <button
           type="button"
-          onClick={onEnterCamp}
+          onClick={onPrimary}
           className="animate-amber-glow mt-7 flex h-[54px] items-center justify-center rounded-full bg-[#ef9d20] px-10 font-display text-base font-bold text-[#3a2807] transition-transform hover:-translate-y-0.5 active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
-          {t.signup.enterCamp}
+          {primaryLabel}
         </button>
         <button
           type="button"
           onClick={onEdit}
           className="mt-4 text-[13px] font-medium text-white/70 transition-colors hover:text-white"
         >
-          {t.signup.editDetails}
+          {editLabel}
         </button>
       </div>
     </div>
