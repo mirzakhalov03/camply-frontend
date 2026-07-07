@@ -223,6 +223,24 @@ type ChatStrings = {
   noSocials: string
 }
 
+// Participant ranks / leaderboard — podium, your-standing spotlight, ranked list,
+// points legend. Group names, scores & trend are DATA (leaderboard.ts), not strings.
+type RanksStrings = {
+  title: string // 'Leaderboard'
+  yourStanding: string
+  you: string // 'YOU' badge
+  behindLeader: string // '{delta} pts behind {name}'
+  leadingBy: string // 'Leading by {delta} pts'
+  points: string // 'pts'
+  howPointsEarned: string
+  activities: string
+  attendance: string
+  challenges: string
+  loadError: string
+  empty: string
+  emptyBody: string
+}
+
 // Shared bits (empty states for the not-yet-built tabs).
 type CommonStrings = {
   comingSoon: string
@@ -242,6 +260,7 @@ export const translations: Record<
     sos: SosStrings
     profile: ProfileStrings
     chat: ChatStrings
+    ranks: RanksStrings
     common: CommonStrings
   }
 > = {
@@ -427,6 +446,21 @@ export const translations: Record<
       ageYears: '{age} yosh',
       socials: 'Ijtimoiy tarmoqlar',
       noSocials: 'Havolalar yoʻq',
+    },
+    ranks: {
+      title: 'Reyting jadvali',
+      yourStanding: 'Sizning oʻrningiz',
+      you: 'SIZ',
+      behindLeader: '{name}dan {delta} ball orqada',
+      leadingBy: 'Yetakchi · +{delta} ball',
+      points: 'ball',
+      howPointsEarned: 'Ballar qanday yigʻiladi',
+      activities: 'Faoliyatlar',
+      attendance: 'Davomat',
+      challenges: 'Sinovlar',
+      loadError: 'Reytingni yuklab boʻlmadi.',
+      empty: 'Hali reyting yoʻq',
+      emptyBody: 'Ballar berilgach, reyting shu yerda paydo boʻladi.',
     },
     common: {
       comingSoon: 'Tez kunda',
@@ -615,6 +649,21 @@ export const translations: Record<
       socials: 'Соцсети',
       noSocials: 'Нет ссылок',
     },
+    ranks: {
+      title: 'Таблица лидеров',
+      yourStanding: 'Ваше место',
+      you: 'ВЫ',
+      behindLeader: 'На {delta} очк. позади {name}',
+      leadingBy: 'Лидирует · +{delta} очк.',
+      points: 'очк.',
+      howPointsEarned: 'Как начисляются очки',
+      activities: 'Активности',
+      attendance: 'Посещаемость',
+      challenges: 'Испытания',
+      loadError: 'Не удалось загрузить рейтинг.',
+      empty: 'Рейтинга пока нет',
+      emptyBody: 'Рейтинг появится, как только начислят очки.',
+    },
     common: {
       comingSoon: 'Скоро',
       comingSoonBody: 'Эта часть лагеря ещё в разработке. Загляните позже!',
@@ -801,6 +850,21 @@ export const translations: Record<
       ageYears: '{age} years',
       socials: 'Socials',
       noSocials: 'No links yet',
+    },
+    ranks: {
+      title: 'Leaderboard',
+      yourStanding: 'Your standing',
+      you: 'YOU',
+      behindLeader: '{delta} pts behind {name}',
+      leadingBy: 'Leading by {delta} pts',
+      points: 'pts',
+      howPointsEarned: 'How points are earned',
+      activities: 'Activities',
+      attendance: 'Attendance',
+      challenges: 'Challenges',
+      loadError: 'Couldn’t load the leaderboard.',
+      empty: 'No rankings yet',
+      emptyBody: 'Standings appear once points are awarded.',
     },
     common: {
       comingSoon: 'Coming soon',

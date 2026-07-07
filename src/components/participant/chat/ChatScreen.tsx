@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { useChat, type ChatMember, type ChatMessage } from '../../../lib/chat'
 import { useChatStore } from '../../../store/useChatStore'
+import { useGroupStore } from '../../../store/useGroupStore'
 import { ChatHeader } from './ChatHeader'
 import { MessageList } from './MessageList'
 import { Composer } from './Composer'
@@ -17,8 +18,9 @@ export function ChatScreen() {
   const { data, isLoading, isError } = useChat()
   const sendText = useChatStore((s) => s.sendText)
   const sendAttachment = useChatStore((s) => s.sendAttachment)
-  const groupPhoto = useChatStore((s) => s.groupPhoto)
-  const setGroupPhoto = useChatStore((s) => s.setGroupPhoto)
+  // Group photo is shared identity (also shown on Ranks), so it lives in useGroupStore.
+  const groupPhoto = useGroupStore((s) => s.photo)
+  const setGroupPhoto = useGroupStore((s) => s.setPhoto)
   const [selected, setSelected] = useState<ChatMember | null>(null)
   const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null)
 

@@ -2,16 +2,17 @@ import { create } from 'zustand'
 import type { ChatMessage, MessageReaction } from '../lib/chat'
 
 /*
-  CLIENT state — the messages the participant sends THIS session, a locally chosen
-  group photo, and an overlay of reactions the user adds this session. Kept
-  separate from server history (useChat) exactly like useProfileStore is separate
-  from useCampHome: this store is what becomes the write-side API calls when the
-  backend lands —
+  CLIENT state — the messages the participant sends THIS session and an overlay of
+  reactions the user adds this session. Kept separate from server history (useChat)
+  exactly like useProfileStore is separate from useCampHome: this store is what
+  becomes the write-side API calls when the backend lands —
     • sendText / sendAttachment → POST /groups/:id/messages
     • toggleReaction            → POST/DELETE /messages/:id/reactions
-    • setGroupPhoto             → PUT /groups/:id/photo
   Until then it's optimistic and local, and it persists across tab switches because
   the store outlives the ChatScreen.
+
+  The group photo used to live here too, but it's GROUP identity shared with the
+  Ranks screen — so it moved to useGroupStore. See there.
 
   Author identity for sent messages ('me') is resolved in the UI from
   useProfileStore, so the store only carries the message payload.
@@ -27,11 +28,8 @@ const READ_DELAY_MS = 2200
 
 type ChatState = {
   sent: ChatMessage[]
-  /** Locally uploaded group photo (object URL); overrides the emoji tile. */
-  groupPhoto: string | null
   /** Reactions added this session, keyed by message id (server or local). */
   reactionOverrides: Record<string, MessageReaction[]>
-  setGroupPhoto: (file: File) => void
   sendText: (text: string, replyTo?: ChatMessage['replyTo']) => void
   sendAttachment: (file: File) => void
   /** Toggle my reaction on a message; `current` is its displayed reaction list. */
@@ -53,10 +51,7 @@ export const useChatStore = create<ChatState>((set) => {
 
   return {
     sent: [],
-    groupPhoto: null,
     reactionOverrides: {},
-
-    setGroupPhoto: (file) => set({ groupPhoto: URL.createObjectURL(file) }),
 
     sendText: (text, replyTo) => {
       const clean = text.trim()
@@ -110,6 +105,6 @@ export const useChatStore = create<ChatState>((set) => {
       set((s) => ({ reactionOverrides: { ...s.reactionOverrides, [messageId]: next } }))
     },
 
-    reset: () => set({ sent: [], groupPhoto: null, reactionOverrides: {} }),
+    reset: () => set({ sent: [], reactionOverrides: {} }),
   }
 })

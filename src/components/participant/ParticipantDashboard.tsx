@@ -6,6 +6,7 @@ import { ComingSoon } from './ComingSoon'
 import { BottomNav, type ParticipantTab } from './BottomNav'
 import { ProfileScreen } from './profile/ProfileScreen'
 import { ChatScreen } from './chat/ChatScreen'
+import { RanksScreen } from './ranks/RanksScreen'
 import { SosButton } from './sos/SosButton'
 import { SosSheet } from './sos/SosSheet'
 import { useSos } from './sos/useSos'
@@ -80,6 +81,8 @@ export function ParticipantDashboard({ onLogout }: Props) {
           />
         ) : tab === 'chat' ? (
           <ChatScreen />
+        ) : tab === 'ranks' ? (
+          <RanksScreen />
         ) : (
           <ComingSoon title={tabTitles[tab]} />
         )}
