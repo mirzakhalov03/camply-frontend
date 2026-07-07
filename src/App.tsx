@@ -8,6 +8,7 @@ import { OnboardingPager } from './components/OnboardingPager'
 import { ParticipantDashboard } from './components/participant/ParticipantDashboard'
 import { isKnownParticipant } from './lib/mockParticipants'
 import { isKnownOrganizer } from './lib/mockOrganizers'
+import { useProfileStore } from './store/useProfileStore'
 
 // Which onboarding step is showing. `congrats` + `form` ride the pager together;
 // `dashboard` is the participant app the camper lands in after "Enter the camp".
@@ -18,6 +19,8 @@ type Flow = 'participant' | 'organizer'
 function App() {
   const [screen, setScreen] = useState<Screen>('login')
   const [flow, setFlow] = useState<Flow>('participant')
+  const setPhone = useProfileStore((s) => s.setPhone)
+  const resetProfile = useProfileStore((s) => s.reset)
 
   // Mock roster check. Organizers are checked FIRST (a number in both lists would
   // open the organizer flow), then participants, else not-found. Swap for a real
@@ -26,13 +29,21 @@ function App() {
     const digits = phone.replace('+998', '')
     if (isKnownOrganizer(digits)) {
       setFlow('organizer')
+      setPhone(digits) // remembered so it shows on the profile screen later
       setScreen('congrats')
     } else if (isKnownParticipant(digits)) {
       setFlow('participant')
+      setPhone(digits)
       setScreen('congrats')
     } else {
       setScreen('notfound')
     }
+  }
+
+  // Clear the collected profile and return to login.
+  const handleLogout = () => {
+    resetProfile()
+    setScreen('login')
   }
 
   if (screen === 'notfound') {
@@ -41,7 +52,7 @@ function App() {
 
   // The camper has finished onboarding and stepped into camp.
   if (screen === 'dashboard') {
-    return <ParticipantDashboard />
+    return <ParticipantDashboard onLogout={handleLogout} />
   }
 
   // Congrats → profile form live in a horizontal pager so pressing Continue slides

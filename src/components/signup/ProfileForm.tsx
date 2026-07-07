@@ -1,6 +1,7 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { useTranslation } from '../../i18n/useTranslation'
 import { useTypewriter } from '../../lib/useTypewriter'
+import { useProfileStore } from '../../store/useProfileStore'
 import type { City } from '../../lib/cities'
 import { OnboardingProgress } from '../OnboardingProgress'
 import { AvatarBadge } from './AvatarBadge'
@@ -76,6 +77,10 @@ export function ProfileForm({
   renderSuccess,
 }: Props) {
   const { t } = useTranslation()
+  // On submit we commit this form's data into the profile store so it survives
+  // the jump into the app — the Profile screen reads it from there. Until then
+  // the fields below stay local: transient form state, not the committed profile.
+  const setRegistration = useProfileStore((s) => s.setRegistration)
 
   // Type the hero title out once this screen is the active step (and on language
   // change). Gated by `active` so it doesn't type while parked offscreen.
@@ -108,7 +113,9 @@ export function ProfileForm({
   const valid = Boolean(trimmedName && trimmedSurname && city) && extraValid
 
   const submit = () => {
-    if (valid && city) setSubmitted(true)
+    if (!valid || !city) return
+    setRegistration({ name: trimmedName, surname: trimmedSurname, city, age, photo, initials })
+    setSubmitted(true)
   }
 
   return (

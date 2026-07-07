@@ -159,6 +159,46 @@ type SosStrings = {
   imSafe: string
 }
 
+// Participant profile screen — identity, help card, editable info & links,
+// settings. Tribe/points values are DATA (see membership.ts), not strings.
+type ProfileStrings = {
+  title: string
+  roles: { participant: string }
+  // Stats row
+  groupRank: string
+  activities: string
+  points: string
+  // Need-help / SOS card
+  needHelp: string
+  needHelpBody: string
+  sendHelp: string
+  organizerNotified: string
+  organizerNotifiedBody: string
+  cancelAlert: string
+  // Info list
+  email: string
+  addEmail: string
+  phone: string
+  city: string
+  notSet: string
+  // Social links
+  socialLinks: string
+  edit: string
+  save: string
+  socialHint: string
+  saveLinks: string
+  tgPlaceholder: string
+  igPlaceholder: string
+  fbPlaceholder: string
+  liPlaceholder: string
+  // Settings
+  notifications: string
+  language: string
+  chooseLanguage: string
+  locationSharing: string
+  logout: string
+}
+
 // Shared bits (empty states for the not-yet-built tabs).
 type CommonStrings = {
   comingSoon: string
@@ -176,6 +216,7 @@ export const translations: Record<
     nav: NavStrings
     home: HomeStrings
     sos: SosStrings
+    profile: ProfileStrings
     common: CommonStrings
   }
 > = {
@@ -308,6 +349,38 @@ export const translations: Record<
       now: 'hozir',
       callOrganizer: 'Tashkilotchiga qoʻngʻiroq',
       imSafe: 'Endi xavfsizman',
+    },
+    profile: {
+      title: 'Profil',
+      roles: { participant: 'Ishtirokchi' },
+      groupRank: 'Guruh reytingi',
+      activities: 'Faoliyatlar',
+      points: 'Ballar',
+      needHelp: 'Yordam kerakmi?',
+      needHelpBody: 'Tashkilotchilar jamoasini joylashuvingiz bilan darhol ogohlantiring.',
+      sendHelp: 'Yordam soʻrash',
+      organizerNotified: 'Tashkilotchi xabardor qilindi',
+      organizerNotifiedBody: 'Yordam joylashuvingiz tomon yoʻlda. Joyingizda qoling.',
+      cancelAlert: 'Yaxshiman — signalni bekor qilish',
+      email: 'Email',
+      addEmail: 'Email qoʻshing',
+      phone: 'Telefon',
+      city: 'Shahar',
+      notSet: 'Kiritilmagan',
+      socialLinks: 'Ijtimoiy tarmoqlar',
+      edit: 'Tahrirlash',
+      save: 'Saqlash',
+      socialHint: 'Ochish uchun belgini bosing — boshqa lagerchilar sizni shu orqali topadi.',
+      saveLinks: 'Havolalarni saqlash',
+      tgPlaceholder: 'Telegram (t.me/…)',
+      igPlaceholder: 'Instagram (@foydalanuvchi)',
+      fbPlaceholder: 'Facebook havolasi',
+      liPlaceholder: 'LinkedIn havolasi',
+      notifications: 'Bildirishnomalar',
+      language: 'Til',
+      chooseLanguage: 'Oʻzingizga qulay tilni tanlang',
+      locationSharing: 'Joylashuvni ulashish',
+      logout: 'Chiqish',
     },
     common: {
       comingSoon: 'Tez kunda',
@@ -443,6 +516,38 @@ export const translations: Record<
       callOrganizer: 'Позвонить организатору',
       imSafe: 'Я в безопасности',
     },
+    profile: {
+      title: 'Профиль',
+      roles: { participant: 'Участник' },
+      groupRank: 'Рейтинг группы',
+      activities: 'Активности',
+      points: 'Очки',
+      needHelp: 'Нужна помощь?',
+      needHelpBody: 'Мгновенно оповестите команду организаторов о вашем местоположении.',
+      sendHelp: 'Запросить помощь',
+      organizerNotified: 'Организатор оповещён',
+      organizerNotifiedBody: 'Помощь уже в пути к вам. Оставайтесь на месте.',
+      cancelAlert: 'Я в порядке — отменить',
+      email: 'Email',
+      addEmail: 'Добавьте email',
+      phone: 'Телефон',
+      city: 'Город',
+      notSet: 'Не указано',
+      socialLinks: 'Соцсети',
+      edit: 'Изменить',
+      save: 'Сохранить',
+      socialHint: 'Нажмите на логотип, чтобы открыть — так вас найдут другие участники.',
+      saveLinks: 'Сохранить ссылки',
+      tgPlaceholder: 'Telegram (t.me/…)',
+      igPlaceholder: 'Instagram (@имя)',
+      fbPlaceholder: 'Ссылка Facebook',
+      liPlaceholder: 'Ссылка LinkedIn',
+      notifications: 'Уведомления',
+      language: 'Язык',
+      chooseLanguage: 'Выберите предпочитаемый язык',
+      locationSharing: 'Геолокация',
+      logout: 'Выйти',
+    },
     common: {
       comingSoon: 'Скоро',
       comingSoonBody: 'Эта часть лагеря ещё в разработке. Загляните позже!',
@@ -576,6 +681,38 @@ export const translations: Record<
       now: 'now',
       callOrganizer: 'Call organizer',
       imSafe: "I'm safe now",
+    },
+    profile: {
+      title: 'Profile',
+      roles: { participant: 'Participant' },
+      groupRank: 'Group rank',
+      activities: 'Activities',
+      points: 'Points',
+      needHelp: 'Need help?',
+      needHelpBody: 'Instantly alert the organizer team with your location.',
+      sendHelp: 'Send help request',
+      organizerNotified: 'Organizer notified',
+      organizerNotifiedBody: 'Help is on the way to your location. Stay where you are.',
+      cancelAlert: "I'm OK — cancel alert",
+      email: 'Email',
+      addEmail: 'Add your email',
+      phone: 'Phone',
+      city: 'City',
+      notSet: 'Not set',
+      socialLinks: 'Social links',
+      edit: 'Edit',
+      save: 'Save',
+      socialHint: 'Tap a logo to open — this is how other campers reach you.',
+      saveLinks: 'Save links',
+      tgPlaceholder: 'Telegram (t.me/…)',
+      igPlaceholder: 'Instagram (@username)',
+      fbPlaceholder: 'Facebook link',
+      liPlaceholder: 'LinkedIn link',
+      notifications: 'Notifications',
+      language: 'Language',
+      chooseLanguage: 'Choose your preferred language',
+      locationSharing: 'Location sharing',
+      logout: 'Log out',
     },
     common: {
       comingSoon: 'Coming soon',

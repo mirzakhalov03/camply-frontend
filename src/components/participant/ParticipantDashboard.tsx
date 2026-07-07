@@ -4,12 +4,18 @@ import { useCampHome } from '../../lib/campHome'
 import { HomeScreen } from './HomeScreen'
 import { ComingSoon } from './ComingSoon'
 import { BottomNav, type ParticipantTab } from './BottomNav'
+import { ProfileScreen } from './profile/ProfileScreen'
 import { SosButton } from './sos/SosButton'
 import { SosSheet } from './sos/SosSheet'
 import { useSos } from './sos/useSos'
 
-// Secondary destinations reachable from Home that aren't bottom-nav tabs.
-type SoonView = 'schedule' | 'announcements'
+type Props = {
+  /** Clear the profile and return to the login screen. */
+  onLogout: () => void
+}
+
+// Secondary destinations reachable from Home/Profile that aren't bottom-nav tabs.
+type SoonView = 'schedule' | 'announcements' | 'notifications'
 
 /*
   The participant app shell — everything a camper sees after "Enter the camp".
@@ -19,7 +25,7 @@ type SoonView = 'schedule' | 'announcements'
   tabs render ComingSoon. The SOS button + sheet live here so they persist across
   every screen, exactly as the design requires.
 */
-export function ParticipantDashboard() {
+export function ParticipantDashboard({ onLogout }: Props) {
   const { t } = useTranslation()
   const [tab, setTab] = useState<ParticipantTab>('home')
   const [soon, setSoon] = useState<SoonView | null>(null)
@@ -44,6 +50,7 @@ export function ParticipantDashboard() {
   const soonTitles: Record<SoonView, string> = {
     schedule: t.home.todaySchedule,
     announcements: t.home.latestAnnouncement,
+    notifications: t.profile.notifications,
   }
 
   return (
@@ -57,13 +64,21 @@ export function ParticipantDashboard() {
             onOpenAnnouncements={() => setSoon('announcements')}
             onOpenGroup={() => goTab('chat')}
           />
+        ) : tab === 'profile' ? (
+          <ProfileScreen
+            sos={sos}
+            onNotifications={() => setSoon('notifications')}
+            onLogout={onLogout}
+          />
         ) : (
           <ComingSoon title={tabTitles[tab]} />
         )}
       </main>
 
-      {/* Persistent across every participant screen. */}
-      <SosButton helpActive={sos.helpActive} onOpen={sos.open} />
+      {/* Floating SOS button — Home only (per request). Profile has its own
+          "Send help request" card; Map/Ranks/Chat don't show it. The sheet stays
+          mounted so an active alert can still resolve from anywhere. */}
+      {tab === 'home' && <SosButton helpActive={sos.helpActive} onOpen={sos.open} />}
       <SosSheet
         stage={sos.stage}
         reason={sos.reason}
