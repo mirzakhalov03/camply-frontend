@@ -13,7 +13,7 @@ type Props = {
 }
 
 /*
-  Bottom input bar. Left "+" opens the attachment menu (Photo/File) → a hidden
+  Bottom input bar. Left paperclip opens the attachment menu (Photo/File) → a hidden
   file input → onPickFile. The text field + send button push a text message.
   Enter sends; empty messages are ignored (guarded in the store too). When a reply
   is active, a quoted preview sits above the input and the field auto-focuses.
@@ -107,15 +107,16 @@ export function Composer({
           className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-soft text-pine transition active:scale-95"
         >
           <svg
-            width="20"
-            height="20"
+            width="21"
+            height="21"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2.3"
+            strokeWidth="2"
             strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <path d="M12 5v14M5 12h14" />
+            <path d="M21.4 11.05 12.25 20.2a5.5 5.5 0 0 1-7.78-7.78l9.19-9.19a3.67 3.67 0 0 1 5.19 5.19l-9.2 9.19a1.83 1.83 0 0 1-2.59-2.59l8.49-8.48" />
           </svg>
         </button>
 

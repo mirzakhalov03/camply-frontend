@@ -8,6 +8,7 @@ import { ChatHeader } from './ChatHeader'
 import { MessageList } from './MessageList'
 import { Composer } from './Composer'
 import { MemberSheet } from './MemberSheet'
+import { MembersSheet } from './MembersSheet'
 
 /*
   The Chat tab. Owns the selected-member sheet state and stitches the pieces
@@ -26,6 +27,7 @@ export function ChatScreen() {
   // member the mock ships with (see withMyProfile).
   const me = useMe()
   const [selected, setSelected] = useState<ChatMember | null>(null)
+  const [membersOpen, setMembersOpen] = useState(false)
   const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null)
 
   if (isLoading) {
@@ -76,6 +78,7 @@ export function ChatScreen() {
         group={data.group}
         members={members}
         onMemberTap={setSelected}
+        onOpenMembers={() => setMembersOpen(true)}
         groupPhoto={groupPhoto}
         onChangePhoto={setGroupPhoto}
       />
@@ -92,6 +95,16 @@ export function ChatScreen() {
         onPickFile={sendAttachment}
         replyPreview={replyPreview}
         onCancelReply={() => setReplyingTo(null)}
+      />
+      <MembersSheet
+        open={membersOpen}
+        onClose={() => setMembersOpen(false)}
+        group={data.group}
+        members={members}
+        onMemberTap={(m) => {
+          setMembersOpen(false)
+          setSelected(m)
+        }}
       />
       <MemberSheet member={selected} onClose={() => setSelected(null)} />
     </div>

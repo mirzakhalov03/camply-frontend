@@ -8,6 +8,8 @@ type Props = {
   group: GroupChat['group']
   members: ChatMember[]
   onMemberTap: (member: ChatMember) => void
+  /** Open the full members list sheet (top-right button). */
+  onOpenMembers: () => void
   /** Locally uploaded group photo (overrides the emoji tile). */
   groupPhoto: string | null
   /** Upload/replace the group photo. */
@@ -17,10 +19,17 @@ type Props = {
 /*
   Chat top bar: group photo/emoji tile + name + "N members · M online", and a
   horizontal rail of member avatars (online dot). Tapping the group tile uploads a
-  photo; tapping a member avatar opens their profile sheet. No "add people" —
-  participants can't change the roster.
+  photo; the top-right button opens the full members list; tapping a member avatar
+  opens their profile sheet. No "add people" — participants can't change the roster.
 */
-export function ChatHeader({ group, members, onMemberTap, groupPhoto, onChangePhoto }: Props) {
+export function ChatHeader({
+  group,
+  members,
+  onMemberTap,
+  onOpenMembers,
+  groupPhoto,
+  onChangePhoto,
+}: Props) {
   const { t } = useTranslation()
   const photoInput = useRef<HTMLInputElement>(null)
   const photo = groupPhoto ?? group.photo
@@ -73,6 +82,31 @@ export function ChatHeader({ group, members, onMemberTap, groupPhoto, onChangePh
             })}
           </div>
         </div>
+
+        {/* Top-right members button — opens the full roster (read-only). */}
+        <button
+          type="button"
+          onClick={onOpenMembers}
+          aria-label={t.chat.viewMembers}
+          className="flex h-10 w-10 flex-none items-center justify-center rounded-xl bg-soft text-pine transition active:scale-95"
+        >
+          <svg
+            width="19"
+            height="19"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden
+          >
+            <circle cx="9" cy="8" r="3.1" />
+            <path d="M3.5 19a5.5 5.5 0 0 1 11 0" />
+            <circle cx="18" cy="9" r="2.4" />
+            <path d="M16.5 14.5a4.4 4.4 0 0 1 4 4" />
+          </svg>
+        </button>
       </div>
 
       {/* Online rail — ~5 avatars fit on a phone; the rest scroll horizontally
