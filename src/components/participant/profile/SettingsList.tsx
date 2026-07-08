@@ -2,43 +2,38 @@ import { useState } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { LANG_LABELS } from '../../../i18n/translations'
 import { LanguageSheet } from './LanguageSheet'
-
-type Props = {
-  /** Open the (not-yet-built) notifications screen. */
-  onNotifications: () => void
-}
+import { usePushNotifications } from '../../../lib/push/usePushNotifications'
 
 /*
-  Profile settings: notifications, language, and location sharing. Language opens
-  a bottom-sheet picker (see LanguageSheet), wired to the real language store.
-  Location sharing is a visual toggle for now — the REAL behavior is scoped to the
-  camper's organizer/group during camp hours (a privacy guardrail), so we don't
-  fake it here; this just holds the UI until that lands.
+  Profile settings: language, location sharing, and notifications. Language opens
+  a bottom-sheet picker. Location sharing is a visual toggle for now (its real
+  behavior is a server-side privacy guardrail). Notifications is a REAL toggle —
+  it subscribes/unsubscribes to Web Push via usePushNotifications().
 */
-export function SettingsList({ onNotifications }: Props) {
+export function SettingsList() {
   const { t, lang, selectedLang, setLanguage } = useTranslation()
   const [langOpen, setLangOpen] = useState(false)
   const [locationOn, setLocationOn] = useState(true)
+  const push = usePushNotifications()
+
+  const pushBlocked = push.permission === 'denied'
+  // Web Push on iOS only works from an installed PWA — hint to install first.
+  const pushUnavailable = !push.supported || (!push.standalone && isIos())
+  const pushHint = pushBlocked
+    ? t.profile.notificationsBlocked
+    : pushUnavailable
+      ? t.profile.notificationsInstall
+      : null
+
+  const onTogglePush = () => {
+    if (pushUnavailable || pushBlocked) return
+    if (push.enabled) push.disable()
+    else push.enable()
+  }
 
   return (
     <>
       <div className="rounded-[20px] border border-line bg-surface px-[18px] shadow-[0_4px_14px_rgba(20,40,30,0.05)]">
-        {/* Notifications */}
-        <button
-          type="button"
-          onClick={onNotifications}
-          className="flex w-full items-center gap-3 border-b border-line py-[14px] text-left"
-        >
-          <span className="w-[22px] text-base">🔔</span>
-          <span className="flex-1 text-sm font-semibold text-content">
-            {t.profile.notifications}
-          </span>
-          <span className="mr-1.5 rounded-full bg-amber px-2 py-0.5 text-[10px] font-bold text-[#3a2807]">
-            2
-          </span>
-          <Chevron />
-        </button>
-
         {/* Language — opens the picker sheet */}
         <button
           type="button"
@@ -51,28 +46,34 @@ export function SettingsList({ onNotifications }: Props) {
           <Chevron />
         </button>
 
-        {/* Location sharing — visual toggle (see note above) */}
-        <div className="flex items-center gap-3 py-[14px]">
+        {/* Location sharing — visual toggle (real behavior is a privacy guardrail) */}
+        <div className="flex items-center gap-3 border-b border-line py-[14px]">
           <span className="w-[22px] text-base">📡</span>
           <span className="flex-1 text-sm font-semibold text-content">
             {t.profile.locationSharing}
           </span>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={locationOn}
-            aria-label={t.profile.locationSharing}
+          <Switch
+            on={locationOn}
+            label={t.profile.locationSharing}
             onClick={() => setLocationOn((v) => !v)}
-            className={`relative h-[26px] w-11 flex-none rounded-full transition-colors ${
-              locationOn ? 'bg-pine' : 'bg-line'
-            }`}
-          >
-            <span
-              className={`absolute top-0.5 h-[22px] w-[22px] rounded-full bg-white shadow transition-all ${
-                locationOn ? 'left-5' : 'left-0.5'
-              }`}
+          />
+        </div>
+
+        {/* Notifications — REAL Web Push toggle */}
+        <div className="py-[14px]">
+          <div className="flex items-center gap-3">
+            <span className="w-[22px] text-base">🔔</span>
+            <span className="flex-1 text-sm font-semibold text-content">
+              {t.profile.notifications}
+            </span>
+            <Switch
+              on={push.enabled}
+              disabled={pushUnavailable || pushBlocked}
+              label={t.profile.notifications}
+              onClick={onTogglePush}
             />
-          </button>
+          </div>
+          {pushHint && <p className="mt-1.5 pl-[34px] text-xs text-muted">{pushHint}</p>}
         </div>
       </div>
 
@@ -83,6 +84,43 @@ export function SettingsList({ onNotifications }: Props) {
         onClose={() => setLangOpen(false)}
       />
     </>
+  )
+}
+
+// iOS detection (Safari on iPhone/iPad) — used only to show the "install first" hint.
+function isIos(): boolean {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent)
+}
+
+function Switch({
+  on,
+  onClick,
+  label,
+  disabled = false,
+}: {
+  on: boolean
+  onClick: () => void
+  label: string
+  disabled?: boolean
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      aria-label={label}
+      disabled={disabled}
+      onClick={onClick}
+      className={`relative h-[26px] w-11 flex-none rounded-full transition-colors ${
+        on ? 'bg-pine' : 'bg-line'
+      } ${disabled ? 'opacity-40' : ''}`}
+    >
+      <span
+        className={`absolute top-0.5 h-[22px] w-[22px] rounded-full bg-white shadow transition-all ${
+          on ? 'left-5' : 'left-0.5'
+        }`}
+      />
+    </button>
   )
 }
 

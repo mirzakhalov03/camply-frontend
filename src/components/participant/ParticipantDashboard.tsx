@@ -42,7 +42,6 @@ export function ParticipantDashboard() {
     goSchedule: () => navigate('/camp/schedule'),
     goAnnouncements: () => navigate('/camp/announcements'),
     goChat: () => navigate('/camp/chat'),
-    goNotifications: () => navigate('/camp/notifications'),
     logout: () => {
       resetProfile()
       navigate('/', { replace: true })

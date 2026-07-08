@@ -191,10 +191,20 @@ type ProfileStrings = {
   liPlaceholder: string
   // Settings
   notifications: string
+  notificationsBlocked: string
+  notificationsInstall: string
   language: string
   chooseLanguage: string
   locationSharing: string
   logout: string
+}
+
+// PWA lifecycle prompts (service-worker update / offline-ready toast).
+type PwaStrings = {
+  updateReady: string
+  reload: string
+  offlineReady: string
+  dismiss: string
 }
 
 // Participant group chat — header, composer, attachment menu, member profile sheet.
@@ -299,6 +309,7 @@ export const translations: Record<
     time: TimeStrings
     announcements: AnnouncementsStrings
     schedule: ScheduleStrings
+    pwa: PwaStrings
   }
 > = {
   uz: {
@@ -456,6 +467,8 @@ export const translations: Record<
       fbPlaceholder: 'Facebook havolasi',
       liPlaceholder: 'LinkedIn havolasi',
       notifications: 'Bildirishnomalar',
+      notificationsBlocked: 'Bildirishnomalarni brauzer sozlamalaridan yoqing.',
+      notificationsInstall: 'Ogohlantirishlar uchun Camply’ni bosh ekranga oʻrnating.',
       language: 'Til',
       chooseLanguage: 'Oʻzingizga qulay tilni tanlang',
       locationSharing: 'Joylashuvni ulashish',
@@ -543,6 +556,12 @@ export const translations: Record<
       emptyDay: 'Bu kunga faoliyat yoʻq',
       error: 'Jadvalni yuklab boʻlmadi',
       back: 'Orqaga',
+    },
+    pwa: {
+      updateReady: 'Yangi versiya mavjud.',
+      reload: 'Yangilash',
+      offlineReady: 'Camply oflayn ishlashga tayyor.',
+      dismiss: 'Yopish',
     },
   },
   ru: {
@@ -699,6 +718,8 @@ export const translations: Record<
       fbPlaceholder: 'Ссылка Facebook',
       liPlaceholder: 'Ссылка LinkedIn',
       notifications: 'Уведомления',
+      notificationsBlocked: 'Включите уведомления в настройках браузера.',
+      notificationsInstall: 'Установите Camply на главный экран, чтобы получать уведомления.',
       language: 'Язык',
       chooseLanguage: 'Выберите предпочитаемый язык',
       locationSharing: 'Геолокация',
@@ -773,6 +794,12 @@ export const translations: Record<
       emptyDay: 'В этот день активностей нет',
       error: 'Не удалось загрузить расписание',
       back: 'Назад',
+    },
+    pwa: {
+      updateReady: 'Доступна новая версия.',
+      reload: 'Обновить',
+      offlineReady: 'Camply готов к работе офлайн.',
+      dismiss: 'Закрыть',
     },
   },
   en: {
@@ -929,6 +956,8 @@ export const translations: Record<
       fbPlaceholder: 'Facebook link',
       liPlaceholder: 'LinkedIn link',
       notifications: 'Notifications',
+      notificationsBlocked: 'Turn on notifications in your browser settings.',
+      notificationsInstall: 'Install Camply to your home screen to get alerts.',
       language: 'Language',
       chooseLanguage: 'Choose your preferred language',
       locationSharing: 'Location sharing',
@@ -1003,6 +1032,12 @@ export const translations: Record<
       emptyDay: 'No activities this day',
       error: "Couldn't load the schedule",
       back: 'Back',
+    },
+    pwa: {
+      updateReady: 'A new version is available.',
+      reload: 'Reload',
+      offlineReady: 'Camply is ready to work offline.',
+      dismiss: 'Dismiss',
     },
   },
 }

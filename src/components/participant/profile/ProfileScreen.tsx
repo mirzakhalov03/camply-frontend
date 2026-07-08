@@ -21,7 +21,7 @@ const HERO_TEXTURE =
 */
 export function ProfileScreen() {
   const { t } = useTranslation()
-  const { sos, goAnnouncements, goNotifications, logout } = useCamp()
+  const { sos, goAnnouncements, logout } = useCamp()
   const { data: membership } = useMembership()
   const { data: announcements } = useAnnouncements()
   const unread = useUnreadCount((announcements ?? []).map((a) => a.id))
@@ -72,7 +72,7 @@ export function ProfileScreen() {
         <SosCard helpActive={sos.helpActive} onOpen={sos.open} onCancel={sos.cancelHelp} />
         <InfoList />
         <SocialLinks />
-        <SettingsList onNotifications={goNotifications} />
+        <SettingsList />
         <button
           type="button"
           onClick={logout}

@@ -17,7 +17,6 @@ export type CampContext = {
   goSchedule: () => void
   goAnnouncements: () => void
   goChat: () => void
-  goNotifications: () => void
   logout: () => void
 }
 

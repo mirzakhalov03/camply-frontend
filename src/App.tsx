@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { Onboarding } from './components/Onboarding'
 import { ParticipantDashboard } from './components/participant/ParticipantDashboard'
 import { HomeScreen } from './components/participant/HomeScreen'
@@ -31,9 +31,8 @@ function App() {
         {/* Not-yet-built destinations — still real routes so links/pushes resolve. */}
         <Route path="announcements" element={<AnnouncementsScreen />} />
         <Route path="announcements/:id" element={<AnnouncementDetailScreen />} />
-        <Route path="map" element={<ComingSoonRoute titleKey="map" />} />
+        <Route path="map" element={<ComingSoonRoute />} />
         <Route path="schedule" element={<ScheduleScreen />} />
-        <Route path="notifications" element={<ComingSoonRoute titleKey="notifications" />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
@@ -41,17 +40,11 @@ function App() {
   )
 }
 
-// Adapter: resolves the translated title and a Back handler for placeholder routes.
-function ComingSoonRoute({ titleKey }: { titleKey: 'map' | 'notifications' }) {
+// Adapter: resolves the translated title for the Map placeholder. Map is a tab,
+// so it has no Back button — the bottom nav leaves it.
+function ComingSoonRoute() {
   const { t } = useTranslation()
-  const navigate = useNavigate()
-  const titles = {
-    map: t.nav.map,
-    notifications: t.profile.notifications,
-  }
-  // Tabs (map) have the bottom nav to leave; secondary views get an explicit Back.
-  const isTab = titleKey === 'map'
-  return <ComingSoon title={titles[titleKey]} onBack={isTab ? undefined : () => navigate(-1)} />
+  return <ComingSoon title={t.nav.map} />
 }
 
 export default App
