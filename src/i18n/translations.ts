@@ -253,6 +253,7 @@ type TimeStrings = {
   hoursAgo: string // '{count}h ago'
   daysAgo: string // '{count}d ago'
   months: string[] // 12 short month names, Jan → Dec (browser ICU is unreliable for uz)
+  weekdaysShort: string[] // 7 short weekday names, indexed by Date.getDay() (0 = Sunday … 6 = Saturday)
 }
 
 // Participant announcements feed + detail.
@@ -267,6 +268,16 @@ type AnnouncementsStrings = {
   today: string
   yesterday: string
   edited: string
+  back: string
+}
+
+// Participant full schedule screen — day strip + timeline.
+type ScheduleStrings = {
+  title: string
+  today: string
+  empty: string // no activities the whole camp
+  emptyDay: string // no activities on the selected day
+  error: string
   back: string
 }
 
@@ -287,6 +298,7 @@ export const translations: Record<
     common: CommonStrings
     time: TimeStrings
     announcements: AnnouncementsStrings
+    schedule: ScheduleStrings
   }
 > = {
   uz: {
@@ -509,6 +521,7 @@ export const translations: Record<
         'noy',
         'dek',
       ],
+      weekdaysShort: ['Yak', 'Dush', 'Sesh', 'Chor', 'Pay', 'Jum', 'Shan'],
     },
     announcements: {
       title: 'Eʼlonlar',
@@ -521,6 +534,14 @@ export const translations: Record<
       today: 'Bugun',
       yesterday: 'Kecha',
       edited: 'tahrirlangan',
+      back: 'Orqaga',
+    },
+    schedule: {
+      title: 'Jadval',
+      today: 'Bugun',
+      empty: 'Hali jadval yoʻq',
+      emptyDay: 'Bu kunga faoliyat yoʻq',
+      error: 'Jadvalni yuklab boʻlmadi',
       back: 'Orqaga',
     },
   },
@@ -730,6 +751,7 @@ export const translations: Record<
       hoursAgo: '{count} ч назад',
       daysAgo: '{count} дн назад',
       months: ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'],
+      weekdaysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
     },
     announcements: {
       title: 'Объявления',
@@ -742,6 +764,14 @@ export const translations: Record<
       today: 'Сегодня',
       yesterday: 'Вчера',
       edited: 'изменено',
+      back: 'Назад',
+    },
+    schedule: {
+      title: 'Расписание',
+      today: 'Сегодня',
+      empty: 'Расписания пока нет',
+      emptyDay: 'В этот день активностей нет',
+      error: 'Не удалось загрузить расписание',
       back: 'Назад',
     },
   },
@@ -951,6 +981,7 @@ export const translations: Record<
       hoursAgo: '{count}h ago',
       daysAgo: '{count}d ago',
       months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
     },
     announcements: {
       title: 'Announcements',
@@ -963,6 +994,14 @@ export const translations: Record<
       today: 'Today',
       yesterday: 'Yesterday',
       edited: 'edited',
+      back: 'Back',
+    },
+    schedule: {
+      title: 'Schedule',
+      today: 'Today',
+      empty: 'No schedule yet',
+      emptyDay: 'No activities this day',
+      error: "Couldn't load the schedule",
       back: 'Back',
     },
   },

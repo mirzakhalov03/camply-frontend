@@ -1,21 +1,26 @@
 import { useTranslation } from '../../../i18n/useTranslation'
 import { interpolate } from '../../../lib/interpolate'
-import type { CampHome } from '../../../lib/campHome'
+import { clockTime } from '../../../lib/relativeTime'
+import type { Activity } from '../../../api/services/schedule.service'
 
 type Props = {
-  upNext: CampHome['upNext']
+  /** The next relevant activity (from pickUpNext). */
+  activity: Activity
   /** Jump to the full schedule. */
   onOpen: () => void
 }
 
 /*
   "Up next" — the single most useful thing on Home: what's happening now/next and
-  where. Tapping anywhere opens the schedule. The time is split (09 / :30) to echo
-  the prototype's chunky time chip.
+  where. Derived from the schedule domain (pickUpNext), so it can't drift from the
+  timeline. Tapping anywhere opens the schedule. The time is split (09 / :30) to echo
+  the prototype's chunky time chip. The group line shows only for group-scoped
+  activities; camp-wide ones just show the location.
 */
-export function UpNextCard({ upNext, onOpen }: Props) {
+export function UpNextCard({ activity, onOpen }: Props) {
   const { t } = useTranslation()
-  const [hour, minute] = upNext.time.split(':')
+  const [hour, minute] = clockTime(activity.startsAt).split(':')
+  const groupName = activity.scope.kind === 'group' ? activity.scope.groupName : null
 
   return (
     <button
@@ -24,16 +29,18 @@ export function UpNextCard({ upNext, onOpen }: Props) {
       className="flex w-full items-center gap-3.5 rounded-[20px] border border-line bg-surface p-4 text-left shadow-[0_4px_16px_rgba(20,40,30,0.06)] transition active:scale-[0.99]"
     >
       <div className="flex h-[52px] w-[52px] flex-none flex-col items-center justify-center rounded-[15px] bg-green-tint">
-        <span className="text-[15px] font-bold leading-none text-pine">{hour}</span>
-        <span className="text-[10px] font-semibold text-[#3f8a6e]">:{minute}</span>
+        <span className="text-title font-bold leading-none text-pine">{hour}</span>
+        <span className="text-meta font-semibold text-pine/70">:{minute}</span>
       </div>
       <div className="min-w-0 flex-1">
-        <div className="text-[11px] font-semibold uppercase tracking-wide text-muted">
+        <div className="text-meta font-semibold uppercase tracking-wide text-muted">
           {t.home.upNext}
         </div>
-        <div className="mt-0.5 text-base font-bold text-content">{upNext.title}</div>
-        <div className="mt-0.5 truncate text-xs text-muted">
-          {upNext.location} · {interpolate(t.home.upNextWith, { group: upNext.group })}
+        <div className="mt-0.5 text-heading font-bold text-content">{activity.title}</div>
+        <div className="mt-0.5 truncate text-caption text-muted">
+          {groupName
+            ? `${activity.location} · ${interpolate(t.home.upNextWith, { group: groupName })}`
+            : activity.location}
         </div>
       </div>
       <span className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-soft">
@@ -42,10 +49,11 @@ export function UpNextCard({ upNext, onOpen }: Props) {
           height="16"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="#0f6b4f"
+          stroke="currentColor"
           strokeWidth="2.4"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className="text-pine"
         >
           <path d="M9 6l6 6-6 6" />
         </svg>

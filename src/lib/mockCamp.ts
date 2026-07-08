@@ -18,18 +18,6 @@ export const campHomeMock: CampHome = {
     // Test cover from public/. Later this is a URL the organizer uploads.
     coverImage: '/camp-cover.jpg',
   },
-  upNext: {
-    time: '09:30',
-    title: 'Robotics Lab',
-    location: 'Tech Tent',
-    group: 'Pine Wolves',
-  },
-  schedule: [
-    { time: '08:00', title: 'Morning Run', location: 'Lakeside trail', status: 'done' },
-    { time: '09:30', title: 'Robotics Lab', location: 'Tech Tent', status: 'now' },
-    { time: '13:00', title: 'Lunch', location: 'Mess Hall', status: 'upcoming' },
-    { time: '16:00', title: 'Kayaking', location: 'Blue Lake', status: 'upcoming' },
-  ],
   group: {
     name: 'Pine Wolves',
     memberCount: 8,

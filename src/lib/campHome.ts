@@ -8,15 +8,6 @@ import { campHomeMock } from './mockCamp'
   the announcements they post, the group they assign. Components depend on these
   shapes, never on where the data actually comes from.
 */
-export type ScheduleStatus = 'done' | 'now' | 'upcoming'
-
-export type ScheduleItem = {
-  time: string
-  title: string
-  location: string
-  status: ScheduleStatus
-}
-
 export type GroupMember = {
   initials: string
   /** Avatar background — runtime data, so consumers apply it as an inline style. */
@@ -33,13 +24,6 @@ export type CampHome = {
     /** Cover photo URL (mock now; organizer-uploaded later). */
     coverImage: string
   }
-  upNext: {
-    time: string
-    title: string
-    location: string
-    group: string
-  }
-  schedule: ScheduleItem[]
   group: {
     name: string
     memberCount: number

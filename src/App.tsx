@@ -7,6 +7,7 @@ import { RanksScreen } from './components/participant/ranks/RanksScreen'
 import { ProfileScreen } from './components/participant/profile/ProfileScreen'
 import { AnnouncementsScreen } from './components/participant/announcements/AnnouncementsScreen'
 import { AnnouncementDetailScreen } from './components/participant/announcements/AnnouncementDetailScreen'
+import { ScheduleScreen } from './components/participant/schedule/ScheduleScreen'
 import { ComingSoon } from './components/participant/ComingSoon'
 import { useTranslation } from './i18n/useTranslation'
 
@@ -31,7 +32,7 @@ function App() {
         <Route path="announcements" element={<AnnouncementsScreen />} />
         <Route path="announcements/:id" element={<AnnouncementDetailScreen />} />
         <Route path="map" element={<ComingSoonRoute titleKey="map" />} />
-        <Route path="schedule" element={<ComingSoonRoute titleKey="schedule" />} />
+        <Route path="schedule" element={<ScheduleScreen />} />
         <Route path="notifications" element={<ComingSoonRoute titleKey="notifications" />} />
       </Route>
 
@@ -41,12 +42,11 @@ function App() {
 }
 
 // Adapter: resolves the translated title and a Back handler for placeholder routes.
-function ComingSoonRoute({ titleKey }: { titleKey: 'map' | 'schedule' | 'notifications' }) {
+function ComingSoonRoute({ titleKey }: { titleKey: 'map' | 'notifications' }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const titles = {
     map: t.nav.map,
-    schedule: t.home.todaySchedule,
     notifications: t.profile.notifications,
   }
   // Tabs (map) have the bottom nav to leave; secondary views get an explicit Back.

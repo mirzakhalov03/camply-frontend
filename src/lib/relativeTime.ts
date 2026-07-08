@@ -45,6 +45,11 @@ export function absoluteDateTime(iso: string, s: TimeStrings): string {
   return `${fmtDate(d, s.months)}, ${fmtTime(d)}`
 }
 
+/** Just the 24h clock time of an ISO timestamp, e.g. "09:30". */
+export function clockTime(iso: string): string {
+  return fmtTime(new Date(iso))
+}
+
 /*
   Day-group label for the feed: "Today" / "Yesterday" / an absolute date. Compares
   calendar days in local time so 23:59 and 00:01 fall on the right side.
