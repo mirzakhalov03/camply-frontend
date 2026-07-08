@@ -1,98 +1,59 @@
-import { useState } from 'react'
-import { ParticipantLogin } from './components/auth/ParticipantLogin'
-import { CongratulationsScreen } from './components/auth/CongratulationsScreen'
-import { NotFoundScreen } from './components/auth/NotFoundScreen'
-import { SignUpScreen } from './components/signup/SignUpScreen'
-import { OrganizerInfoForm } from './components/organizer/OrganizerInfoForm'
-import { OnboardingPager } from './components/OnboardingPager'
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
+import { Onboarding } from './components/Onboarding'
 import { ParticipantDashboard } from './components/participant/ParticipantDashboard'
-import { isKnownParticipant } from './lib/mockParticipants'
-import { isKnownOrganizer } from './lib/mockOrganizers'
-import { useProfileStore } from './store/useProfileStore'
+import { HomeScreen } from './components/participant/HomeScreen'
+import { ChatScreen } from './components/participant/chat/ChatScreen'
+import { RanksScreen } from './components/participant/ranks/RanksScreen'
+import { ProfileScreen } from './components/participant/profile/ProfileScreen'
+import { ComingSoon } from './components/participant/ComingSoon'
+import { useTranslation } from './i18n/useTranslation'
 
-// Which onboarding step is showing. `congrats` + `form` ride the pager together;
-// `dashboard` is the participant app the camper lands in after "Enter the camp".
-type Screen = 'login' | 'congrats' | 'form' | 'notfound' | 'dashboard'
-// Which role's flow we're in — decided at login by which roster matched.
-type Flow = 'participant' | 'organizer'
-
+/*
+  Route table. Two surfaces today: onboarding at `/`, and the participant app at
+  `/camp/*` (a layout + one route per screen, so push can deep-link). The
+  organizer and organization surfaces will slot in as sibling top-level routes
+  (`/org`, `/admin`) — that's why the structure is split by surface here.
+*/
 function App() {
-  const [screen, setScreen] = useState<Screen>('login')
-  const [flow, setFlow] = useState<Flow>('participant')
-  const setPhone = useProfileStore((s) => s.setPhone)
-  const resetProfile = useProfileStore((s) => s.reset)
+  return (
+    <Routes>
+      <Route path="/" element={<Onboarding />} />
 
-  // Mock roster check. Organizers are checked FIRST (a number in both lists would
-  // open the organizer flow), then participants, else not-found. Swap for a real
-  // API call once auth is wired up.
-  const handleLogin = (phone: string) => {
-    const digits = phone.replace('+998', '')
-    if (isKnownOrganizer(digits)) {
-      setFlow('organizer')
-      setPhone(digits) // remembered so it shows on the profile screen later
-      setScreen('congrats')
-    } else if (isKnownParticipant(digits)) {
-      setFlow('participant')
-      setPhone(digits)
-      setScreen('congrats')
-    } else {
-      setScreen('notfound')
-    }
+      <Route path="/camp" element={<ParticipantDashboard />}>
+        <Route index element={<Navigate to="home" replace />} />
+        <Route path="home" element={<HomeScreen />} />
+        <Route path="chat" element={<ChatScreen />} />
+        <Route path="ranks" element={<RanksScreen />} />
+        <Route path="profile" element={<ProfileScreen />} />
+        {/* Not-yet-built destinations — still real routes so links/pushes resolve. */}
+        <Route path="map" element={<ComingSoonRoute titleKey="map" />} />
+        <Route path="schedule" element={<ComingSoonRoute titleKey="schedule" />} />
+        <Route path="announcements" element={<ComingSoonRoute titleKey="announcements" />} />
+        <Route path="notifications" element={<ComingSoonRoute titleKey="notifications" />} />
+      </Route>
+
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  )
+}
+
+// Adapter: resolves the translated title and a Back handler for placeholder routes.
+function ComingSoonRoute({
+  titleKey,
+}: {
+  titleKey: 'map' | 'schedule' | 'announcements' | 'notifications'
+}) {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const titles = {
+    map: t.nav.map,
+    schedule: t.home.todaySchedule,
+    announcements: t.home.latestAnnouncement,
+    notifications: t.profile.notifications,
   }
-
-  // Clear the collected profile and return to login.
-  const handleLogout = () => {
-    resetProfile()
-    setScreen('login')
-  }
-
-  if (screen === 'notfound') {
-    return <NotFoundScreen onBack={() => setScreen('login')} />
-  }
-
-  // The camper has finished onboarding and stepped into camp.
-  if (screen === 'dashboard') {
-    return <ParticipantDashboard onLogout={handleLogout} />
-  }
-
-  // Congrats → profile form live in a horizontal pager so pressing Continue slides
-  // the form in from the right (and Back slides it away again). The two panels are
-  // role-specific; the pager mechanics are shared.
-  if (screen === 'congrats' || screen === 'form') {
-    const isOrganizer = flow === 'organizer'
-    return (
-      <OnboardingPager
-        index={screen === 'form' ? 1 : 0}
-        panels={[
-          <CongratulationsScreen
-            key="congrats"
-            variant={flow}
-            onContinue={() => setScreen('form')}
-          />,
-          isOrganizer ? (
-            <OrganizerInfoForm
-              key="form"
-              active={screen === 'form'}
-              onBack={() => setScreen('congrats')}
-              onEnterDashboard={() => {
-                // The organizer dashboard doesn't exist yet — placeholder.
-                console.log('go to organizer dashboard')
-              }}
-            />
-          ) : (
-            <SignUpScreen
-              key="form"
-              active={screen === 'form'}
-              onBack={() => setScreen('congrats')}
-              onEnterCamp={() => setScreen('dashboard')}
-            />
-          ),
-        ]}
-      />
-    )
-  }
-
-  return <ParticipantLogin onSubmit={handleLogin} />
+  // Tabs (map) have the bottom nav to leave; secondary views get an explicit Back.
+  const isTab = titleKey === 'map'
+  return <ComingSoon title={titles[titleKey]} onBack={isTab ? undefined : () => navigate(-1)} />
 }
 
 export default App

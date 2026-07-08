@@ -1,58 +1,53 @@
 import type { ReactNode } from 'react'
+import { NavLink } from 'react-router-dom'
 import { useTranslation } from '../../i18n/useTranslation'
 
-// The five participant tabs. Only 'home' is built; the rest show ComingSoon.
-export type ParticipantTab = 'home' | 'map' | 'ranks' | 'chat' | 'profile'
-
 type Props = {
-  active: ParticipantTab
-  onSelect: (tab: ParticipantTab) => void
   /** Unread group-chat count for the Chat badge (server data). */
   chatBadge?: number
 }
 
 /*
-  Persistent bottom tab bar. Frosted surface so content scrolls under it. The
-  active tab is pine; the rest are muted. Chat carries an unread badge. Extra
-  bottom padding leaves room for the phone's home indicator (safe area).
+  Persistent bottom tab bar. Frosted surface so content scrolls under it. Each tab
+  is a NavLink to a real `/camp/*` route, so the active state is driven by the URL
+  (and deep links / push notifications highlight the right tab for free). Chat
+  carries an unread badge. Extra bottom padding leaves room for the phone's home
+  indicator (safe area).
 */
-export function BottomNav({ active, onSelect, chatBadge }: Props) {
+export function BottomNav({ chatBadge }: Props) {
   const { t } = useTranslation()
 
-  const tabs: { id: ParticipantTab; label: string; icon: ReactNode; badge?: number }[] = [
-    { id: 'home', label: t.nav.home, icon: <HomeIcon /> },
-    { id: 'map', label: t.nav.map, icon: <MapIcon /> },
-    { id: 'ranks', label: t.nav.ranks, icon: <RanksIcon /> },
-    { id: 'chat', label: t.nav.chat, icon: <ChatIcon />, badge: chatBadge },
-    { id: 'profile', label: t.nav.profile, icon: <ProfileIcon /> },
+  const tabs: { to: string; label: string; icon: ReactNode; badge?: number }[] = [
+    { to: '/camp/home', label: t.nav.home, icon: <HomeIcon /> },
+    { to: '/camp/map', label: t.nav.map, icon: <MapIcon /> },
+    { to: '/camp/ranks', label: t.nav.ranks, icon: <RanksIcon /> },
+    { to: '/camp/chat', label: t.nav.chat, icon: <ChatIcon />, badge: chatBadge },
+    { to: '/camp/profile', label: t.nav.profile, icon: <ProfileIcon /> },
   ]
 
   return (
     <nav className="flex-none border-t border-line bg-surface-2/95 px-3.5 pb-6 pt-2 backdrop-blur-md">
       <ul className="flex items-center justify-around">
-        {tabs.map((tab) => {
-          const isActive = active === tab.id
-          return (
-            <li key={tab.id}>
-              <button
-                type="button"
-                onClick={() => onSelect(tab.id)}
-                aria-current={isActive ? 'page' : undefined}
-                className={`relative flex flex-col items-center gap-1 px-2 py-1 transition ${
+        {tabs.map((tab) => (
+          <li key={tab.to}>
+            <NavLink
+              to={tab.to}
+              className={({ isActive }) =>
+                `relative flex flex-col items-center gap-1 px-2 py-1 transition ${
                   isActive ? 'text-pine' : 'text-muted'
-                }`}
-              >
-                {tab.icon}
-                {tab.badge ? (
-                  <span className="absolute right-1 top-[-2px] flex h-3.5 min-w-3.5 items-center justify-center rounded-full border-[1.5px] border-surface-2 bg-amber px-1 text-[9px] font-extrabold text-[#3a2807]">
-                    {tab.badge}
-                  </span>
-                ) : null}
-                <span className="text-[10px] font-semibold">{tab.label}</span>
-              </button>
-            </li>
-          )
-        })}
+                }`
+              }
+            >
+              {tab.icon}
+              {tab.badge ? (
+                <span className="absolute right-1 top-[-2px] flex h-3.5 min-w-3.5 items-center justify-center rounded-full border-[1.5px] border-surface-2 bg-amber-bright px-1 text-[9px] font-extrabold text-amber-ink">
+                  {tab.badge}
+                </span>
+              ) : null}
+              <span className="text-meta font-semibold">{tab.label}</span>
+            </NavLink>
+          </li>
+        ))}
       </ul>
     </nav>
   )

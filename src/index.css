@@ -16,9 +16,16 @@
   --color-pine: #0f6b4f; /* primary */
   --color-deep: #0a5039; /* theme / darker surfaces */
   --color-amber: #e0982a; /* accent */
+  --color-amber-bright: #ef9d20; /* CTA amber — the brighter accent for primary actions */
+  --color-amber-ink: #3a2807; /* text/icons ON amber surfaces */
   --color-sky: #5aa9c4; /* secondary */
   --color-paper: #f4f1ea; /* app background */
   --color-ink: #16271f; /* text */
+
+  /* SOS / danger — safety is a first-class concern, so it gets real tokens. */
+  --color-danger: #e0492f; /* bright stop / solid danger */
+  --color-danger-deep: #c43a22; /* dark stop of the SOS gradient, pressed states */
+  --color-danger-tint: #fdece8; /* danger-tinted surface */
 
   /* Dawn gradient stops — warm arrival-at-camp sky. */
   --color-dawn-top: #faf7ef;
@@ -45,7 +52,33 @@
   --font-display: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'DM Mono', ui-monospace, monospace;
 
-  --radius-card: 1.5rem;
+  /*
+    Type scale (Context.md §5). One name per role so components stop hand-rolling
+    `text-[13px]`. These set size + line-height; pair with a font-weight utility
+    (§5: Display 700, Heading 600, Body 400). Generates `text-meta`, `text-body`,
+    `text-display`, etc.
+  */
+  --text-meta: 0.6875rem; /* 11px — mono codes, eyebrows, chip labels */
+  --text-meta--line-height: 1.25;
+  --text-caption: 0.75rem; /* 12px — secondary/helper text */
+  --text-caption--line-height: 1.35;
+  --text-body: 0.8125rem; /* 13px — §5 Body, the default reading size */
+  --text-body--line-height: 1.5;
+  --text-title: 0.9375rem; /* 15px — inputs, list-row titles */
+  --text-title--line-height: 1.4;
+  --text-heading: 1rem; /* 16px — §5 Heading */
+  --text-heading--line-height: 1.3;
+  --text-subhead: 1.125rem; /* 18px — card / section headers */
+  --text-subhead--line-height: 1.3;
+  --text-display: 1.375rem; /* 22px — §5 Display */
+  --text-display--line-height: 1.15;
+
+  /* Radii — §5 is ~16px surfaces; cards run a little rounder. */
+  --radius-input: 1rem; /* 16px — inputs, chips, list rows */
+  --radius-card: 1.5rem; /* 24px — cards, sheets */
+
+  /* Focus ring — one pine halo everywhere, so focus states are consistent. */
+  --color-focus: rgba(15, 107, 79, 0.12);
 }
 
 :root {
@@ -64,6 +97,7 @@
   --color-soft: #1e2c25;
   --color-green-tint: #143528;
   --color-amber-tint: #2f2614;
+  --color-danger-tint: #331a14;
 }
 
 html,

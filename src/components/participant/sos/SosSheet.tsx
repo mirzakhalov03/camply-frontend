@@ -93,7 +93,7 @@ function ReasonStage({
       <div className="mx-auto mb-4 mt-1.5 h-1 w-10 rounded-full bg-line" />
 
       <div className="flex items-center gap-3">
-        <div className="flex h-11 w-11 flex-none items-center justify-center rounded-[14px] bg-[#fdece8] text-[22px]">
+        <div className="flex h-11 w-11 flex-none items-center justify-center rounded-[14px] bg-danger-tint text-[22px]">
           🆘
         </div>
         <div className="flex-1">
@@ -125,7 +125,7 @@ function ReasonStage({
               onClick={() => onPickReason(r.key)}
               className={`rounded-[16px] border p-3.5 text-left transition ${
                 on
-                  ? 'border-[#c43a22] bg-[#c43a22] text-white'
+                  ? 'border-danger-deep bg-danger-deep text-white'
                   : 'border-[#f0d9d2] bg-surface text-content'
               }`}
             >
@@ -163,7 +163,7 @@ function ReasonStage({
         className="relative mt-4 h-[58px] cursor-pointer touch-none select-none overflow-hidden rounded-full bg-[#f0d9d2] shadow-[0_8px_20px_rgba(224,73,47,0.26)]"
       >
         <div
-          className="absolute inset-y-0 left-0 bg-[linear-gradient(135deg,#e0492f,#c43a22)] transition-[width] duration-[50ms] ease-linear"
+          className="absolute inset-y-0 left-0 bg-[linear-gradient(135deg,var(--color-danger),var(--color-danger-deep))] transition-[width] duration-[50ms] ease-linear"
           style={{ width: `${holdPct}%` }}
         />
         <div className="absolute inset-0 flex items-center justify-center gap-2 text-base font-extrabold text-[#7a2414]">
@@ -183,7 +183,7 @@ function SendingStage({ reasonLabel }: { reasonLabel: string }) {
       <div className="relative flex h-[110px] w-[110px] items-center justify-center">
         <span className="animate-radar absolute inset-0 rounded-full bg-[rgba(224,73,47,0.4)]" />
         <span className="animate-radar absolute inset-0 rounded-full bg-[rgba(224,73,47,0.4)] [animation-delay:0.8s]" />
-        <div className="relative flex h-[74px] w-[74px] items-center justify-center rounded-full bg-[linear-gradient(150deg,#e0492f,#c43a22)] text-3xl shadow-[0_10px_24px_rgba(224,73,47,0.4)]">
+        <div className="relative flex h-[74px] w-[74px] items-center justify-center rounded-full bg-[linear-gradient(150deg,var(--color-danger),var(--color-danger-deep))] text-3xl shadow-[0_10px_24px_rgba(224,73,47,0.4)]">
           🆘
         </div>
       </div>
@@ -212,7 +212,7 @@ function ActiveStage({
 
   return (
     <div className="overflow-y-auto">
-      <div className="relative bg-[linear-gradient(140deg,#e0492f,#c43a22)] px-5 pb-6 pt-5 text-white">
+      <div className="relative bg-[linear-gradient(140deg,var(--color-danger),var(--color-danger-deep))] px-5 pb-6 pt-5 text-white">
         <button
           type="button"
           onClick={onClose}
@@ -262,7 +262,7 @@ function ActiveStage({
 
         <button
           type="button"
-          className="flex h-[50px] items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#e0492f,#c43a22)] text-sm font-extrabold text-white shadow-[0_6px_16px_rgba(224,73,47,0.3)]"
+          className="flex h-[50px] items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,var(--color-danger),var(--color-danger-deep))] text-sm font-extrabold text-white shadow-[0_6px_16px_rgba(224,73,47,0.3)]"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
             <path d="M20 15.5a11 11 0 0 1-3.5-.6 1 1 0 0 0-1 .25l-1.5 1.5a13 13 0 0 1-6-6l1.5-1.5a1 1 0 0 0 .25-1A11 11 0 0 1 8.5 4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1 17 17 0 0 0 17 17 1 1 0 0 0 1-1v-3.5a1 1 0 0 0-1-1z" />

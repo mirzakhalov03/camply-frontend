@@ -21,21 +21,21 @@ export function SosButton({ helpActive, onOpen }: Props) {
         <button
           type="button"
           onClick={onOpen}
-          className="animate-sos-breath flex items-center gap-2 rounded-full bg-[#c43a22] py-2 pl-2.5 pr-4 text-white"
+          className="animate-sos-breath flex items-center gap-2 rounded-full bg-danger-deep py-2 pl-2.5 pr-4 text-white"
         >
           <span className="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white/20 text-sm">
             🆘
           </span>
-          <span className="text-[13px] font-extrabold tracking-wide">{t.sos.helpComing}</span>
+          <span className="text-body font-extrabold tracking-wide">{t.sos.helpComing}</span>
         </button>
       ) : (
         <button
           type="button"
           onClick={onOpen}
           aria-label="SOS — emergency help"
-          className="animate-sos-idle flex h-[58px] w-[58px] items-center justify-center rounded-full border-[2.5px] border-white/75 bg-[linear-gradient(150deg,#e0492f,#c43a22)] text-white shadow-[0_8px_20px_rgba(224,73,47,0.4)]"
+          className="animate-sos-idle flex h-[58px] w-[58px] items-center justify-center rounded-full border-[2.5px] border-white/75 bg-[linear-gradient(150deg,var(--color-danger),var(--color-danger-deep))] text-white shadow-[0_8px_20px_rgba(224,73,47,0.4)]"
         >
-          <span className="text-[15px] font-black tracking-wide">SOS</span>
+          <span className="text-title font-black tracking-wide">SOS</span>
         </button>
       )}
     </div>

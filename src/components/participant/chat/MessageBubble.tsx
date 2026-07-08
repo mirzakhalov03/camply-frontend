@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
+import { Avatar } from '../../ui'
 import type { ChatMessage, ChatMember, MessageReaction } from '../../../lib/chat'
 import { formatFileSize } from '../../../lib/formatFileSize'
 
@@ -127,7 +128,7 @@ export function MessageBubble({
   if (message.sentByMe) {
     return (
       <div className="flex flex-col items-end">
-        <div className="max-w-[78%] rounded-[18px_3px_18px_18px] bg-gradient-to-br from-[#f2ad42] to-amber px-3.5 pb-2 pt-2.5 text-[13.5px] leading-snug text-[#3a2807] shadow-[0_4px_12px_rgba(224,152,42,0.3)]">
+        <div className="max-w-[78%] rounded-[18px_3px_18px_18px] bg-gradient-to-br from-[#f2ad42] to-amber px-3.5 pb-2 pt-2.5 text-body leading-snug text-amber-ink shadow-[0_4px_12px_rgba(224,152,42,0.3)]">
           {message.replyTo && <ReplyQuote replyTo={message.replyTo} />}
           <Body message={message} />
           <span className="mt-1 flex items-center justify-end gap-1 text-[9px] text-[rgba(58,40,7,0.55)]">
@@ -149,14 +150,15 @@ export function MessageBubble({
         type="button"
         onClick={onAuthorTap}
         aria-label={author?.name}
-        className="flex h-8 w-8 flex-none items-center justify-center overflow-hidden rounded-full text-[11px] font-bold text-white"
-        style={{ backgroundColor: author?.color ?? '#5aa9c4' }}
+        className="flex-none rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pine"
       >
-        {author?.photo ? (
-          <img src={author.photo} alt={author.name} className="h-full w-full object-cover" />
-        ) : (
-          (author?.initials ?? '?')
-        )}
+        <Avatar
+          name={author?.name ?? ''}
+          initials={author?.initials ?? '?'}
+          photo={author?.photo}
+          color={author?.color ?? 'var(--color-sky)'}
+          size={32}
+        />
       </button>
       <div className="flex max-w-[76%] flex-col items-start">
         <button

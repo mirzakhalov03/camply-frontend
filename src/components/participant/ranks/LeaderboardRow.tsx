@@ -1,3 +1,4 @@
+import { Avatar, Badge } from '../../ui'
 import type { RankedGroup } from '../../../lib/leaderboard'
 
 type Props = {
@@ -6,8 +7,9 @@ type Props = {
   youLabel: string
 }
 
-// Trend arrow color. Explicit hex so it holds on both light and dark surfaces.
-const TREND_COLOR = { up: '#12A06A', down: '#E0733F', same: '#9aa79f' } as const
+// Trend arrow color. Explicit hex (not tokens) so the up/down semantics stay
+// fixed on both light and dark tinted rows; 'same' rides the muted token.
+const TREND_COLOR = { up: '#12A06A', down: '#E0733F', same: 'var(--color-muted)' } as const
 const TREND_GLYPH = { up: '▲', down: '▼', same: '—' } as const
 
 /*
@@ -26,28 +28,25 @@ export function LeaderboardRow({ group, youLabel }: Props) {
         group.isYou ? 'border-pine bg-green-tint' : 'border-line bg-surface'
       }`}
     >
-      <span className="w-5 flex-none text-center text-[15px] font-extrabold text-muted">
+      <span className="w-5 flex-none text-center text-title font-extrabold text-muted">
         {group.rank}
       </span>
 
-      <span
-        className="flex h-9 w-9 flex-none items-center justify-center overflow-hidden rounded-full text-[13px] font-bold text-white"
-        style={{ backgroundColor: group.color }}
-      >
-        {group.photo ? (
-          <img src={group.photo} alt={group.name} className="h-full w-full object-cover" />
-        ) : (
-          group.initials
-        )}
-      </span>
+      <Avatar
+        name={group.name}
+        initials={group.initials}
+        photo={group.photo}
+        color={group.color}
+        size="sm"
+      />
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">
-          <span className="truncate text-sm font-bold text-content">{group.name}</span>
+          <span className="truncate text-title font-bold text-content">{group.name}</span>
           {group.isYou && (
-            <span className="flex-none rounded-full bg-pine px-1.5 py-0.5 text-[9px] font-extrabold text-white">
+            <Badge tone="pine" solid className="flex-none px-1.5 py-0.5 text-[9px]">
               {youLabel}
-            </span>
+            </Badge>
           )}
         </div>
         <div className="mt-1.5 h-[5px] overflow-hidden rounded-full bg-line">
@@ -59,8 +58,8 @@ export function LeaderboardRow({ group, youLabel }: Props) {
       </div>
 
       <div className="flex-none text-right">
-        <div className="text-[15px] font-extrabold text-content">{group.score}</div>
-        <div className="text-[11px] font-bold" style={{ color: TREND_COLOR[direction] }}>
+        <div className="text-title font-extrabold text-content">{group.score}</div>
+        <div className="text-meta font-bold" style={{ color: TREND_COLOR[direction] }}>
           {TREND_GLYPH[direction]}
           {direction !== 'same' ? ` ${delta}` : ''}
         </div>

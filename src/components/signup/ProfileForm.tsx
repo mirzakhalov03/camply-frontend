@@ -4,6 +4,7 @@ import { useTypewriter } from '../../lib/useTypewriter'
 import { useProfileStore } from '../../store/useProfileStore'
 import type { City } from '../../lib/cities'
 import { OnboardingProgress } from '../OnboardingProgress'
+import { Button, Field } from '../ui'
 import { AvatarBadge } from './AvatarBadge'
 import { CityPicker } from './CityPicker'
 import { AgeStepper } from './AgeStepper'
@@ -124,7 +125,7 @@ export function ProfileForm({
         {/* ── Green hero ── */}
         {/* Top padding respects a phone notch (safe-area) but stays tight
             otherwise, so the back button sits close to the top edge. */}
-        <div className="relative overflow-hidden bg-[linear-gradient(180deg,#0f6b4f_0%,#0a5039_100%)] px-6 pb-16 pt-[max(1.25rem,env(safe-area-inset-top))] text-white">
+        <div className="relative overflow-hidden bg-gradient-to-b from-pine to-deep px-6 pb-16 pt-[max(1.25rem,env(safe-area-inset-top))] text-white">
           {/* items-start pins the progress dots to the hero's top padding so they
               line up with the same figure on the congratulations screen. */}
           <div className="flex items-start justify-between">
@@ -148,7 +149,7 @@ export function ProfileForm({
             <OnboardingProgress step={2} />
           </div>
 
-          <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#f4d9a8]">
+          <p className="mt-6 text-meta font-semibold uppercase tracking-[0.1em] text-[#f4d9a8]">
             {eyebrow}
           </p>
           {/* Typewriter title. The full text is the accessible name; the
@@ -190,21 +191,31 @@ export function ProfileForm({
               label={t.signup.uploadPhoto}
             />
           </div>
-          <p className="mt-2.5 text-center font-mono text-[11px] tracking-[0.04em] text-[#9aa79f]">
+          <p className="mt-2.5 text-center font-mono text-meta tracking-[0.04em] text-muted">
             {photo ? `● ${t.signup.photoUploaded}` : t.signup.badgeEmpty}
           </p>
 
           {/* Name + surname */}
-          <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#9aa79f]">
+          <p className="mt-6 text-meta font-semibold uppercase tracking-[0.06em] text-muted">
             {t.signup.nameLabel}
           </p>
           <div className="mt-2.5 grid grid-cols-2 gap-2.5">
-            <NameInput value={name} onChange={setName} placeholder={t.signup.firstName} />
-            <NameInput value={surname} onChange={setSurname} placeholder={t.signup.surname} />
+            <Field
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder={t.signup.firstName}
+              maxLength={40}
+            />
+            <Field
+              value={surname}
+              onChange={(e) => setSurname(e.target.value)}
+              placeholder={t.signup.surname}
+              maxLength={40}
+            />
           </div>
 
           {/* Home city */}
-          <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#9aa79f]">
+          <p className="mt-5 text-meta font-semibold uppercase tracking-[0.06em] text-muted">
             {t.signup.cityLabel}
           </p>
           <div className="mt-2.5">
@@ -213,12 +224,10 @@ export function ProfileForm({
 
           {/* Age */}
           <div className="mt-5 flex items-baseline justify-between">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#9aa79f]">
+            <p className="text-meta font-semibold uppercase tracking-[0.06em] text-muted">
               {t.signup.ageLabel}
             </p>
-            {ageBracket && (
-              <p className="font-mono text-[11px] text-[#b7bdb2]">{ageBracket(age)}</p>
-            )}
+            {ageBracket && <p className="font-mono text-meta text-muted">{ageBracket(age)}</p>}
           </div>
           <div className="mt-2.5">
             <AgeStepper age={age} onChange={setAge} />
@@ -228,32 +237,29 @@ export function ProfileForm({
           {extraFields}
 
           {/* Submit */}
-          <button
+          <Button
+            variant="accent"
+            size="lg"
+            fullWidth
             type="button"
             onClick={submit}
             disabled={!valid}
-            className={[
-              'mt-6 flex h-[58px] w-full items-center justify-center gap-2.5 rounded-full font-display text-[16.5px] font-bold transition-all',
-              'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pine',
-              valid
-                ? 'bg-[#ef9d20] text-[#3a2807] shadow-[0_10px_24px_rgba(239,157,32,0.36)] hover:-translate-y-0.5 active:translate-y-0'
-                : 'cursor-not-allowed bg-[#e9e3d5] text-[#a9b0a8]',
-            ].join(' ')}
+            className="mt-6"
           >
             <span>{valid ? submitValid : submitInvalid}</span>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
               <path
                 d="M4 10h11M11 5l5 5-5 5"
-                stroke={valid ? '#3a2807' : '#a9b0a8'}
+                stroke="currentColor"
                 strokeWidth="2.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
             </svg>
-          </button>
+          </Button>
 
           {consent && (
-            <p className="mt-3.5 text-center text-xs leading-relaxed text-[#9aa79f]">
+            <p className="mt-3.5 text-center text-caption leading-relaxed text-muted">
               {consent.before} <span className="font-semibold text-pine">{consent.link}</span>{' '}
               {consent.after}
             </p>
@@ -268,30 +274,5 @@ export function ProfileForm({
           () => setSubmitted(false),
         )}
     </div>
-  )
-}
-
-/*
-  Small local input used for both name fields — same look, so it lives here
-  rather than as a shared component. The green focus ring matches the design's
-  field-focus state.
-*/
-function NameInput({
-  value,
-  onChange,
-  placeholder,
-}: {
-  value: string
-  onChange: (value: string) => void
-  placeholder: string
-}) {
-  return (
-    <input
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      maxLength={40} // sane cap so a name can't overflow the badge / layout
-      className="h-[52px] w-full rounded-[16px] border-[1.5px] border-[#e7e1d3] bg-[#fffdf8] px-[15px] text-[15px] font-semibold text-ink shadow-[0_3px_10px_rgba(20,40,30,0.04)] outline-none transition-colors placeholder:font-medium placeholder:text-[#a9b0a8] focus:border-pine focus:bg-white focus:shadow-[0_0_0_4px_rgba(15,107,79,0.12)]"
-    />
   )
 }

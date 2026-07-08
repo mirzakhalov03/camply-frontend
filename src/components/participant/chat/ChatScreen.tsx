@@ -3,7 +3,7 @@ import { useTranslation } from '../../../i18n/useTranslation'
 import { useChat, withMyProfile, type ChatMember, type ChatMessage } from '../../../lib/chat'
 import { useChatStore } from '../../../store/useChatStore'
 import { useGroupStore } from '../../../store/useGroupStore'
-import { useProfileStore } from '../../../store/useProfileStore'
+import { useMe } from '../../../store/useMe'
 import { ChatHeader } from './ChatHeader'
 import { MessageList } from './MessageList'
 import { Composer } from './Composer'
@@ -22,21 +22,15 @@ export function ChatScreen() {
   // Group photo is shared identity (also shown on Ranks), so it lives in useGroupStore.
   const groupPhoto = useGroupStore((s) => s.photo)
   const setGroupPhoto = useGroupStore((s) => s.setPhoto)
-  // My real identity (name/photo/city…) lives in useProfileStore; it overlays the
-  // placeholder "me" member the mock ships with (see withMyProfile).
-  const myName = useProfileStore((s) => s.name)
-  const mySurname = useProfileStore((s) => s.surname)
-  const myInitials = useProfileStore((s) => s.initials)
-  const myPhoto = useProfileStore((s) => s.photo)
-  const myCity = useProfileStore((s) => s.city)
-  const myAge = useProfileStore((s) => s.age)
-  const mySocials = useProfileStore((s) => s.socials)
+  // My real identity, assembled once by useMe(); it overlays the placeholder "me"
+  // member the mock ships with (see withMyProfile).
+  const me = useMe()
   const [selected, setSelected] = useState<ChatMember | null>(null)
   const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null)
 
   if (isLoading) {
     return (
-      <div className="flex h-full items-center justify-center bg-canvas text-[13px] text-muted">
+      <div className="flex h-full items-center justify-center bg-canvas text-body text-muted">
         {t.chat.loading}
       </div>
     )
@@ -44,7 +38,7 @@ export function ChatScreen() {
 
   if (isError || !data) {
     return (
-      <div className="flex h-full items-center justify-center bg-canvas px-8 text-center text-[13px] text-muted">
+      <div className="flex h-full items-center justify-center bg-canvas px-8 text-center text-body text-muted">
         {t.chat.loadError}
       </div>
     )
@@ -52,14 +46,7 @@ export function ChatScreen() {
 
   // Overlay my profile onto the placeholder "me" member so the roster, rail, and
   // member sheet all show my real name/photo/city instead of mock seed data.
-  const members = withMyProfile(data.members, {
-    name: `${myName} ${mySurname}`.trim(),
-    initials: myInitials,
-    photo: myPhoto,
-    city: myCity?.name ?? '',
-    age: myAge,
-    socials: mySocials,
-  })
+  const members = withMyProfile(data.members, me)
 
   // Who wrote a message (for the reply quote): "You" for mine, else their name.
   const authorNameOf = (msg: ChatMessage) =>

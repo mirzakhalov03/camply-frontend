@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { interpolate } from '../../../lib/interpolate'
+import { Avatar } from '../../ui'
 import type { GroupChat, ChatMember } from '../../../lib/chat'
 
 type Props = {
@@ -63,8 +64,8 @@ export function ChatHeader({ group, members, onMemberTap, groupPhoto, onChangePh
           aria-hidden
         />
         <div className="min-w-0 flex-1">
-          <div className="truncate text-[17px] font-bold text-content">{group.name}</div>
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-pine">
+          <div className="truncate text-subhead font-bold text-content">{group.name}</div>
+          <div className="flex items-center gap-1.5 text-caption font-semibold text-pine">
             <span className="h-1.5 w-1.5 rounded-full bg-pine" />
             {interpolate(t.chat.membersOnline, {
               members: group.memberCount,
@@ -85,23 +86,20 @@ export function ChatHeader({ group, members, onMemberTap, groupPhoto, onChangePh
             className="flex w-[52px] flex-none flex-col items-center gap-1"
           >
             <span className="relative">
-              <span
-                className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full text-sm font-bold text-white"
-                style={{ backgroundColor: m.color }}
-              >
-                {m.photo ? (
-                  <img src={m.photo} alt={m.name} className="h-full w-full object-cover" />
-                ) : (
-                  m.initials
-                )}
-              </span>
+              <Avatar
+                name={m.name}
+                initials={m.initials}
+                photo={m.photo}
+                color={m.color}
+                size={44}
+              />
               <span
                 className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-surface-2 ${
                   m.online ? 'bg-pine' : 'bg-muted'
                 }`}
               />
             </span>
-            <span className="max-w-[52px] truncate text-[10px] font-semibold text-muted">
+            <span className="max-w-[52px] truncate text-meta font-semibold text-muted">
               {m.isMe ? t.chat.you : m.name.split(' ')[0]}
             </span>
           </button>
