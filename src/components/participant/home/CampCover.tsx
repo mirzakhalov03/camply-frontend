@@ -8,6 +8,8 @@ type Props = {
   camp: CampHome['camp']
   /** Open the notifications / announcements screen (bell tap). */
   onOpenNotifications: () => void
+  /** Unread announcements — drives the bell badge. */
+  unreadCount?: number
 }
 
 /*
@@ -16,7 +18,7 @@ type Props = {
   with a mountain silhouette stays vivid in both light and dark mode. Floating
   over it: the notifications bell and the light/dark toggle.
 */
-export function CampCover({ camp, onOpenNotifications }: Props) {
+export function CampCover({ camp, onOpenNotifications, unreadCount = 0 }: Props) {
   const { t } = useTranslation()
   const theme = useThemeStore((s) => s.theme)
   const toggleTheme = useThemeStore((s) => s.toggle)
@@ -54,7 +56,11 @@ export function CampCover({ camp, onOpenNotifications }: Props) {
             <path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6" />
             <path d="M10 20a2 2 0 0 0 4 0" />
           </svg>
-          <span className="absolute right-2 top-1.5 h-2 w-2 rounded-full border-[1.5px] border-deep bg-amber" />
+          {unreadCount > 0 && (
+            <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full border-[1.5px] border-deep bg-amber px-1 text-[10px] font-bold leading-none text-amber-ink">
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          )}
         </button>
 
         <button

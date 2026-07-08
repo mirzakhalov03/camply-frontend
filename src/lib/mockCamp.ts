@@ -30,11 +30,6 @@ export const campHomeMock: CampHome = {
     { time: '13:00', title: 'Lunch', location: 'Mess Hall', status: 'upcoming' },
     { time: '16:00', title: 'Kayaking', location: 'Blue Lake', status: 'upcoming' },
   ],
-  announcement: {
-    minutesAgo: 20,
-    body: 'Bus to Chimgan leaves at 7:00 sharp — meet at the main gate with your day pack.',
-    author: 'Organizer team',
-  },
   group: {
     name: 'Pine Wolves',
     memberCount: 8,

@@ -1,5 +1,7 @@
 import { useTranslation } from '../../../i18n/useTranslation'
 import { useMembership } from '../../../lib/membership'
+import { useAnnouncements } from '../../../api/queries/announcements.queries'
+import { useUnreadCount } from '../../../store/useAnnouncementReads'
 import { useCamp } from '../campContext'
 import { IdentityCard } from './IdentityCard'
 import { SosCard } from './SosCard'
@@ -19,8 +21,10 @@ const HERO_TEXTURE =
 */
 export function ProfileScreen() {
   const { t } = useTranslation()
-  const { sos, goNotifications, logout } = useCamp()
+  const { sos, goAnnouncements, goNotifications, logout } = useCamp()
   const { data: membership } = useMembership()
+  const { data: announcements } = useAnnouncements()
+  const unread = useUnreadCount((announcements ?? []).map((a) => a.id))
 
   return (
     <div className="h-full overflow-y-auto bg-canvas">
@@ -31,8 +35,8 @@ export function ProfileScreen() {
           <div className="text-body font-semibold text-white/80">{t.profile.title}</div>
           <button
             type="button"
-            onClick={goNotifications}
-            aria-label={t.profile.notifications}
+            onClick={goAnnouncements}
+            aria-label={t.announcements.title}
             className="relative flex h-[38px] w-[38px] items-center justify-center rounded-xl bg-white/15"
           >
             <svg
@@ -49,7 +53,11 @@ export function ProfileScreen() {
               <path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6" />
               <path d="M10 20a2 2 0 0 0 4 0" />
             </svg>
-            <span className="absolute right-2 top-[7px] h-2 w-2 rounded-full border-[1.5px] border-deep bg-amber" />
+            {unread > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full border-[1.5px] border-deep bg-amber px-1 text-[10px] font-bold leading-none text-amber-ink">
+                {unread > 9 ? '9+' : unread}
+              </span>
+            )}
           </button>
         </div>
       </div>

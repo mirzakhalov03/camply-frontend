@@ -29,4 +29,9 @@ export const campKeys = {
   mapPins: (campId: string) => [...campKeys.all(campId), 'map'] as const,
   /** Chat is per-group within a camp. */
   chat: (campId: string, groupId: string) => [...campKeys.all(campId), 'chat', groupId] as const,
+  /** All announcements for a camp — one invalidation refreshes the feed. */
+  announcements: (campId: string) => [...campKeys.all(campId), 'announcements'] as const,
+  /** A single announcement (detail screen + push deep-link). */
+  announcement: (campId: string, id: string) =>
+    [...campKeys.all(campId), 'announcements', id] as const,
 }

@@ -124,8 +124,6 @@ type HomeStrings = {
   statusNow: string
   latestAnnouncement: string
   all: string
-  pinned: string
-  minutesAgo: string // '{minutes} min ago'
   myGroup: string
   membersCount: string // '{count} members'
 }
@@ -208,6 +206,7 @@ type ChatStrings = {
   photo: string
   file: string
   send: string // aria-label for send
+  viewMembers: string // aria-label for the header members button
   call: string
   reply: string
   emptyThread: string
@@ -247,6 +246,30 @@ type CommonStrings = {
   comingSoonBody: string
 }
 
+// Relative-time wording — {count} is filled per language (see lib/relativeTime).
+type TimeStrings = {
+  justNow: string
+  minAgo: string // '{count} min ago'
+  hoursAgo: string // '{count}h ago'
+  daysAgo: string // '{count}d ago'
+  months: string[] // 12 short month names, Jan → Dec (browser ICU is unreliable for uz)
+}
+
+// Participant announcements feed + detail.
+type AnnouncementsStrings = {
+  title: string
+  empty: string
+  emptyBody: string
+  error: string
+  retry: string
+  pinned: string
+  allCamp: string
+  today: string
+  yesterday: string
+  edited: string
+  back: string
+}
+
 export const translations: Record<
   Lang,
   {
@@ -262,6 +285,8 @@ export const translations: Record<
     chat: ChatStrings
     ranks: RanksStrings
     common: CommonStrings
+    time: TimeStrings
+    announcements: AnnouncementsStrings
   }
 > = {
   uz: {
@@ -357,8 +382,6 @@ export const translations: Record<
       statusNow: 'Hozir',
       latestAnnouncement: 'Soʻnggi eʼlon',
       all: 'Hammasi',
-      pinned: 'Qadalgan',
-      minutesAgo: '{minutes} daqiqa oldin',
       myGroup: 'Mening guruhim',
       membersCount: '{count} ta aʼzo',
     },
@@ -434,6 +457,7 @@ export const translations: Record<
       photo: 'Rasm',
       file: 'Fayl',
       send: 'Yuborish',
+      viewMembers: 'Aʼzolarni koʻrish',
       call: 'Qoʻngʻiroq qilish',
       reply: 'Javob berish',
       emptyThread: 'Hali xabar yoʻq. Birinchi boʻlib salom bering!',
@@ -465,6 +489,39 @@ export const translations: Record<
     common: {
       comingSoon: 'Tez kunda',
       comingSoonBody: 'Oromgohning bu qismi tayyorlanmoqda. Tez orada qayting!',
+    },
+    time: {
+      justNow: 'hozirgina',
+      minAgo: '{count} daq oldin',
+      hoursAgo: '{count} soat oldin',
+      daysAgo: '{count} kun oldin',
+      months: [
+        'yan',
+        'fev',
+        'mar',
+        'apr',
+        'may',
+        'iyun',
+        'iyul',
+        'avg',
+        'sen',
+        'okt',
+        'noy',
+        'dek',
+      ],
+    },
+    announcements: {
+      title: 'Eʼlonlar',
+      empty: 'Hozircha eʼlonlar yoʻq',
+      emptyBody: 'Tashkilotchilar eʼlon joʻnatganda, u shu yerda koʻrinadi.',
+      error: 'Eʼlonlarni yuklab boʻlmadi',
+      retry: 'Qayta urinish',
+      pinned: 'Qadalgan',
+      allCamp: 'Butun lager',
+      today: 'Bugun',
+      yesterday: 'Kecha',
+      edited: 'tahrirlangan',
+      back: 'Orqaga',
     },
   },
   ru: {
@@ -559,8 +616,6 @@ export const translations: Record<
       statusNow: 'Сейчас',
       latestAnnouncement: 'Последнее объявление',
       all: 'Все',
-      pinned: 'Закреплено',
-      minutesAgo: '{minutes} мин назад',
       myGroup: 'Моя группа',
       membersCount: '{count} участников',
     },
@@ -636,6 +691,7 @@ export const translations: Record<
       photo: 'Фото',
       file: 'Файл',
       send: 'Отправить',
+      viewMembers: 'Участники',
       call: 'Позвонить',
       reply: 'Ответить',
       emptyThread: 'Сообщений пока нет. Напишите первым!',
@@ -667,6 +723,26 @@ export const translations: Record<
     common: {
       comingSoon: 'Скоро',
       comingSoonBody: 'Эта часть лагеря ещё в разработке. Загляните позже!',
+    },
+    time: {
+      justNow: 'только что',
+      minAgo: '{count} мин назад',
+      hoursAgo: '{count} ч назад',
+      daysAgo: '{count} дн назад',
+      months: ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'],
+    },
+    announcements: {
+      title: 'Объявления',
+      empty: 'Объявлений пока нет',
+      emptyBody: 'Когда организаторы опубликуют объявление, оно появится здесь.',
+      error: 'Не удалось загрузить объявления',
+      retry: 'Повторить',
+      pinned: 'Закреплено',
+      allCamp: 'Весь лагерь',
+      today: 'Сегодня',
+      yesterday: 'Вчера',
+      edited: 'изменено',
+      back: 'Назад',
     },
   },
   en: {
@@ -761,8 +837,6 @@ export const translations: Record<
       statusNow: 'Now',
       latestAnnouncement: 'Latest announcement',
       all: 'All',
-      pinned: 'Pinned',
-      minutesAgo: '{minutes} min ago',
       myGroup: 'My group',
       membersCount: '{count} members',
     },
@@ -838,6 +912,7 @@ export const translations: Record<
       photo: 'Photo',
       file: 'File',
       send: 'Send',
+      viewMembers: 'View members',
       call: 'Call',
       reply: 'Reply',
       emptyThread: 'No messages yet. Say hi!',
@@ -869,6 +944,26 @@ export const translations: Record<
     common: {
       comingSoon: 'Coming soon',
       comingSoonBody: 'This part of camp is being built. Check back soon!',
+    },
+    time: {
+      justNow: 'just now',
+      minAgo: '{count} min ago',
+      hoursAgo: '{count}h ago',
+      daysAgo: '{count}d ago',
+      months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    },
+    announcements: {
+      title: 'Announcements',
+      empty: 'No announcements yet',
+      emptyBody: "When organizers post an announcement, it'll show up here.",
+      error: "Couldn't load announcements",
+      retry: 'Try again',
+      pinned: 'Pinned',
+      allCamp: 'All camp',
+      today: 'Today',
+      yesterday: 'Yesterday',
+      edited: 'edited',
+      back: 'Back',
     },
   },
 }

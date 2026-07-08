@@ -5,6 +5,8 @@ import { HomeScreen } from './components/participant/HomeScreen'
 import { ChatScreen } from './components/participant/chat/ChatScreen'
 import { RanksScreen } from './components/participant/ranks/RanksScreen'
 import { ProfileScreen } from './components/participant/profile/ProfileScreen'
+import { AnnouncementsScreen } from './components/participant/announcements/AnnouncementsScreen'
+import { AnnouncementDetailScreen } from './components/participant/announcements/AnnouncementDetailScreen'
 import { ComingSoon } from './components/participant/ComingSoon'
 import { useTranslation } from './i18n/useTranslation'
 
@@ -26,9 +28,10 @@ function App() {
         <Route path="ranks" element={<RanksScreen />} />
         <Route path="profile" element={<ProfileScreen />} />
         {/* Not-yet-built destinations — still real routes so links/pushes resolve. */}
+        <Route path="announcements" element={<AnnouncementsScreen />} />
+        <Route path="announcements/:id" element={<AnnouncementDetailScreen />} />
         <Route path="map" element={<ComingSoonRoute titleKey="map" />} />
         <Route path="schedule" element={<ComingSoonRoute titleKey="schedule" />} />
-        <Route path="announcements" element={<ComingSoonRoute titleKey="announcements" />} />
         <Route path="notifications" element={<ComingSoonRoute titleKey="notifications" />} />
       </Route>
 
@@ -38,17 +41,12 @@ function App() {
 }
 
 // Adapter: resolves the translated title and a Back handler for placeholder routes.
-function ComingSoonRoute({
-  titleKey,
-}: {
-  titleKey: 'map' | 'schedule' | 'announcements' | 'notifications'
-}) {
+function ComingSoonRoute({ titleKey }: { titleKey: 'map' | 'schedule' | 'notifications' }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const titles = {
     map: t.nav.map,
     schedule: t.home.todaySchedule,
-    announcements: t.home.latestAnnouncement,
     notifications: t.profile.notifications,
   }
   // Tabs (map) have the bottom nav to leave; secondary views get an explicit Back.

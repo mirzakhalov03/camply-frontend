@@ -40,11 +40,6 @@ export type CampHome = {
     group: string
   }
   schedule: ScheduleItem[]
-  announcement: {
-    minutesAgo: number
-    body: string
-    author: string
-  }
   group: {
     name: string
     memberCount: number
