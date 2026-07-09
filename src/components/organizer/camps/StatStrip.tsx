@@ -11,7 +11,7 @@ export function StatStrip({ summary }: { summary: OrganizerSummary }) {
   return (
     <div className="flex gap-2.5">
       <Tile primary value={summary.totalParticipants} label={c.statParticipants} />
-      <Tile value={summary.activeCamps} label={c.statActiveCamps} />
+      <Tile value={summary.onSite} label={c.statOnSite} />
       <Tile value={summary.totalGroups} label={c.statGroups} accent />
     </div>
   )

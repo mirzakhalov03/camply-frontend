@@ -36,7 +36,7 @@ export function OrganizerShell() {
   const ctx: OrgContext = {
     openCamp: (campId) => navigate(`/org/camps/${campId}`),
     openCampMap: (campId) => navigate(`/org/camps/${campId}/map`),
-    openCreate: () => navigate('/org/camps/new'),
+    openChat: () => navigate('/org/chat'),
     openTeam: () => navigate('/org/team'),
     logout: () => {
       clearAuth()

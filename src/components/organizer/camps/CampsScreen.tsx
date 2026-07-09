@@ -26,7 +26,7 @@ import type { OrganizerCamp } from '../../../api/services/camps.service'
 export function CampsScreen() {
   const { t } = useTranslation()
   const c = t.org.camps
-  const { openCamp, openCampMap, openCreate } = useOrg()
+  const { openCamp, openCampMap, openChat } = useOrg()
 
   const campsQuery = useOrganizerCamps()
   const summaryQuery = useOrganizerSummary()
@@ -55,21 +55,26 @@ export function CampsScreen() {
   const activeHelp = help?.[0] ?? null
 
   return (
-    <div className="flex flex-col gap-3.5 px-5 pb-24 pt-4 md:px-8 md:pb-8">
+    <div className="flex flex-col gap-3.5 px-5 pb-6 pt-4 md:px-8 md:pb-8">
       {/* Header */}
       <header>
         <p className="text-caption font-medium text-muted">
           {interpolate(c.welcome, { name: summary.organizerName })}
         </p>
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-display font-bold text-content">{c.yourCamps}</h1>
+          <h1 className="text-display font-bold text-content">{primary?.name ?? c.yourCamps}</h1>
           <button
             type="button"
-            onClick={openCreate}
-            className="inline-flex items-center gap-1.5 rounded-full bg-pine px-3.5 py-2 text-caption font-bold text-white shadow-[0_4px_12px_rgba(15,107,79,0.28)] active:scale-95"
+            onClick={openChat}
+            aria-label={c.openChatAria}
+            className="relative flex h-[42px] w-[42px] flex-none items-center justify-center rounded-input border border-line bg-surface text-pine shadow-[0_3px_12px_rgba(20,40,30,0.05)] active:scale-95"
           >
-            <PlusIcon />
-            {c.newCamp}
+            <ChatIcon />
+            {summary.unreadChat > 0 ? (
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full border-2 border-canvas bg-amber px-1 text-[9px] font-extrabold text-amber-ink">
+                {summary.unreadChat}
+              </span>
+            ) : null}
           </button>
         </div>
       </header>
@@ -97,19 +102,8 @@ export function CampsScreen() {
         ) : null}
       </div>
 
-      {/* Camps list */}
-      <h2 className="mt-1 text-meta font-bold uppercase tracking-wider text-muted">
-        {c.campsLabel}
-      </h2>
-      {camps.length === 0 ? (
-        <EmptyState title={c.empty} body={c.emptyBody} />
-      ) : (
-        <div className="grid gap-3.5 md:grid-cols-2">
-          {camps.map((camp) => (
-            <CampCard key={camp.id} camp={camp} onOpen={() => openCamp(camp.id)} />
-          ))}
-        </div>
-      )}
+      {/* The organizer's current camp */}
+      {primary ? <CampCard camp={primary} onOpen={() => openCamp(primary.id)} /> : null}
     </div>
   )
 }
@@ -140,28 +134,19 @@ function ErrorState({
   )
 }
 
-function EmptyState({ title, body }: { title: string; body: string }) {
-  return (
-    <div className="flex flex-col items-center gap-1.5 rounded-card border border-dashed border-line bg-surface px-8 py-10 text-center">
-      <span className="text-3xl">🏕</span>
-      <p className="text-title font-bold text-content">{title}</p>
-      <p className="text-caption text-muted">{body}</p>
-    </div>
-  )
-}
-
-function PlusIcon() {
+function ChatIcon() {
   return (
     <svg
-      width="15"
-      height="15"
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2.6"
+      strokeWidth="2.1"
       strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <path d="M12 5v14M5 12h14" />
+      <path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z" />
     </svg>
   )
 }

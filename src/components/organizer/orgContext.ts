@@ -11,8 +11,8 @@ export type OrgContext = {
   openCamp: (campId: string) => void
   /** Open a camp's live map (currently a "coming soon" placeholder). */
   openCampMap: (campId: string) => void
-  /** Start the create-camp flow (currently a "coming soon" placeholder). */
-  openCreate: () => void
+  /** Open the organizer Chat tab. */
+  openChat: () => void
   /** Open the Team & co-organizers screen. */
   openTeam: () => void
   /** Clear the session + onboarding stores and return to onboarding. */

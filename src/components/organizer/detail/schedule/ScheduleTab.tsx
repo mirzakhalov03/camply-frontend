@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Skeleton } from '../../../ui'
 import { useTranslation } from '../../../../i18n/useTranslation'
-import { dayBucketLabel } from '../../../../lib/relativeTime'
 import { useSchedule } from '../../../../api/queries/schedule.queries'
 import { groupIntoDays } from '../../../../api/services/schedule.service'
+import { DaySelector } from '../../../participant/schedule/DaySelector'
 import { useCampDetail } from '../campDetailContext'
 import { OrgActivityRow } from './OrgActivityRow'
 import { AddActivitySheet } from './AddActivitySheet'
@@ -18,9 +18,13 @@ export function ScheduleTab() {
   const { t } = useTranslation()
   const d = t.org.detail
   const [addOpen, setAddOpen] = useState(false)
+  const [selectedKey, setSelectedKey] = useState<string | null>(null)
   const { data, isPending, isError } = useSchedule(camp.id)
 
-  const dayLabels = { today: t.announcements.today, yesterday: t.announcements.yesterday }
+  const days = data ? groupIntoDays(data) : []
+  // Default selection: today if present, else the first day with activities.
+  const activeKey = selectedKey ?? days.find((x) => x.isToday)?.key ?? days[0]?.key ?? ''
+  const selectedDay = days.find((x) => x.key === activeKey)
 
   return (
     <div className="flex flex-col gap-4 pt-1">
@@ -40,21 +44,23 @@ export function ScheduleTab() {
         </div>
       ) : isError ? (
         <p className="py-8 text-center text-body text-muted">{d.loadError}</p>
-      ) : data.length === 0 ? (
+      ) : days.length === 0 ? (
         <p className="py-8 text-center text-body text-muted">{d.schedEmpty}</p>
       ) : (
-        groupIntoDays(data).map((day) => (
-          <section key={day.key}>
-            <h3 className="mb-2 text-meta font-bold uppercase tracking-wider text-muted">
-              {dayBucketLabel(day.date.toISOString(), t.time, dayLabels)}
-            </h3>
+        <>
+          <DaySelector days={days} selectedKey={activeKey} onSelect={setSelectedKey} />
+          {selectedDay ? (
             <div className="rounded-card border border-line bg-surface px-4 shadow-[0_3px_12px_rgba(20,40,30,0.04)]">
-              {day.activities.map((a, i) => (
-                <OrgActivityRow key={a.id} activity={a} last={i === day.activities.length - 1} />
+              {selectedDay.activities.map((a, i) => (
+                <OrgActivityRow
+                  key={a.id}
+                  activity={a}
+                  last={i === selectedDay.activities.length - 1}
+                />
               ))}
             </div>
-          </section>
-        ))
+          ) : null}
+        </>
       )}
 
       <AddActivitySheet open={addOpen} onClose={() => setAddOpen(false)} campId={camp.id} />

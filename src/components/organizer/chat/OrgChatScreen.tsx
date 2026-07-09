@@ -6,6 +6,7 @@ import type { OrgChatChannelId } from '../../../api/services/orgChat.service'
 import { withMyProfile, type ChatMember, type ChatMessage } from '../../../lib/chat'
 import { useOrgChatStore } from '../../../store/useOrgChatStore'
 import { useOrganizerStore } from '../../../store/useOrganizerStore'
+import { useGroupStore } from '../../../store/useGroupStore'
 import { useMe } from '../../../store/useMe'
 import { Avatar } from '../../ui'
 import { Composer } from '../../participant/chat/Composer'
@@ -30,6 +31,11 @@ export function OrgChatScreen() {
   const sendText = useOrgChatStore((s) => s.sendText)
   const sendAttachment = useOrgChatStore((s) => s.sendAttachment)
 
+  // Group identity photo — shared with the participant's group view (same store).
+  const groupPhoto = useGroupStore((s) => s.photo)
+  const setGroupPhoto = useGroupStore((s) => s.setPhoto)
+  const photoInput = useRef<HTMLInputElement>(null)
+
   if (isPending) {
     return (
       <div className="flex h-full items-center justify-center bg-canvas text-body text-muted">
@@ -51,15 +57,51 @@ export function OrgChatScreen() {
 
   const title = channel === 'organizers' ? t.org.chat.channelOrganizers : active.title
   const members = withMyProfile(active.members, me)
+  // Only the coordinator's own group has an identity photo; the organizers team keeps its emoji.
+  const canUploadPhoto = channel === 'group' && !locked
 
   return (
     <div className="flex h-full flex-col bg-canvas">
       {/* Header */}
       <div className="flex-none border-b border-line bg-surface-2 px-4 pt-3 shadow-[0_3px_12px_rgba(20,40,30,0.05)]">
         <div className="flex items-center gap-3">
-          <span className="flex h-11 w-11 flex-none items-center justify-center rounded-input bg-gradient-to-br from-pine-light to-pine text-xl shadow-[0_4px_10px_rgba(15,107,79,0.25)]">
-            {active.emoji}
-          </span>
+          {canUploadPhoto ? (
+            <button
+              type="button"
+              onClick={() => photoInput.current?.click()}
+              aria-label={t.chat.changePhoto}
+              className="relative flex-none rounded-input focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pine"
+            >
+              <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-input bg-gradient-to-br from-pine-light to-pine text-xl shadow-[0_4px_10px_rgba(15,107,79,0.25)]">
+                {groupPhoto ? (
+                  <img src={groupPhoto} alt={title} className="h-full w-full object-cover" />
+                ) : (
+                  active.emoji
+                )}
+              </span>
+              <span className="absolute -bottom-1 -right-1 flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 border-surface-2 bg-pine">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <path d="M12 5v14M5 12h14" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
+                </svg>
+              </span>
+            </button>
+          ) : (
+            <span className="flex h-11 w-11 flex-none items-center justify-center rounded-input bg-gradient-to-br from-pine-light to-pine text-xl shadow-[0_4px_10px_rgba(15,107,79,0.25)]">
+              {active.emoji}
+            </span>
+          )}
+          <input
+            ref={photoInput}
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0]
+              if (file) setGroupPhoto(file)
+              e.target.value = ''
+            }}
+            className="hidden"
+            aria-hidden
+          />
           <div className="min-w-0 flex-1">
             <div className="truncate text-subhead font-bold text-content">{title}</div>
             <div className="flex items-center gap-1.5 text-caption font-semibold text-pine">

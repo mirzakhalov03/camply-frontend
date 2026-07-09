@@ -56,7 +56,6 @@ function App() {
       <Route path="/org" element={<OrganizerShell />}>
         <Route index element={<Navigate to="camps" replace />} />
         <Route path="camps" element={<CampsScreen />} />
-        <Route path="camps/new" element={<OrgComingSoon />} />
         {/* Camp Detail (slice 2): tabbed layout, each tab a deep-linkable route.
             Participants + Groups are built; the rest land a "coming soon". */}
         <Route path="camps/:campId" element={<CampDetailShell />}>

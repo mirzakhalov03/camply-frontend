@@ -1,11 +1,14 @@
+import { useState } from 'react'
 import { Skeleton } from '../../../ui'
 import { useTranslation } from '../../../../i18n/useTranslation'
 import {
   useLeaderboard,
   useAdjustGroupPoints,
   deriveLeaderboard,
+  type RankedGroup,
 } from '../../../../lib/leaderboard'
 import { OrgLeaderboardRow } from './OrgLeaderboardRow'
+import { PointsWheelSheet } from './PointsWheelSheet'
 
 /*
   Leaderboard tab — the organizer awards / adjusts group points. Reads the SAME
@@ -17,6 +20,7 @@ export function LeaderboardTab() {
   const d = t.org.detail
   const { data, isPending, isError } = useLeaderboard()
   const adjust = useAdjustGroupPoints()
+  const [target, setTarget] = useState<RankedGroup | null>(null)
 
   if (isPending) {
     return (
@@ -45,13 +49,16 @@ export function LeaderboardTab() {
       </div>
 
       {view.rows.map((group) => (
-        <OrgLeaderboardRow
-          key={group.id}
-          group={group}
-          onAdd={() => adjust.mutate({ groupId: group.id, delta: 25 })}
-          onSubtract={() => adjust.mutate({ groupId: group.id, delta: -25 })}
-        />
+        <OrgLeaderboardRow key={group.id} group={group} onOpen={() => setTarget(group)} />
       ))}
+
+      <PointsWheelSheet
+        group={target}
+        onClose={() => setTarget(null)}
+        onApply={(delta) => {
+          if (target) adjust.mutate({ groupId: target.id, delta })
+        }}
+      />
     </div>
   )
 }

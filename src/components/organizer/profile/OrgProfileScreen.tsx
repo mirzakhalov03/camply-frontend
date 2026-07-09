@@ -40,7 +40,7 @@ export function OrgProfileScreen() {
   const name = user ? `${user.name} ${user.surname}`.trim() : 'Organizer'
 
   return (
-    <div className="pb-24 md:pb-8">
+    <div className="pb-6 md:pb-8">
       {/* Header */}
       <div className="bg-gradient-to-b from-pine to-deep px-5 pb-14 pt-6 md:px-8">
         <p className="text-caption font-semibold text-white/80">{p.title}</p>

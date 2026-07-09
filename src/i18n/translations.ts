@@ -303,8 +303,9 @@ type OrgStrings = {
     welcome: string // 'Welcome back, {name}'
     yourCamps: string
     statParticipants: string
-    statActiveCamps: string
     statGroups: string
+    statOnSite: string
+    openChatAria: string
     // Live help banner (SOS)
     needsHelp: string // '{name} needs help'
     reasonMedical: string
@@ -322,9 +323,6 @@ type OrgStrings = {
     topGroups: string
     viewAll: string
     // Camp cards
-    campsLabel: string
-    newCamp: string
-    newCampBody: string
     statusActive: string
     statusUpcoming: string
     statusDraft: string
@@ -378,6 +376,9 @@ type OrgStrings = {
     locationPlaceholder: string
     audience: string
     schedEmpty: string
+    applyPoints: string // 'Apply {n}'
+    noChange: string
+    wheelAria: string
     // Announcements tab
     newAnnouncement: string
     annTitleOptional: string
@@ -533,8 +534,9 @@ export const translations: Record<
         welcome: 'Xush kelibsiz, {name}',
         yourCamps: 'Lagerlaringiz',
         statParticipants: 'Ishtirokchi',
-        statActiveCamps: 'Faol lager',
         statGroups: 'Guruh',
+        statOnSite: 'Hozir shu yerda',
+        openChatAria: 'Chatni ochish',
         needsHelp: '{name} yordamga muhtoj',
         reasonMedical: 'Tibbiy',
         reasonLost: 'Yoʻqolgan',
@@ -548,9 +550,6 @@ export const translations: Record<
         leaderboardMeta: '{group} yetakchi',
         topGroups: 'Eng yaxshi guruhlar',
         viewAll: 'Barchasi',
-        campsLabel: 'Lagerlar',
-        newCamp: 'Yangi lager',
-        newCampBody: 'Maʼlumot · guruhlar · ishtirokchilar',
         statusActive: 'Faol',
         statusUpcoming: 'Kutilmoqda',
         statusDraft: 'Qoralama',
@@ -599,6 +598,9 @@ export const translations: Record<
         locationPlaceholder: 'mas. Asosiy maydon',
         audience: 'Kim uchun?',
         schedEmpty: 'Hali mashgʻulot yoʻq',
+        applyPoints: '{n} qoʻllash',
+        noChange: 'Oʻzgarishsiz',
+        wheelAria: 'Ballar gʻildiragi',
         newAnnouncement: 'Yangi eʼlon',
         annTitleOptional: 'Sarlavha (ixtiyoriy)',
         annMessage: 'Xabar',
@@ -905,8 +907,9 @@ export const translations: Record<
         welcome: 'С возвращением, {name}',
         yourCamps: 'Ваши лагеря',
         statParticipants: 'Участников',
-        statActiveCamps: 'Активных',
         statGroups: 'Групп',
+        statOnSite: 'На месте',
+        openChatAria: 'Открыть чат',
         needsHelp: '{name} нужна помощь',
         reasonMedical: 'Медицина',
         reasonLost: 'Потерялся',
@@ -920,9 +923,6 @@ export const translations: Record<
         leaderboardMeta: '{group} лидирует',
         topGroups: 'Лучшие группы',
         viewAll: 'Все',
-        campsLabel: 'Лагеря',
-        newCamp: 'Новый лагерь',
-        newCampBody: 'Детали · группы · участники',
         statusActive: 'Активный',
         statusUpcoming: 'Скоро',
         statusDraft: 'Черновик',
@@ -971,6 +971,9 @@ export const translations: Record<
         locationPlaceholder: 'напр. Главное поле',
         audience: 'Для кого?',
         schedEmpty: 'Пока нет занятий',
+        applyPoints: 'Применить {n}',
+        noChange: 'Без изменений',
+        wheelAria: 'Колесо баллов',
         newAnnouncement: 'Новое объявление',
         annTitleOptional: 'Заголовок (необязательно)',
         annMessage: 'Сообщение',
@@ -1263,8 +1266,9 @@ export const translations: Record<
         welcome: 'Welcome back, {name}',
         yourCamps: 'Your camps',
         statParticipants: 'Participants',
-        statActiveCamps: 'Active camps',
         statGroups: 'Groups',
+        statOnSite: 'On-site',
+        openChatAria: 'Open chat',
         needsHelp: '{name} needs help',
         reasonMedical: 'Medical',
         reasonLost: 'Lost',
@@ -1278,9 +1282,6 @@ export const translations: Record<
         leaderboardMeta: '{group} lead',
         topGroups: 'Top groups',
         viewAll: 'View all',
-        campsLabel: 'Camps',
-        newCamp: 'New camp',
-        newCampBody: 'Details · groups · participants',
         statusActive: 'Active',
         statusUpcoming: 'Upcoming',
         statusDraft: 'Draft',
@@ -1329,6 +1330,9 @@ export const translations: Record<
         locationPlaceholder: 'e.g. Main Field',
         audience: 'Who is it for?',
         schedEmpty: 'No activities yet',
+        applyPoints: 'Apply {n}',
+        noChange: 'No change',
+        wheelAria: 'Points wheel',
         newAnnouncement: 'New announcement',
         annTitleOptional: 'Title (optional)',
         annMessage: 'Message',
