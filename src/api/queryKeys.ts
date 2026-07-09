@@ -17,6 +17,27 @@ export const authKeys = {
   me: ['auth', 'me'] as const,
 }
 
+/*
+  Organizer-scoped, CROSS-camp resources — the back-office dashboard reads that
+  span every camp the organizer runs, so they sit ABOVE any single campId (unlike
+  campKeys below). A single-camp view still reads camp-scoped keys from campKeys.
+*/
+export const organizerKeys = {
+  all: ['organizer'] as const,
+  /** The organizer's camps list (dashboard cards). */
+  camps: ['organizer', 'camps'] as const,
+  /** A single camp's organizer-side meta (detail header). */
+  camp: (campId: string) => ['organizer', 'camps', campId] as const,
+  /** Header totals: participants / active camps / groups across all camps. */
+  summary: ['organizer', 'summary'] as const,
+  /** Active SOS / help requests surfaced on the dashboard, safety-first. */
+  helpRequests: ['organizer', 'help'] as const,
+  /** The organizer team + pending invites (org-level, spans camps). */
+  team: ['organizer', 'team'] as const,
+  /** The organizer chat (two channels), org-level. */
+  orgChat: ['organizer', 'chat'] as const,
+}
+
 /** Everything owned by / read within a single camp. */
 export const campKeys = {
   all: (campId: string) => ['camp', campId] as const,

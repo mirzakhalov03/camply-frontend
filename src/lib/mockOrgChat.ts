@@ -1,0 +1,153 @@
+import type { OrgChat } from '../api/services/orgChat.service'
+
+/*
+  Mock backing store for the ORGANIZER chat — the two channels the back-office chats
+  in: the Organizers team, and the coordinator's own group. Reuses the ChatMember /
+  ChatMessage contracts from lib/chat so bubbles + member sheet render identically to
+  the participant chat. Message content is seed data (English), like mockChat /
+  mockAnnouncements; only UI chrome is translated. `orgChat.ts` is the swap seam.
+*/
+export const orgChatMock: OrgChat = {
+  organizers: {
+    id: 'organizers',
+    title: '',
+    emoji: '🧭',
+    onlineCount: 3,
+    members: [
+      {
+        id: 'me',
+        name: 'Madina Yusupova',
+        initials: 'MY',
+        color: '#0f6b4f',
+        city: 'Tashkent',
+        age: 29,
+        role: 'leader',
+        online: true,
+        isMe: true,
+      },
+      {
+        id: 'o-nodira',
+        name: 'Nodira Abdullayeva',
+        initials: 'NA',
+        color: '#5aa9c4',
+        city: 'Tashkent',
+        age: 26,
+        role: 'member',
+        online: true,
+      },
+      {
+        id: 'o-jasur',
+        name: 'Jasur Karimov',
+        initials: 'JK',
+        color: '#e0982a',
+        city: 'Samarkand',
+        age: 31,
+        role: 'member',
+        online: true,
+      },
+      {
+        id: 'o-dilnoza',
+        name: 'Dilnoza Aliyeva',
+        initials: 'DA',
+        color: '#c97b5a',
+        city: 'Bukhara',
+        age: 24,
+        role: 'member',
+        online: false,
+      },
+    ],
+    messages: [
+      {
+        id: 'om1',
+        authorId: 'o-nodira',
+        kind: 'text',
+        text: 'Bus schedule is updated — we leave at 7:00 sharp tomorrow.',
+        time: '09:12',
+        sentByMe: false,
+      },
+      {
+        id: 'om2',
+        authorId: 'o-jasur',
+        kind: 'text',
+        text: 'Med kit restocked at the Medical tent ✅',
+        time: '09:20',
+        sentByMe: false,
+      },
+      {
+        id: 'om3',
+        authorId: 'o-dilnoza',
+        kind: 'text',
+        text: 'Photos from yesterday are in the shared drive 📸',
+        time: '09:31',
+        sentByMe: false,
+      },
+    ],
+  },
+  group: {
+    id: 'group',
+    title: 'Pine Wolves',
+    emoji: '🐺',
+    onlineCount: 2,
+    members: [
+      {
+        id: 'me',
+        name: 'Madina Yusupova',
+        initials: 'MY',
+        color: '#0f6b4f',
+        city: 'Tashkent',
+        age: 29,
+        role: 'leader',
+        online: true,
+        isMe: true,
+      },
+      {
+        id: 'p-sardor',
+        name: 'Sardor Aliyev',
+        initials: 'SA',
+        color: '#0f6b4f',
+        city: 'Tashkent',
+        age: 17,
+        role: 'member',
+        online: true,
+      },
+      {
+        id: 'p-aziza',
+        name: 'Aziza Rashidova',
+        initials: 'AR',
+        color: '#5aa9c4',
+        city: 'Tashkent',
+        age: 16,
+        role: 'member',
+        online: true,
+      },
+      {
+        id: 'p-bekzod',
+        name: 'Bekzod Tursunov',
+        initials: 'BT',
+        color: '#2f8f6b',
+        city: 'Samarkand',
+        age: 17,
+        role: 'member',
+        online: false,
+      },
+    ],
+    messages: [
+      {
+        id: 'gm1',
+        authorId: 'p-sardor',
+        kind: 'text',
+        text: 'Are we meeting at the assembly point at 6:50?',
+        time: '08:40',
+        sentByMe: false,
+      },
+      {
+        id: 'gm2',
+        authorId: 'p-aziza',
+        kind: 'text',
+        text: 'Yes! I’ll bring the group flag 🚩',
+        time: '08:44',
+        sentByMe: false,
+      },
+    ],
+  },
+}

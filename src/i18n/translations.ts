@@ -294,6 +294,140 @@ type ScheduleStrings = {
   back: string
 }
 
+// Organizer back-office app — its own bottom-nav/sidebar labels + the Camps
+// dashboard (slice 1). Distinct from OrganizerStrings, which is the ONBOARDING
+// flow. {tokens} are filled per-language so grammar can place them freely.
+type OrgStrings = {
+  nav: { camps: string; chat: string; profile: string }
+  camps: {
+    welcome: string // 'Welcome back, {name}'
+    yourCamps: string
+    statParticipants: string
+    statActiveCamps: string
+    statGroups: string
+    // Live help banner (SOS)
+    needsHelp: string // '{name} needs help'
+    reasonMedical: string
+    reasonLost: string
+    reasonUnsafe: string
+    reasonOther: string
+    tapToLocate: string
+    view: string
+    // Quick links
+    liveMap: string
+    liveMapMeta: string // '{onsite} on-site · {alerts} alert'
+    leaderboard: string
+    leaderboardMeta: string // '{group} lead'
+    // Standings widget
+    topGroups: string
+    viewAll: string
+    // Camp cards
+    campsLabel: string
+    newCamp: string
+    newCampBody: string
+    statusActive: string
+    statusUpcoming: string
+    statusDraft: string
+    statusArchived: string
+    participantsUnit: string
+    groupsUnit: string
+    checkIn: string
+    dayProgress: string // 'Day {current} of {total}'
+    // States
+    error: string
+    retry: string
+    empty: string
+    emptyBody: string
+    // Generic placeholder for not-yet-built org screens
+    soon: string
+    soonBody: string
+  }
+  // Camp Detail (slice 2): header stats, tab bar, Participants + Groups tabs.
+  detail: {
+    back: string
+    tabParticipants: string
+    tabGroups: string
+    tabMap: string
+    tabLeaderboard: string
+    tabSchedule: string
+    tabAnnouncements: string
+    statParticipants: string
+    statGroups: string
+    statCheckedIn: string
+    searchParticipants: string // 'Search {count} participants…'
+    statusIn: string
+    statusOut: string
+    unassigned: string
+    members: string // '{count} members'
+    noMembers: string
+    leader: string
+    noResults: string // no search matches
+    loadError: string
+    // Leaderboard tab
+    lbTitle: string
+    lbSubtitle: string
+    // Schedule tab
+    addActivity: string
+    newActivity: string
+    activityName: string
+    activityNamePlaceholder: string
+    dateLabel: string
+    startLabel: string
+    endLabel: string
+    locationLabel: string
+    locationPlaceholder: string
+    audience: string
+    schedEmpty: string
+    // Announcements tab
+    newAnnouncement: string
+    annTitleOptional: string
+    annMessage: string
+    annMessagePlaceholder: string
+    pinToTop: string
+    annEmpty: string
+    // Shared form actions
+    create: string
+    cancel: string
+  }
+  // Organizer chat (slice 4): two channels + coordinator lock.
+  chat: {
+    channelOrganizers: string
+    channelGroup: string
+    online: string // '{count} online'
+    lockedTitle: string
+    lockedBody: string
+    membersSheetTitle: string
+  }
+  // Organizer profile (slice 5) — reuses t.profile.{email,phone,notSet,language,logout}.
+  profile: {
+    title: string
+    roleOrganizer: string
+    statCamps: string
+    helpRequests: string
+    resolve: string
+    allSafe: string
+    organization: string
+    team: string
+    campSettings: string
+  }
+  // Team & co-organizers (slice 5).
+  team: {
+    title: string
+    people: string // '{count} people'
+    invite: string
+    inviteBody: string
+    roleLabel: string
+    sendInvite: string
+    inviteHint: string
+    members: string
+    you: string
+    pending: string
+    invitedAgo: string // 'invited {time}'
+    phonePlaceholder: string
+    rolesNote: string
+  }
+}
+
 export const translations: Record<
   Lang,
   {
@@ -302,6 +436,7 @@ export const translations: Record<
     notfound: NotFoundStrings
     signup: SignUpStrings
     organizer: OrganizerStrings
+    org: OrgStrings
     nav: NavStrings
     home: HomeStrings
     sos: SosStrings
@@ -391,6 +526,124 @@ export const translations: Record<
       welcome: 'Hammasi tayyor, {name}!',
       enterDashboard: 'Boshqaruv paneliga',
       editDetails: 'Maʼlumotlarni tahrirlash',
+    },
+    org: {
+      nav: { camps: 'Lagerlar', chat: 'Chat', profile: 'Profil' },
+      camps: {
+        welcome: 'Xush kelibsiz, {name}',
+        yourCamps: 'Lagerlaringiz',
+        statParticipants: 'Ishtirokchi',
+        statActiveCamps: 'Faol lager',
+        statGroups: 'Guruh',
+        needsHelp: '{name} yordamga muhtoj',
+        reasonMedical: 'Tibbiy',
+        reasonLost: 'Yoʻqolgan',
+        reasonUnsafe: 'Xavf',
+        reasonOther: 'Boshqa',
+        tapToLocate: 'joylashuvni koʻrish uchun bosing',
+        view: 'Koʻrish',
+        liveMap: 'Jonli xarita',
+        liveMapMeta: '{onsite} hududda · {alerts} signal',
+        leaderboard: 'Reyting',
+        leaderboardMeta: '{group} yetakchi',
+        topGroups: 'Eng yaxshi guruhlar',
+        viewAll: 'Barchasi',
+        campsLabel: 'Lagerlar',
+        newCamp: 'Yangi lager',
+        newCampBody: 'Maʼlumot · guruhlar · ishtirokchilar',
+        statusActive: 'Faol',
+        statusUpcoming: 'Kutilmoqda',
+        statusDraft: 'Qoralama',
+        statusArchived: 'Arxiv',
+        participantsUnit: 'ishtirokchi',
+        groupsUnit: 'guruh',
+        checkIn: 'Roʻyxat',
+        dayProgress: '{total} kundan {current}-kun',
+        error: 'Lagerlarni yuklab boʻlmadi',
+        retry: 'Qayta urinish',
+        empty: 'Hali lager yoʻq',
+        emptyBody: 'Birinchi lageringizni yarating.',
+        soon: 'Tez orada',
+        soonBody: 'Bu boʻlim tayyorlanmoqda.',
+      },
+      detail: {
+        back: 'Orqaga',
+        tabParticipants: 'Ishtirokchilar',
+        tabGroups: 'Guruhlar',
+        tabMap: 'Xarita',
+        tabLeaderboard: 'Reyting',
+        tabSchedule: 'Jadval',
+        tabAnnouncements: 'Eʼlonlar',
+        statParticipants: 'Ishtirokchi',
+        statGroups: 'Guruh',
+        statCheckedIn: 'Roʻyxatda',
+        searchParticipants: '{count} ishtirokchini qidirish…',
+        statusIn: 'Hududda',
+        statusOut: 'Tashqarida',
+        unassigned: 'Guruhsiz',
+        members: '{count} aʼzo',
+        noMembers: 'Hali aʼzo yoʻq',
+        leader: 'Rahbar',
+        noResults: 'Hech narsa topilmadi',
+        loadError: 'Maʼlumotni yuklab boʻlmadi',
+        lbTitle: 'Guruhlar reytingi',
+        lbSubtitle: 'Ball berish yoki tuzatish uchun +/− bosing',
+        addActivity: 'Mashgʻulot qoʻshish',
+        newActivity: 'Yangi mashgʻulot',
+        activityName: 'Mashgʻulot nomi',
+        activityNamePlaceholder: 'mas. Ertalabki yugurish',
+        dateLabel: 'Sana',
+        startLabel: 'Boshlanish',
+        endLabel: 'Tugash',
+        locationLabel: 'Manzil',
+        locationPlaceholder: 'mas. Asosiy maydon',
+        audience: 'Kim uchun?',
+        schedEmpty: 'Hali mashgʻulot yoʻq',
+        newAnnouncement: 'Yangi eʼlon',
+        annTitleOptional: 'Sarlavha (ixtiyoriy)',
+        annMessage: 'Xabar',
+        annMessagePlaceholder: 'Eʼloningizni yozing…',
+        pinToTop: 'Yuqoriga qadash',
+        annEmpty: 'Hali eʼlon yoʻq',
+        create: 'Yaratish',
+        cancel: 'Bekor qilish',
+      },
+      chat: {
+        channelOrganizers: 'Tashkilotchilar',
+        channelGroup: 'Mening guruhim',
+        online: '{count} onlayn',
+        lockedTitle: 'Faqat koordinatorlar uchun',
+        lockedBody:
+          'Bu boʻlimni faqat guruh koordinatorlari koʻra oladi. Siz bu guruhning koordinatori emassiz.',
+        membersSheetTitle: 'Aʼzolar',
+      },
+      profile: {
+        title: 'Profil',
+        roleOrganizer: 'Tashkilotchi',
+        statCamps: 'Lager',
+        helpRequests: 'Yordam soʻrovlari',
+        resolve: 'Hal qilindi',
+        allSafe: 'Faol soʻrov yoʻq — barcha ishtirokchilar xavfsiz.',
+        organization: 'Tashkilot',
+        team: 'Jamoa va hamkorlar',
+        campSettings: 'Lager sozlamalari',
+      },
+      team: {
+        title: 'Jamoa va hamkorlar',
+        people: '{count} kishi',
+        invite: 'Hamkor tashkilotchi taklif qilish',
+        inviteBody: 'Telefon raqami orqali qoʻshing',
+        roleLabel: 'Rol',
+        sendInvite: 'Taklif yuborish',
+        inviteHint: 'Ular shu raqam bilan kirib qoʻshiladi — email shart emas.',
+        members: 'Aʼzolar',
+        you: 'Siz',
+        pending: 'Kutilayotgan takliflar',
+        invitedAgo: '{time} taklif qilindi',
+        phonePlaceholder: '90 123 45 67',
+        rolesNote:
+          'Har bir hamkorga roli boʻyicha huquqlar beriladi. Tashkilotchilar yangi tashkilot yoki tashkilotchi yarata olmaydi.',
+      },
     },
     nav: {
       home: 'Asosiy',
@@ -646,6 +899,123 @@ export const translations: Record<
       enterDashboard: 'В панель управления',
       editDetails: 'Изменить данные',
     },
+    org: {
+      nav: { camps: 'Лагеря', chat: 'Чат', profile: 'Профиль' },
+      camps: {
+        welcome: 'С возвращением, {name}',
+        yourCamps: 'Ваши лагеря',
+        statParticipants: 'Участников',
+        statActiveCamps: 'Активных',
+        statGroups: 'Групп',
+        needsHelp: '{name} нужна помощь',
+        reasonMedical: 'Медицина',
+        reasonLost: 'Потерялся',
+        reasonUnsafe: 'Опасность',
+        reasonOther: 'Другое',
+        tapToLocate: 'нажмите, чтобы найти',
+        view: 'Открыть',
+        liveMap: 'Живая карта',
+        liveMapMeta: '{onsite} на месте · {alerts} сигнал',
+        leaderboard: 'Рейтинг',
+        leaderboardMeta: '{group} лидирует',
+        topGroups: 'Лучшие группы',
+        viewAll: 'Все',
+        campsLabel: 'Лагеря',
+        newCamp: 'Новый лагерь',
+        newCampBody: 'Детали · группы · участники',
+        statusActive: 'Активный',
+        statusUpcoming: 'Скоро',
+        statusDraft: 'Черновик',
+        statusArchived: 'Архив',
+        participantsUnit: 'участников',
+        groupsUnit: 'групп',
+        checkIn: 'Отметка',
+        dayProgress: 'День {current} из {total}',
+        error: 'Не удалось загрузить лагеря',
+        retry: 'Повторить',
+        empty: 'Пока нет лагерей',
+        emptyBody: 'Создайте свой первый лагерь.',
+        soon: 'Скоро',
+        soonBody: 'Этот раздел в разработке.',
+      },
+      detail: {
+        back: 'Назад',
+        tabParticipants: 'Участники',
+        tabGroups: 'Группы',
+        tabMap: 'Карта',
+        tabLeaderboard: 'Рейтинг',
+        tabSchedule: 'Расписание',
+        tabAnnouncements: 'Объявления',
+        statParticipants: 'Участников',
+        statGroups: 'Групп',
+        statCheckedIn: 'Отмечено',
+        searchParticipants: 'Поиск среди {count} участников…',
+        statusIn: 'На месте',
+        statusOut: 'Снаружи',
+        unassigned: 'Без группы',
+        members: '{count} участн.',
+        noMembers: 'Пока нет участников',
+        leader: 'Лидер',
+        noResults: 'Ничего не найдено',
+        loadError: 'Не удалось загрузить данные',
+        lbTitle: 'Рейтинг групп',
+        lbSubtitle: 'Нажмите +/−, чтобы начислить или изменить баллы',
+        addActivity: 'Добавить занятие',
+        newActivity: 'Новое занятие',
+        activityName: 'Название занятия',
+        activityNamePlaceholder: 'напр. Утренняя пробежка',
+        dateLabel: 'Дата',
+        startLabel: 'Начало',
+        endLabel: 'Конец',
+        locationLabel: 'Место',
+        locationPlaceholder: 'напр. Главное поле',
+        audience: 'Для кого?',
+        schedEmpty: 'Пока нет занятий',
+        newAnnouncement: 'Новое объявление',
+        annTitleOptional: 'Заголовок (необязательно)',
+        annMessage: 'Сообщение',
+        annMessagePlaceholder: 'Напишите объявление…',
+        pinToTop: 'Закрепить сверху',
+        annEmpty: 'Пока нет объявлений',
+        create: 'Создать',
+        cancel: 'Отмена',
+      },
+      chat: {
+        channelOrganizers: 'Организаторы',
+        channelGroup: 'Моя группа',
+        online: '{count} онлайн',
+        lockedTitle: 'Только для координаторов',
+        lockedBody: 'Этот канал видят только координаторы группы. Вы не координатор этой группы.',
+        membersSheetTitle: 'Участники',
+      },
+      profile: {
+        title: 'Профиль',
+        roleOrganizer: 'Организатор',
+        statCamps: 'Лагеря',
+        helpRequests: 'Запросы о помощи',
+        resolve: 'Решено',
+        allSafe: 'Нет активных запросов — все участники в безопасности.',
+        organization: 'Организация',
+        team: 'Команда и соорганизаторы',
+        campSettings: 'Настройки лагеря',
+      },
+      team: {
+        title: 'Команда и соорганизаторы',
+        people: '{count} чел.',
+        invite: 'Пригласить соорганизатора',
+        inviteBody: 'Добавьте по номеру телефона',
+        roleLabel: 'Роль',
+        sendInvite: 'Отправить приглашение',
+        inviteHint: 'Они войдут по этому номеру — email не нужен.',
+        members: 'Участники',
+        you: 'Вы',
+        pending: 'Ожидающие приглашения',
+        invitedAgo: 'приглашён {time}',
+        phonePlaceholder: '90 123 45 67',
+        rolesNote:
+          'Каждому соорганизатору даются права по роли. Организаторы не могут создавать организации или других организаторов.',
+      },
+    },
     nav: {
       home: 'Главная',
       map: 'Карта',
@@ -886,6 +1256,124 @@ export const translations: Record<
       welcome: "You're all set, {name}!",
       enterDashboard: 'Go to dashboard',
       editDetails: 'Edit my details',
+    },
+    org: {
+      nav: { camps: 'Camps', chat: 'Chat', profile: 'Profile' },
+      camps: {
+        welcome: 'Welcome back, {name}',
+        yourCamps: 'Your camps',
+        statParticipants: 'Participants',
+        statActiveCamps: 'Active camps',
+        statGroups: 'Groups',
+        needsHelp: '{name} needs help',
+        reasonMedical: 'Medical',
+        reasonLost: 'Lost',
+        reasonUnsafe: 'Unsafe',
+        reasonOther: 'Other',
+        tapToLocate: 'tap to locate',
+        view: 'View',
+        liveMap: 'Live map',
+        liveMapMeta: '{onsite} on-site · {alerts} alert',
+        leaderboard: 'Leaderboard',
+        leaderboardMeta: '{group} lead',
+        topGroups: 'Top groups',
+        viewAll: 'View all',
+        campsLabel: 'Camps',
+        newCamp: 'New camp',
+        newCampBody: 'Details · groups · participants',
+        statusActive: 'Active',
+        statusUpcoming: 'Upcoming',
+        statusDraft: 'Draft',
+        statusArchived: 'Archived',
+        participantsUnit: 'participants',
+        groupsUnit: 'groups',
+        checkIn: 'Check-in',
+        dayProgress: 'Day {current} of {total}',
+        error: 'Couldn’t load camps',
+        retry: 'Retry',
+        empty: 'No camps yet',
+        emptyBody: 'Create your first camp.',
+        soon: 'Coming soon',
+        soonBody: 'This section is coming soon.',
+      },
+      detail: {
+        back: 'Back',
+        tabParticipants: 'Participants',
+        tabGroups: 'Groups',
+        tabMap: 'Map',
+        tabLeaderboard: 'Leaderboard',
+        tabSchedule: 'Schedule',
+        tabAnnouncements: 'Announcements',
+        statParticipants: 'Participants',
+        statGroups: 'Groups',
+        statCheckedIn: 'Checked in',
+        searchParticipants: 'Search {count} participants…',
+        statusIn: 'In',
+        statusOut: 'Out',
+        unassigned: 'Unassigned',
+        members: '{count} members',
+        noMembers: 'No members yet',
+        leader: 'Leader',
+        noResults: 'No matches',
+        loadError: 'Couldn’t load data',
+        lbTitle: 'Group standings',
+        lbSubtitle: 'Tap +/− to award or adjust points',
+        addActivity: 'Add activity',
+        newActivity: 'New activity',
+        activityName: 'Activity name',
+        activityNamePlaceholder: 'e.g. Morning Run',
+        dateLabel: 'Date',
+        startLabel: 'Start',
+        endLabel: 'End',
+        locationLabel: 'Location',
+        locationPlaceholder: 'e.g. Main Field',
+        audience: 'Who is it for?',
+        schedEmpty: 'No activities yet',
+        newAnnouncement: 'New announcement',
+        annTitleOptional: 'Title (optional)',
+        annMessage: 'Message',
+        annMessagePlaceholder: 'Write your announcement…',
+        pinToTop: 'Pin to top',
+        annEmpty: 'No announcements yet',
+        create: 'Create',
+        cancel: 'Cancel',
+      },
+      chat: {
+        channelOrganizers: 'Organizers',
+        channelGroup: 'My group',
+        online: '{count} online',
+        lockedTitle: 'Coordinators only',
+        lockedBody:
+          'Only group coordinators can see this channel. You’re not a coordinator of this group.',
+        membersSheetTitle: 'Members',
+      },
+      profile: {
+        title: 'Profile',
+        roleOrganizer: 'Organizer',
+        statCamps: 'Camps',
+        helpRequests: 'Help requests',
+        resolve: 'Resolve',
+        allSafe: 'No active requests — all participants safe.',
+        organization: 'Organization',
+        team: 'Team & co-organizers',
+        campSettings: 'Camp settings',
+      },
+      team: {
+        title: 'Team & co-organizers',
+        people: '{count} people',
+        invite: 'Invite co-organizer',
+        inviteBody: 'Add a teammate by phone number',
+        roleLabel: 'Role',
+        sendInvite: 'Send invite',
+        inviteHint: 'They join by entering this number — no email needed.',
+        members: 'Members',
+        you: 'You',
+        pending: 'Pending invites',
+        invitedAgo: 'invited {time}',
+        phonePlaceholder: '90 123 45 67',
+        rolesNote:
+          'Each teammate gets rights by role. Organizers can’t create organizations or other organizers.',
+      },
     },
     nav: {
       home: 'Home',

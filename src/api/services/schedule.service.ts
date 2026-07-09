@@ -141,9 +141,21 @@ function sortByStart(list: Activity[]): Activity[] {
   return [...list].sort((a, b) => a.startsAt.localeCompare(b.startsAt))
 }
 
+/** What the organizer submits to create an activity — everything but the id. */
+export type NewActivity = Omit<Activity, 'id'>
+
 export const scheduleService = {
   list: async (_campId: string = CURRENT_CAMP_ID): Promise<Activity[]> => {
     // return (await axiosInstance.get<Activity[]>(`/camps/${_campId}/schedule`)).data
     return sortByStart(scheduleMock)
+  },
+
+  /** Organizer creates an activity. Mutates the mock store today (persists for the
+      session); the commented line is the real POST. Returns the created record. */
+  create: async (activity: NewActivity): Promise<Activity> => {
+    // return (await axiosInstance.post<Activity>(`/camps/${activity.campId}/schedule`, activity)).data
+    const created: Activity = { ...activity, id: `act_local_${Date.now()}` }
+    scheduleMock.push(created)
+    return created
   },
 }

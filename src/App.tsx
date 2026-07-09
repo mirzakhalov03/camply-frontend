@@ -9,6 +9,18 @@ import { AnnouncementsScreen } from './components/participant/announcements/Anno
 import { AnnouncementDetailScreen } from './components/participant/announcements/AnnouncementDetailScreen'
 import { ScheduleScreen } from './components/participant/schedule/ScheduleScreen'
 import { ComingSoon } from './components/participant/ComingSoon'
+import { OrganizerShell } from './components/organizer/OrganizerShell'
+import { CampsScreen } from './components/organizer/camps/CampsScreen'
+import { CampDetailShell } from './components/organizer/detail/CampDetailShell'
+import { ParticipantsTab } from './components/organizer/detail/participants/ParticipantsTab'
+import { GroupsTab } from './components/organizer/detail/groups/GroupsTab'
+import { LeaderboardTab } from './components/organizer/detail/leaderboard/LeaderboardTab'
+import { ScheduleTab } from './components/organizer/detail/schedule/ScheduleTab'
+import { AnnouncementsTab } from './components/organizer/detail/announcements/AnnouncementsTab'
+import { OrgChatScreen } from './components/organizer/chat/OrgChatScreen'
+import { OrgProfileScreen } from './components/organizer/profile/OrgProfileScreen'
+import { OrgTeamScreen } from './components/organizer/team/OrgTeamScreen'
+import { OrgComingSoon } from './components/organizer/OrgComingSoon'
 import { useTranslation } from './i18n/useTranslation'
 
 /*
@@ -33,6 +45,32 @@ function App() {
         <Route path="announcements/:id" element={<AnnouncementDetailScreen />} />
         <Route path="map" element={<ComingSoonRoute />} />
         <Route path="schedule" element={<ScheduleScreen />} />
+      </Route>
+
+      {/*
+        Organizer surface (slice 1: shell + camps dashboard). Chat, Profile, the
+        Map tab, and Camp Detail are real routes today so nav + deep links resolve;
+        each lands a "coming soon" until its slice. `camps/new` precedes
+        `camps/:campId` so "new" isn't captured as a camp id.
+      */}
+      <Route path="/org" element={<OrganizerShell />}>
+        <Route index element={<Navigate to="camps" replace />} />
+        <Route path="camps" element={<CampsScreen />} />
+        <Route path="camps/new" element={<OrgComingSoon />} />
+        {/* Camp Detail (slice 2): tabbed layout, each tab a deep-linkable route.
+            Participants + Groups are built; the rest land a "coming soon". */}
+        <Route path="camps/:campId" element={<CampDetailShell />}>
+          <Route index element={<Navigate to="participants" replace />} />
+          <Route path="participants" element={<ParticipantsTab />} />
+          <Route path="groups" element={<GroupsTab />} />
+          <Route path="map" element={<OrgComingSoon />} />
+          <Route path="leaderboard" element={<LeaderboardTab />} />
+          <Route path="schedule" element={<ScheduleTab />} />
+          <Route path="announcements" element={<AnnouncementsTab />} />
+        </Route>
+        <Route path="chat" element={<OrgChatScreen />} />
+        <Route path="profile" element={<OrgProfileScreen />} />
+        <Route path="team" element={<OrgTeamScreen />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

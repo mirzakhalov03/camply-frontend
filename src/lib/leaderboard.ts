@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { leaderboardMock } from './mockLeaderboard'
 // import { api } from './api' // ← enable when the backend endpoint exists
 
@@ -56,6 +56,8 @@ export type RankedGroup = {
   photo?: string
   initials: string
   score: number
+  /** Per-category points — shown on the organizer's Leaderboard tab. */
+  breakdown: LeaderboardBreakdown
   isYou: boolean
   /** score / topScore * 100 — the progress bar width. */
   barPct: number
@@ -105,6 +107,7 @@ export function deriveLeaderboard(data: Leaderboard): LeaderboardView {
       photo: g.photo,
       initials: initialsOf(g.name),
       score: g.score,
+      breakdown: g.breakdown,
       isYou: g.id === data.currentGroupId,
       barPct: topScore > 0 ? Math.round((g.score / topScore) * 100) : 0,
       trend: {
@@ -132,9 +135,44 @@ export async function fetchLeaderboard(): Promise<Leaderboard> {
 }
 
 /*
+  One key for the leaderboard cache, defined once so the read hook and the write
+  mutation below can't drift. (This lib module predates the api/queryKeys registry;
+  it migrates there when the endpoint lands — see CLAUDE.md.)
+*/
+const LEADERBOARD_KEY = ['leaderboard'] as const
+
+/*
   React Query hook. Caches by queryKey so any component can call useLeaderboard()
   and share one request + one cache — same pattern as useCampHome().
 */
 export function useLeaderboard() {
-  return useQuery({ queryKey: ['leaderboard'], queryFn: fetchLeaderboard })
+  return useQuery({ queryKey: LEADERBOARD_KEY, queryFn: fetchLeaderboard })
+}
+
+/*
+  The WRITE side — the organizer awards / deducts a group's points. This is the
+  shared-domain payoff: it writes the SAME ['leaderboard'] cache the participant
+  Ranks screen reads, so a running participant board would re-rank live. The update
+  is optimistic (onMutate → setQueryData); the commented mutationFn is where the
+  real POST lands, and deriveLeaderboard recomputes ranks + trend from the new score.
+*/
+export function useAdjustGroupPoints() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (_vars: { groupId: string; delta: number }) => {
+      // await api.post(`/camps/current/leaderboard/${_vars.groupId}/points`, { delta: _vars.delta })
+    },
+    onMutate: ({ groupId, delta }) => {
+      qc.setQueryData<Leaderboard>(LEADERBOARD_KEY, (prev) =>
+        prev
+          ? {
+              ...prev,
+              groups: prev.groups.map((g) =>
+                g.id === groupId ? { ...g, score: Math.max(0, g.score + delta) } : g,
+              ),
+            }
+          : prev,
+      )
+    },
+  })
 }

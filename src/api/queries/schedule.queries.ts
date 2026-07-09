@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
-import { scheduleService } from '../services/schedule.service'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { scheduleService, type NewActivity } from '../services/schedule.service'
 import { CURRENT_CAMP_ID } from '../services/announcements.service'
 import { campKeys } from '../queryKeys'
 
@@ -13,5 +13,18 @@ export function useSchedule(campId: string = CURRENT_CAMP_ID) {
   return useQuery({
     queryKey: campKeys.schedule(campId),
     queryFn: () => scheduleService.list(campId),
+  })
+}
+
+/*
+  The WRITE side — the organizer adds an activity. On success it invalidates the
+  camp's schedule key, so the organizer's Schedule tab AND the participant's home
+  widget + schedule screen (all keyed campKeys.schedule) refetch and show it.
+*/
+export function useCreateActivity(campId: string = CURRENT_CAMP_ID) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (activity: NewActivity) => scheduleService.create(activity),
+    onSuccess: () => qc.invalidateQueries({ queryKey: campKeys.schedule(campId) }),
   })
 }

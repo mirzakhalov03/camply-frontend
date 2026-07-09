@@ -14,6 +14,7 @@
 */
 @theme {
   --color-pine: #0f6b4f; /* primary */
+  --color-pine-light: #2f8f6b; /* lighter pine — decorative cover/header gradients only */
   --color-deep: #0a5039; /* theme / darker surfaces */
   --color-amber: #e0982a; /* accent */
   --color-amber-bright: #ef9d20; /* CTA amber — the brighter accent for primary actions */

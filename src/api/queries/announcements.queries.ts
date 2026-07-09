@@ -1,5 +1,9 @@
-import { useQuery } from '@tanstack/react-query'
-import { announcementsService, CURRENT_CAMP_ID } from '../services/announcements.service'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  announcementsService,
+  CURRENT_CAMP_ID,
+  type NewAnnouncement,
+} from '../services/announcements.service'
 import { campKeys } from '../queryKeys'
 
 /*
@@ -23,5 +27,18 @@ export function useAnnouncement(id: string, campId: string = CURRENT_CAMP_ID) {
   return useQuery({
     queryKey: campKeys.announcement(campId, id),
     queryFn: () => announcementsService.getById(campId, id),
+  })
+}
+
+/*
+  The WRITE side — the organizer posts an announcement. On success it invalidates
+  the camp's announcements key, so the organizer's Announcements tab AND the
+  participant's feed (both keyed campKeys.announcements) refetch and show it.
+*/
+export function useCreateAnnouncement(campId: string = CURRENT_CAMP_ID) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (input: NewAnnouncement) => announcementsService.create(input),
+    onSuccess: () => qc.invalidateQueries({ queryKey: campKeys.announcements(campId) }),
   })
 }

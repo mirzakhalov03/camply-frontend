@@ -9,6 +9,7 @@ import { OnboardingPager } from './OnboardingPager'
 import { isKnownParticipant } from '../lib/mockParticipants'
 import { isKnownOrganizer } from '../lib/mockOrganizers'
 import { useProfileStore } from '../store/useProfileStore'
+import { useAuthStore } from '../store/useAuthStore'
 
 // Which onboarding step is showing. `congrats` + `form` ride the pager together.
 // The pager stays local state (not routes) so its slide animation is preserved;
@@ -70,8 +71,22 @@ export function Onboarding() {
               active={screen === 'form'}
               onBack={() => setScreen('congrats')}
               onEnterDashboard={() => {
-                // The organizer dashboard doesn't exist yet — placeholder.
-                console.log('go to organizer dashboard')
+                // Commit an organizer SESSION (the seam a real login mutation will
+                // fill), then hand off to the router. The `/org` shell guards on
+                // this role. Read from the stores at click time to avoid stale
+                // closures — the profile form has just committed name/surname.
+                const p = useProfileStore.getState()
+                useAuthStore.getState().setSession({
+                  token: 'mock-organizer-session',
+                  user: {
+                    id: 'org-me',
+                    phone: p.phone,
+                    name: p.name,
+                    surname: p.surname,
+                    role: 'organizer',
+                  },
+                })
+                navigate('/org/camps')
               }}
             />
           ) : (

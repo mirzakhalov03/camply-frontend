@@ -52,6 +52,9 @@ function sortForFeed(list: Announcement[]): Announcement[] {
   })
 }
 
+/** What the organizer submits to post an announcement (server sets id + createdAt). */
+export type NewAnnouncement = Omit<Announcement, 'id' | 'createdAt'>
+
 export const announcementsService = {
   list: async (_campId: string): Promise<Announcement[]> => {
     // return (await axiosInstance.get<Announcement[]>(`/camps/${_campId}/announcements`)).data
@@ -63,5 +66,18 @@ export const announcementsService = {
     const found = announcementsMock.find((a) => a.id === id)
     if (!found) throw new Error('Announcement not found')
     return found
+  },
+
+  /** Organizer posts an announcement. Prepends to the mock store today (persists for
+      the session); the commented line is the real POST. Returns the created record. */
+  create: async (input: NewAnnouncement): Promise<Announcement> => {
+    // return (await axiosInstance.post<Announcement>(`/camps/${input.campId}/announcements`, input)).data
+    const created: Announcement = {
+      ...input,
+      id: `a_local_${Date.now()}`,
+      createdAt: new Date().toISOString(),
+    }
+    announcementsMock.unshift(created)
+    return created
   },
 }
