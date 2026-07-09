@@ -30,6 +30,7 @@ export function Composer({
   const [menuOpen, setMenuOpen] = useState(false)
   const photoInput = useRef<HTMLInputElement>(null)
   const fileInput = useRef<HTMLInputElement>(null)
+  const cameraInput = useRef<HTMLInputElement>(null)
   const textInput = useRef<HTMLInputElement>(null)
 
   // Focus the field the moment a reply starts, so you can type right away.
@@ -60,6 +61,7 @@ export function Composer({
         onClose={() => setMenuOpen(false)}
         onPickPhoto={() => photoInput.current?.click()}
         onPickFile={() => fileInput.current?.click()}
+        onPickCamera={() => cameraInput.current?.click()}
       />
 
       <input
@@ -71,6 +73,16 @@ export function Composer({
         aria-hidden
       />
       <input ref={fileInput} type="file" onChange={handleFile} className="hidden" aria-hidden />
+      {/* `capture` opens the device camera directly instead of the gallery. */}
+      <input
+        ref={cameraInput}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={handleFile}
+        className="hidden"
+        aria-hidden
+      />
 
       {replyPreview && (
         <div className="mb-2 flex items-center gap-2 rounded-xl border-l-2 border-pine bg-soft px-3 py-2">
@@ -104,7 +116,7 @@ export function Composer({
           type="button"
           onClick={() => setMenuOpen((v) => !v)}
           aria-label={t.chat.attach}
-          className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-soft text-pine transition active:scale-95"
+          className="flex h-[42px] w-[42px] flex-none items-center justify-center rounded-full bg-soft text-pine transition active:scale-95"
         >
           <svg
             width="21"

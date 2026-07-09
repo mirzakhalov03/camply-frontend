@@ -47,6 +47,7 @@
   --color-soft: #eef4f0; /* subtle chip / icon bg */
   --color-green-tint: #e7f1ec; /* pine-tinted card */
   --color-amber-tint: #fbf3e2; /* amber-tinted card */
+  --color-sky-tint: #e4f0f4; /* sky-tinted chip / icon tile */
 
   --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
@@ -97,6 +98,7 @@
   --color-soft: #1e2c25;
   --color-green-tint: #143528;
   --color-amber-tint: #2f2614;
+  --color-sky-tint: #17282e;
   --color-danger-tint: #331a14;
 }
 

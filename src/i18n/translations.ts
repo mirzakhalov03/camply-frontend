@@ -215,6 +215,7 @@ type ChatStrings = {
   attach: string // aria-label for the + button
   photo: string
   file: string
+  camera: string
   send: string // aria-label for send
   viewMembers: string // aria-label for the header members button
   call: string
@@ -479,8 +480,9 @@ export const translations: Record<
       messagePlaceholder: '{group} guruhiga yozing…',
       changePhoto: 'Guruh rasmini oʻzgartirish',
       attach: 'Biriktirish',
-      photo: 'Rasm',
-      file: 'Fayl',
+      photo: 'Rasm / Galereya',
+      file: 'Fayl biriktirish',
+      camera: 'Kamera',
       send: 'Yuborish',
       viewMembers: 'Aʼzolarni koʻrish',
       call: 'Qoʻngʻiroq qilish',
@@ -730,8 +732,9 @@ export const translations: Record<
       messagePlaceholder: 'Написать {group}…',
       changePhoto: 'Изменить фото группы',
       attach: 'Прикрепить',
-      photo: 'Фото',
-      file: 'Файл',
+      photo: 'Фото / Галерея',
+      file: 'Прикрепить файл',
+      camera: 'Камера',
       send: 'Отправить',
       viewMembers: 'Участники',
       call: 'Позвонить',
@@ -968,8 +971,9 @@ export const translations: Record<
       messagePlaceholder: 'Message {group}…',
       changePhoto: 'Change group photo',
       attach: 'Attach',
-      photo: 'Photo',
-      file: 'File',
+      photo: 'Photo / Gallery',
+      file: 'Attach file',
+      camera: 'Camera',
       send: 'Send',
       viewMembers: 'View members',
       call: 'Call',
