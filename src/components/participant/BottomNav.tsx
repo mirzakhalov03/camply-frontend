@@ -59,8 +59,8 @@ const svg = 'stroke-current'
 function HomeIcon() {
   return (
     <svg
-      width="23"
-      height="23"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
       fill="none"
       strokeWidth="2.1"
@@ -75,8 +75,8 @@ function HomeIcon() {
 function MapIcon() {
   return (
     <svg
-      width="23"
-      height="23"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
       fill="none"
       strokeWidth="2.1"
@@ -92,8 +92,8 @@ function MapIcon() {
 function RanksIcon() {
   return (
     <svg
-      width="23"
-      height="23"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
       fill="none"
       strokeWidth="2.1"
@@ -101,17 +101,17 @@ function RanksIcon() {
       strokeLinejoin="round"
       className={svg}
     >
-      <rect x="4" y="13" width="4" height="7" rx="1" />
-      <rect x="10" y="8" width="4" height="12" rx="1" />
-      <rect x="16" y="11" width="4" height="9" rx="1" />
+      <rect x="4" y="12" width="4" height="8" rx="1" />
+      <rect x="10" y="5" width="4" height="15" rx="1" />
+      <rect x="16" y="8" width="4" height="12" rx="1" />
     </svg>
   )
 }
 function ChatIcon() {
   return (
     <svg
-      width="23"
-      height="23"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
       fill="none"
       strokeWidth="2.1"
@@ -119,15 +119,15 @@ function ChatIcon() {
       strokeLinejoin="round"
       className={svg}
     >
-      <path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z" />
+      <path d="M20 6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2v4l4-4h6a2 2 0 0 0 2-2z" />
     </svg>
   )
 }
 function ProfileIcon() {
   return (
     <svg
-      width="23"
-      height="23"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
       fill="none"
       strokeWidth="2.1"
@@ -135,8 +135,8 @@ function ProfileIcon() {
       strokeLinejoin="round"
       className={svg}
     >
-      <circle cx="12" cy="8" r="3.4" />
-      <path d="M5 20a7 7 0 0 1 14 0" />
+      <circle cx="12" cy="8" r="3.8" />
+      <path d="M4.5 20.5a7.5 7.5 0 0 1 15 0" />
     </svg>
   )
 }
