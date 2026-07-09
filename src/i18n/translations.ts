@@ -95,6 +95,8 @@ type OrganizerStrings = {
     eventManager: string
     photographer: string
   }
+  groupLabel: string // shown only for the coordinator role
+  groupPlaceholder: string // collapsed-row prompt in the group picker
   enterValid: string
   enterInvalid: string
   badgeCreated: string
@@ -381,6 +383,8 @@ export const translations: Record<
         eventManager: 'Tadbir menejeri',
         photographer: 'Fotograf',
       },
+      groupLabel: 'Guruhingiz',
+      groupPlaceholder: 'Guruhni tanlang',
       enterValid: 'Profil yaratish',
       enterInvalid: 'Profilni toʻldiring',
       badgeCreated: 'Profil yaratildi',
@@ -633,6 +637,8 @@ export const translations: Record<
         eventManager: 'Ивент-менеджер',
         photographer: 'Фотограф',
       },
+      groupLabel: 'Ваша группа',
+      groupPlaceholder: 'Выберите группу',
       enterValid: 'Создать профиль',
       enterInvalid: 'Заполните профиль',
       badgeCreated: 'Профиль создан',
@@ -872,6 +878,8 @@ export const translations: Record<
         eventManager: 'Event Manager',
         photographer: 'Photographer',
       },
+      groupLabel: 'Your group',
+      groupPlaceholder: 'Choose your group',
       enterValid: 'Create profile',
       enterInvalid: 'Complete your profile',
       badgeCreated: 'Profile created',

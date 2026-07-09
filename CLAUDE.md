@@ -125,9 +125,11 @@ assembler); don't conflate them.
 ### Client state — Zustand stores
 
 UI-owned state only (never mirror server data here). Stores: `useProfileStore`
-(registration data = the current user's editable profile), `useAuthStore` (the auth
-**session** — `token` + `user`; the token source for the axios interceptor),
-`useThemeStore` (dark mode), `useChatStore`, `useGroupStore`, and
+(registration data = the current user's editable profile), `useOrganizerStore` (the
+organizer's onboarding identity — `role` + `group`; the organizer twin of
+`useProfileStore`, committed on profile submit via ProfileForm's `onCommit` seam),
+`useAuthStore` (the auth **session** — `token` + `user`; the token source for the axios
+interceptor), `useThemeStore` (dark mode), `useChatStore`, `useGroupStore`, and
 `i18n/useLanguageStore`. Anything that must survive a reload / PWA relaunch uses the
 `persist` middleware (theme, language, **auth**).
 

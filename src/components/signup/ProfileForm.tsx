@@ -39,6 +39,9 @@ type Props = {
   extraFields?: ReactNode
   /** Extra validity gate, ANDed with the core fields (e.g. a role must be picked). */
   extraValid?: boolean
+  /** Fired inside submit(), right after the profile commits — the caller's hook
+      to persist its own extra fields (e.g. the organizer's role + group). */
+  onCommit?: () => void
   /** Optional consent line under the submit button. */
   consent?: { before: string; link: string; after: string }
 
@@ -74,6 +77,7 @@ export function ProfileForm({
   ageBracket,
   extraFields,
   extraValid = true,
+  onCommit,
   consent,
   renderSuccess,
 }: Props) {
@@ -116,6 +120,7 @@ export function ProfileForm({
   const submit = () => {
     if (!valid || !city) return
     setRegistration({ name: trimmedName, surname: trimmedSurname, city, age, photo, initials })
+    onCommit?.()
     setSubmitted(true)
   }
 
