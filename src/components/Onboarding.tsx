@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ParticipantLogin } from './auth/ParticipantLogin'
 import { CongratulationsScreen } from './auth/CongratulationsScreen'
@@ -47,16 +47,21 @@ export function Onboarding() {
     }
   }
 
-  if (screen === 'notfound') {
-    return <NotFoundScreen onBack={() => setScreen('login')} />
-  }
+  // The whole onboarding flow is a deliberately light-locked, branded surface —
+  // dark mode never touches it. `.theme-light` (index.css) re-pins the semantic
+  // tokens to their day values for this subtree, so the shared primitives (Field,
+  // Button, CityPicker) render light even when `.dark` is on <html>. Building the
+  // active screen into `content` lets us wrap the whole flow in one island.
+  let content: ReactNode
 
-  // Congrats → profile form live in a horizontal pager so pressing Continue slides
-  // the form in from the right (and Back slides it away again). The two panels are
-  // role-specific; the pager mechanics are shared.
-  if (screen === 'congrats' || screen === 'form') {
+  if (screen === 'notfound') {
+    content = <NotFoundScreen onBack={() => setScreen('login')} />
+  } else if (screen === 'congrats' || screen === 'form') {
+    // Congrats → profile form live in a horizontal pager so pressing Continue
+    // slides the form in from the right (and Back slides it away again). The two
+    // panels are role-specific; the pager mechanics are shared.
     const isOrganizer = flow === 'organizer'
-    return (
+    content = (
       <OnboardingPager
         index={screen === 'form' ? 1 : 0}
         panels={[
@@ -100,7 +105,9 @@ export function Onboarding() {
         ]}
       />
     )
+  } else {
+    content = <ParticipantLogin onSubmit={handleLogin} />
   }
 
-  return <ParticipantLogin onSubmit={handleLogin} />
+  return <div className="theme-light h-full">{content}</div>
 }

@@ -103,6 +103,32 @@
   --color-danger-tint: #331a14;
 }
 
+/*
+  Light island — re-pins the semantic tokens to their DAY values for a subtree,
+  even inside `.dark`. The onboarding flow (login → congrats → profile form) is a
+  deliberately branded, always-light surface: green hero over paper. Its shared
+  primitives (Field, Button, CityPicker) are built on the semantic tokens, which
+  would otherwise flip with `.dark` and leave half the screen dark (the reported
+  bug). Wrapping the flow in `.theme-light` re-declares those variables locally.
+  CSS variables cascade, so a value set here beats the one inherited from `.dark`
+  on <html> — no per-element overrides needed. Values mirror the light `@theme`
+  block above (kept in sync the same way the `.dark` block is).
+*/
+.theme-light {
+  color-scheme: light;
+  --color-canvas: #f4f1ea;
+  --color-surface: #ffffff;
+  --color-surface-2: #fffdf8;
+  --color-content: #16271f;
+  --color-muted: #6c7a71;
+  --color-line: #ece7db;
+  --color-soft: #eef4f0;
+  --color-green-tint: #e7f1ec;
+  --color-amber-tint: #fbf3e2;
+  --color-sky-tint: #e4f0f4;
+  --color-danger-tint: #fdece8;
+}
+
 html,
 body,
 #root {
