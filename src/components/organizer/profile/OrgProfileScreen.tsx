@@ -5,6 +5,7 @@ import { initials } from '../../../lib/initials'
 import { useAuthStore } from '../../../store/useAuthStore'
 import { useProfileStore } from '../../../store/useProfileStore'
 import { useOrganizerStore } from '../../../store/useOrganizerStore'
+import { useThemeStore } from '../../../store/useThemeStore'
 import { useOrganizerSummary } from '../../../api/queries/camps.queries'
 import { ROLE_EMOJI } from '../roles'
 import { Avatar } from '../../ui'
@@ -34,6 +35,8 @@ export function OrgProfileScreen() {
   const photo = useProfileStore((s) => s.photo)
   const email = useProfileStore((s) => s.email)
   const subRole = useOrganizerStore((s) => s.role)
+  const theme = useThemeStore((s) => s.theme)
+  const toggleTheme = useThemeStore((s) => s.toggle)
   const { data: summary } = useOrganizerSummary()
   const [langOpen, setLangOpen] = useState(false)
 
@@ -103,6 +106,7 @@ export function OrgProfileScreen() {
             hint={(selectedLang ?? 'uz').toUpperCase()}
             onClick={() => setLangOpen(true)}
           />
+          <ThemeRow label={t.profile.appearance} isDark={theme === 'dark'} onToggle={toggleTheme} />
           <SettingsRow icon="⚙️" label={p.campSettings} onClick={() => {}} last />
         </div>
 
@@ -160,6 +164,47 @@ function InfoRow({
         <div className="text-meta text-muted">{label}</div>
         <div className="truncate text-body font-semibold text-content">{value}</div>
       </div>
+    </div>
+  )
+}
+
+/*
+  Settings row whose control lives in-place: a light/dark switch instead of a
+  chevron (SettingsRow's chevron implies navigation — this flips a preference on
+  the spot). The sliding pill mirrors the participant toggle in CampCover; the
+  white knob is intentionally constant so it reads on the track in both themes.
+*/
+function ThemeRow({
+  label,
+  isDark,
+  onToggle,
+}: {
+  label: string
+  isDark: boolean
+  onToggle: () => void
+}) {
+  return (
+    <div className="flex w-full items-center gap-3 border-b border-line py-3.5">
+      <span className="w-5 flex-none text-center text-base">🌙</span>
+      <span className="flex-1 text-body font-semibold text-content">{label}</span>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-label={label}
+        aria-pressed={isDark}
+        className="relative flex h-8 w-[62px] flex-none items-center justify-between rounded-full border border-line bg-soft px-2"
+      >
+        <span className="text-[11px] leading-none opacity-70">☀️</span>
+        <span className="text-[11px] leading-none opacity-70">🌙</span>
+        <span
+          className={`absolute top-[3px] flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white text-[13px] shadow transition-[left] duration-300 ${
+            isDark ? 'left-[33px]' : 'left-[3px]'
+          }`}
+          style={{ transitionTimingFunction: 'cubic-bezier(0.34,1.45,0.5,1)' }}
+        >
+          {isDark ? '🌙' : '☀️'}
+        </span>
+      </button>
     </div>
   )
 }

@@ -198,6 +198,7 @@ type ProfileStrings = {
   language: string
   chooseLanguage: string
   locationSharing: string
+  appearance: string
   logout: string
 }
 
@@ -736,6 +737,7 @@ export const translations: Record<
       language: 'Til',
       chooseLanguage: 'Oʻzingizga qulay tilni tanlang',
       locationSharing: 'Joylashuvni ulashish',
+      appearance: 'Koʻrinish',
       logout: 'Chiqish',
     },
     chat: {
@@ -1110,6 +1112,7 @@ export const translations: Record<
       language: 'Язык',
       chooseLanguage: 'Выберите предпочитаемый язык',
       locationSharing: 'Геолокация',
+      appearance: 'Оформление',
       logout: 'Выйти',
     },
     chat: {
@@ -1472,6 +1475,7 @@ export const translations: Record<
       language: 'Language',
       chooseLanguage: 'Choose your preferred language',
       locationSharing: 'Location sharing',
+      appearance: 'Appearance',
       logout: 'Log out',
     },
     chat: {
