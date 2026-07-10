@@ -24,7 +24,16 @@ export type RosterParticipant = {
   groupId: string | null
   groupName: string | null
   city: string
+  age: number
   status: CheckinStatus
+  /** E.164 phone for the organizer's call button, e.g. '+998901234567'. */
+  phone?: string
+  socials?: {
+    telegram?: string
+    instagram?: string
+    facebook?: string
+    linkedin?: string
+  }
 }
 
 const GROUP_NAME = new Map(CAMP_GROUPS.map((g) => [g.id, g.name]))
@@ -43,7 +52,10 @@ export const rosterService = {
         groupId: p.groupId,
         groupName: p.groupId ? (GROUP_NAME.get(p.groupId) ?? null) : null,
         city: p.city,
+        age: p.age,
         status: p.status,
+        phone: p.phone,
+        socials: p.socials,
       }))
       .sort((a, b) => a.name.localeCompare(b.name))
   },

@@ -1,7 +1,6 @@
-import { useRef } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { interpolate } from '../../../lib/interpolate'
-import { Avatar } from '../../ui'
+import { Avatar, GroupPhotoButton } from '../../ui'
 import type { GroupChat, ChatMember } from '../../../lib/chat'
 
 type Props = {
@@ -31,46 +30,16 @@ export function ChatHeader({
   onChangePhoto,
 }: Props) {
   const { t } = useTranslation()
-  const photoInput = useRef<HTMLInputElement>(null)
-  const photo = groupPhoto ?? group.photo
-
-  const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) onChangePhoto(file)
-    e.target.value = '' // allow re-picking the same file
-  }
 
   return (
     <div className="flex-none border-b border-line bg-surface-2 px-4 pt-3 shadow-[0_3px_12px_rgba(20,40,30,0.05)]">
       <div className="flex items-center gap-3">
-        {/* Group photo uploader — same treatment as the profile avatar badge:
-            circular image with a pine "+" corner badge. */}
-        <button
-          type="button"
-          onClick={() => photoInput.current?.click()}
-          aria-label={t.chat.changePhoto}
-          className="relative flex-none rounded-[15px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pine"
-        >
-          <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-[15px] bg-gradient-to-br from-[#2f8f6b] to-pine text-[22px] shadow-[0_4px_10px_rgba(15,107,79,0.25)]">
-            {photo ? (
-              <img src={photo} alt={group.name} className="h-full w-full object-cover" />
-            ) : (
-              group.emoji
-            )}
-          </div>
-          <span className="absolute -bottom-1 -right-1 flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 border-surface-2 bg-pine shadow-[0_2px_6px_rgba(15,107,79,0.35)]">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M12 5v14M5 12h14" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
-            </svg>
-          </span>
-        </button>
-        <input
-          ref={photoInput}
-          type="file"
-          accept="image/*"
-          onChange={handlePhoto}
-          className="hidden"
-          aria-hidden
+        {/* Group photo uploader — shared with the organizer chat header. */}
+        <GroupPhotoButton
+          photo={groupPhoto ?? group.photo}
+          emoji={group.emoji}
+          label={t.chat.changePhoto}
+          onPick={onChangePhoto}
         />
         <div className="min-w-0 flex-1">
           <div className="truncate text-subhead font-bold text-content">{group.name}</div>

@@ -1,10 +1,13 @@
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Skeleton } from '../../../ui'
 import { useTranslation } from '../../../../i18n/useTranslation'
 import { interpolate } from '../../../../lib/interpolate'
 import { useRoster } from '../../../../api/queries/roster.queries'
+import type { RosterParticipant } from '../../../../api/services/roster.service'
 import { useCampDetail } from '../campDetailContext'
 import { RosterRow } from './RosterRow'
+import { ParticipantPeekSheet } from './ParticipantPeekSheet'
 
 /*
   Participants tab — the camp roster with client-side search (name / group / city).
@@ -15,7 +18,10 @@ export function ParticipantsTab() {
   const { camp } = useCampDetail()
   const { t } = useTranslation()
   const d = t.org.detail
+  const navigate = useNavigate()
   const [query, setQuery] = useState('')
+  // Which participant's peek sheet is open (null = closed).
+  const [selected, setSelected] = useState<RosterParticipant | null>(null)
   const rosterQuery = useRoster(camp.id)
 
   const filtered = useMemo(() => {
@@ -48,8 +54,19 @@ export function ParticipantsTab() {
       {filtered.length === 0 ? (
         <p className="py-8 text-center text-body text-muted">{d.noResults}</p>
       ) : (
-        filtered.map((p) => <RosterRow key={p.id} p={p} />)
+        filtered.map((p) => <RosterRow key={p.id} p={p} onSelect={setSelected} />)
       )}
+
+      <ParticipantPeekSheet
+        participant={selected}
+        onClose={() => setSelected(null)}
+        onSeeOnMap={(p) => {
+          setSelected(null)
+          // Map tab is a real route (still a placeholder today); the `focus` param
+          // lets it centre on this participant once the live map is built.
+          navigate(`../map?focus=${p.id}`)
+        }}
+      />
     </div>
   )
 }

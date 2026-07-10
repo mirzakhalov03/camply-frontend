@@ -298,14 +298,15 @@ type ScheduleStrings = {
 // dashboard (slice 1). Distinct from OrganizerStrings, which is the ONBOARDING
 // flow. {tokens} are filled per-language so grammar can place them freely.
 type OrgStrings = {
-  nav: { camps: string; chat: string; profile: string }
+  nav: { main: string; chat: string; profile: string }
   camps: {
     welcome: string // 'Welcome back, {name}'
     yourCamps: string
     statParticipants: string
     statGroups: string
     statOnSite: string
-    openChatAria: string
+    notifications: string // aria-label + notifications screen title
+    notificationsSubtitle: string // 'Sent to participants'
     // Live help banner (SOS)
     needsHelp: string // '{name} needs help'
     reasonMedical: string
@@ -355,6 +356,7 @@ type OrgStrings = {
     searchParticipants: string // 'Search {count} participants…'
     statusIn: string
     statusOut: string
+    seeOnMap: string
     unassigned: string
     members: string // '{count} members'
     noMembers: string
@@ -529,14 +531,15 @@ export const translations: Record<
       editDetails: 'Maʼlumotlarni tahrirlash',
     },
     org: {
-      nav: { camps: 'Lagerlar', chat: 'Chat', profile: 'Profil' },
+      nav: { main: 'Asosiy', chat: 'Chat', profile: 'Profil' },
       camps: {
         welcome: 'Xush kelibsiz, {name}',
         yourCamps: 'Lagerlaringiz',
         statParticipants: 'Ishtirokchi',
         statGroups: 'Guruh',
         statOnSite: 'Hozir shu yerda',
-        openChatAria: 'Chatni ochish',
+        notifications: 'Bildirishnomalar',
+        notificationsSubtitle: 'Ishtirokchilarga yuborilgan',
         needsHelp: '{name} yordamga muhtoj',
         reasonMedical: 'Tibbiy',
         reasonLost: 'Yoʻqolgan',
@@ -579,6 +582,7 @@ export const translations: Record<
         searchParticipants: '{count} ishtirokchini qidirish…',
         statusIn: 'Hududda',
         statusOut: 'Tashqarida',
+        seeOnMap: 'Xaritada koʻrish',
         unassigned: 'Guruhsiz',
         members: '{count} aʼzo',
         noMembers: 'Hali aʼzo yoʻq',
@@ -902,14 +906,15 @@ export const translations: Record<
       editDetails: 'Изменить данные',
     },
     org: {
-      nav: { camps: 'Лагеря', chat: 'Чат', profile: 'Профиль' },
+      nav: { main: 'Главная', chat: 'Чат', profile: 'Профиль' },
       camps: {
         welcome: 'С возвращением, {name}',
         yourCamps: 'Ваши лагеря',
         statParticipants: 'Участников',
         statGroups: 'Групп',
         statOnSite: 'На месте',
-        openChatAria: 'Открыть чат',
+        notifications: 'Уведомления',
+        notificationsSubtitle: 'Отправлено участникам',
         needsHelp: '{name} нужна помощь',
         reasonMedical: 'Медицина',
         reasonLost: 'Потерялся',
@@ -952,6 +957,7 @@ export const translations: Record<
         searchParticipants: 'Поиск среди {count} участников…',
         statusIn: 'На месте',
         statusOut: 'Снаружи',
+        seeOnMap: 'Показать на карте',
         unassigned: 'Без группы',
         members: '{count} участн.',
         noMembers: 'Пока нет участников',
@@ -1261,14 +1267,15 @@ export const translations: Record<
       editDetails: 'Edit my details',
     },
     org: {
-      nav: { camps: 'Camps', chat: 'Chat', profile: 'Profile' },
+      nav: { main: 'Main', chat: 'Chat', profile: 'Profile' },
       camps: {
         welcome: 'Welcome back, {name}',
         yourCamps: 'Your camps',
         statParticipants: 'Participants',
         statGroups: 'Groups',
         statOnSite: 'On-site',
-        openChatAria: 'Open chat',
+        notifications: 'Notifications',
+        notificationsSubtitle: 'Sent to participants',
         needsHelp: '{name} needs help',
         reasonMedical: 'Medical',
         reasonLost: 'Lost',
@@ -1311,6 +1318,7 @@ export const translations: Record<
         searchParticipants: 'Search {count} participants…',
         statusIn: 'In',
         statusOut: 'Out',
+        seeOnMap: 'See on map',
         unassigned: 'Unassigned',
         members: '{count} members',
         noMembers: 'No members yet',

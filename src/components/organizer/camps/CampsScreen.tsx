@@ -26,7 +26,7 @@ import type { OrganizerCamp } from '../../../api/services/camps.service'
 export function CampsScreen() {
   const { t } = useTranslation()
   const c = t.org.camps
-  const { openCamp, openCampMap, openChat } = useOrg()
+  const { openCamp, openCampMap, openNotifications } = useOrg()
 
   const campsQuery = useOrganizerCamps()
   const summaryQuery = useOrganizerSummary()
@@ -63,18 +63,15 @@ export function CampsScreen() {
         </p>
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-display font-bold text-content">{primary?.name ?? c.yourCamps}</h1>
+          {/* Notifications — nudged up slightly (-translate-y-1.5) so it sits a touch
+              above the heading baseline. */}
           <button
             type="button"
-            onClick={openChat}
-            aria-label={c.openChatAria}
-            className="relative flex h-[42px] w-[42px] flex-none items-center justify-center rounded-input border border-line bg-surface text-pine shadow-[0_3px_12px_rgba(20,40,30,0.05)] active:scale-95"
+            onClick={openNotifications}
+            aria-label={c.notifications}
+            className="relative flex h-[42px] w-[42px] flex-none -translate-y-1.5 items-center justify-center rounded-input border border-line bg-surface text-pine shadow-[0_3px_12px_rgba(20,40,30,0.05)] active:scale-95"
           >
-            <ChatIcon />
-            {summary.unreadChat > 0 ? (
-              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full border-2 border-canvas bg-amber px-1 text-[9px] font-extrabold text-amber-ink">
-                {summary.unreadChat}
-              </span>
-            ) : null}
+            <BellIcon />
           </button>
         </div>
       </header>
@@ -134,7 +131,7 @@ function ErrorState({
   )
 }
 
-function ChatIcon() {
+function BellIcon() {
   return (
     <svg
       width="20"
@@ -146,7 +143,8 @@ function ChatIcon() {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z" />
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+      <path d="M13.7 21a2 2 0 0 1-3.4 0" />
     </svg>
   )
 }

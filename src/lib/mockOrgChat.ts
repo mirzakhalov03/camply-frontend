@@ -34,6 +34,8 @@ export const orgChatMock: OrgChat = {
         age: 26,
         role: 'member',
         online: true,
+        phone: '+998901234501',
+        socials: { telegram: '@nodira', instagram: '@nodira.a' },
       },
       {
         id: 'o-jasur',
@@ -44,6 +46,8 @@ export const orgChatMock: OrgChat = {
         age: 31,
         role: 'member',
         online: true,
+        phone: '+998901234502',
+        socials: { telegram: '@jasurk' },
       },
       {
         id: 'o-dilnoza',
@@ -54,6 +58,8 @@ export const orgChatMock: OrgChat = {
         age: 24,
         role: 'member',
         online: false,
+        phone: '+998901234503',
+        socials: { instagram: '@dilnoza.a' },
       },
     ],
     messages: [

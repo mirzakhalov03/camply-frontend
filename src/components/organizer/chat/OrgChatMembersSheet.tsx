@@ -12,11 +12,14 @@ export function OrgChatMembersSheet({
   onClose,
   title,
   members,
+  onMemberTap,
 }: {
   open: boolean
   onClose: () => void
   title: string
   members: ChatMember[]
+  /** Open a member's profile peek. */
+  onMemberTap: (member: ChatMember) => void
 }) {
   const { t } = useTranslation()
 
@@ -31,7 +34,12 @@ export function OrgChatMembersSheet({
     >
       <div className="flex flex-col gap-0.5">
         {members.map((m) => (
-          <div key={m.id} className="flex items-center gap-3 py-2">
+          <button
+            key={m.id}
+            type="button"
+            onClick={() => onMemberTap(m)}
+            className="flex items-center gap-3 rounded-input py-2 text-left transition active:scale-[0.99]"
+          >
             <div className="relative flex-none">
               <Avatar
                 name={m.name}
@@ -47,7 +55,7 @@ export function OrgChatMembersSheet({
               />
             </div>
             <span className="flex-1 truncate text-title font-semibold text-content">{m.name}</span>
-          </div>
+          </button>
         ))}
       </div>
     </Sheet>

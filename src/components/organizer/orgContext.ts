@@ -13,6 +13,8 @@ export type OrgContext = {
   openCampMap: (campId: string) => void
   /** Open the organizer Chat tab. */
   openChat: () => void
+  /** Open notifications (currently a "coming soon" placeholder). */
+  openNotifications: () => void
   /** Open the Team & co-organizers screen. */
   openTeam: () => void
   /** Clear the session + onboarding stores and return to onboarding. */

@@ -3,14 +3,20 @@ import { useTranslation } from '../../../i18n/useTranslation'
 import { interpolate } from '../../../lib/interpolate'
 import { useOrgChat } from '../../../api/queries/orgChat.queries'
 import type { OrgChatChannelId } from '../../../api/services/orgChat.service'
-import { withMyProfile, type ChatMember, type ChatMessage } from '../../../lib/chat'
+import {
+  withMyProfile,
+  type ChatMember,
+  type ChatMessage,
+  type MessageReaction,
+} from '../../../lib/chat'
 import { useOrgChatStore } from '../../../store/useOrgChatStore'
 import { useOrganizerStore } from '../../../store/useOrganizerStore'
 import { useGroupStore } from '../../../store/useGroupStore'
 import { useMe } from '../../../store/useMe'
-import { Avatar } from '../../ui'
+import { Avatar, GroupPhotoButton } from '../../ui'
 import { Composer } from '../../participant/chat/Composer'
-import { OrgMessageBubble } from './OrgMessageBubble'
+import { MessageBubble } from '../../participant/chat/MessageBubble'
+import { MemberSheet } from '../../participant/chat/MemberSheet'
 import { OrgChatMembersSheet } from './OrgChatMembersSheet'
 
 /*
@@ -26,15 +32,31 @@ export function OrgChatScreen() {
   const role = useOrganizerStore((s) => s.role)
   const [channel, setChannel] = useState<OrgChatChannelId>('organizers')
   const [membersOpen, setMembersOpen] = useState(false)
+  // The message being replied to (per the active channel; cleared on switch/send).
+  const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null)
+  // Whose profile peek is open (tapped author avatar / members-list row).
+  const [selected, setSelected] = useState<ChatMember | null>(null)
 
   const sent = useOrgChatStore((s) => s.sent[channel])
+  const reactionOverrides = useOrgChatStore((s) => s.reactionOverrides[channel])
   const sendText = useOrgChatStore((s) => s.sendText)
   const sendAttachment = useOrgChatStore((s) => s.sendAttachment)
+  const toggleReaction = useOrgChatStore((s) => s.toggleReaction)
+  // The Organizers team's own photo (org-chat-local, not the participant group photo).
+  const teamPhoto = useOrgChatStore((s) => s.teamPhoto)
+  const setTeamPhoto = useOrgChatStore((s) => s.setTeamPhoto)
 
-  // Group identity photo — shared with the participant's group view (same store).
+  // My group's identity photo — shared with the participant's group view (same store).
   const groupPhoto = useGroupStore((s) => s.photo)
   const setGroupPhoto = useGroupStore((s) => s.setPhoto)
-  const photoInput = useRef<HTMLInputElement>(null)
+
+  // Switching channels drops any in-progress reply and closes the members sheet
+  // (both belonged to the old thread; the new one may be locked).
+  const switchChannel = (next: OrgChatChannelId) => {
+    setChannel(next)
+    setReplyingTo(null)
+    setMembersOpen(false)
+  }
 
   if (isPending) {
     return (
@@ -57,50 +79,45 @@ export function OrgChatScreen() {
 
   const title = channel === 'organizers' ? t.org.chat.channelOrganizers : active.title
   const members = withMyProfile(active.members, me)
-  // Only the coordinator's own group has an identity photo; the organizers team keeps its emoji.
-  const canUploadPhoto = channel === 'group' && !locked
+
+  // Each channel owns its photo: the Organizers team photo lives in the org-chat store
+  // (any organizer can set it); the "My group" photo is the shared group identity, and
+  // only its coordinator may change it. When the group is locked there's no uploader.
+  const channelPhoto = channel === 'group' ? groupPhoto : teamPhoto
+  const onPickPhoto =
+    channel === 'group' ? (isCoordinator ? setGroupPhoto : undefined) : setTeamPhoto
+
+  // Reply-quote helpers (mirror the participant ChatScreen): author name + a snippet.
+  const authorNameOf = (msg: ChatMessage) =>
+    msg.sentByMe ? t.chat.you : (members.find((m) => m.id === msg.authorId)?.name ?? '')
+  const snippetOf = (msg: ChatMessage) =>
+    msg.kind === 'image'
+      ? `📷 ${t.chat.photo}`
+      : msg.kind === 'file'
+        ? `📎 ${msg.attachment?.name ?? t.chat.file}`
+        : (msg.text ?? '')
+  const replyPreview = replyingTo
+    ? { authorName: authorNameOf(replyingTo), text: snippetOf(replyingTo) }
+    : null
+
+  const handleSendText = (text: string) => {
+    sendText(channel, text, replyPreview ?? undefined)
+    setReplyingTo(null)
+  }
 
   return (
     <div className="flex h-full flex-col bg-canvas">
       {/* Header */}
       <div className="flex-none border-b border-line bg-surface-2 px-4 pt-3 shadow-[0_3px_12px_rgba(20,40,30,0.05)]">
         <div className="flex items-center gap-3">
-          {canUploadPhoto ? (
-            <button
-              type="button"
-              onClick={() => photoInput.current?.click()}
-              aria-label={t.chat.changePhoto}
-              className="relative flex-none rounded-input focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pine"
-            >
-              <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-input bg-gradient-to-br from-pine-light to-pine text-xl shadow-[0_4px_10px_rgba(15,107,79,0.25)]">
-                {groupPhoto ? (
-                  <img src={groupPhoto} alt={title} className="h-full w-full object-cover" />
-                ) : (
-                  active.emoji
-                )}
-              </span>
-              <span className="absolute -bottom-1 -right-1 flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 border-surface-2 bg-pine">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>
-                  <path d="M12 5v14M5 12h14" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
-                </svg>
-              </span>
-            </button>
-          ) : (
-            <span className="flex h-11 w-11 flex-none items-center justify-center rounded-input bg-gradient-to-br from-pine-light to-pine text-xl shadow-[0_4px_10px_rgba(15,107,79,0.25)]">
-              {active.emoji}
-            </span>
-          )}
-          <input
-            ref={photoInput}
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files?.[0]
-              if (file) setGroupPhoto(file)
-              e.target.value = ''
-            }}
-            className="hidden"
-            aria-hidden
+          {/* Group photo — same shared uploader as the participant chat header,
+              top-left. Editable per channel (see onPickPhoto); a locked group is
+              a static emoji tile. */}
+          <GroupPhotoButton
+            photo={channelPhoto}
+            emoji={active.emoji}
+            label={t.chat.changePhoto}
+            onPick={onPickPhoto}
           />
           <div className="min-w-0 flex-1">
             <div className="truncate text-subhead font-bold text-content">{title}</div>
@@ -109,22 +126,26 @@ export function OrgChatScreen() {
               {interpolate(t.org.chat.online, { count: active.onlineCount })}
             </div>
           </div>
-          <button
-            type="button"
-            onClick={() => setMembersOpen(true)}
-            aria-label={t.org.chat.membersSheetTitle}
-            className="flex h-10 w-10 flex-none items-center justify-center rounded-input bg-soft text-pine active:scale-95"
-          >
-            <MembersIcon />
-          </button>
+          {/* Members button — hidden on a locked group: a non-coordinator shouldn't
+              be able to open that group's member list. */}
+          {!locked && (
+            <button
+              type="button"
+              onClick={() => setMembersOpen(true)}
+              aria-label={t.org.chat.membersSheetTitle}
+              className="flex h-10 w-10 flex-none items-center justify-center rounded-input bg-soft text-pine active:scale-95"
+            >
+              <MembersIcon />
+            </button>
+          )}
         </div>
 
         {/* Channel toggle */}
         <div className="mt-3 flex gap-1 rounded-input bg-soft p-1">
-          <ChannelTab active={channel === 'organizers'} onClick={() => setChannel('organizers')}>
+          <ChannelTab active={channel === 'organizers'} onClick={() => switchChannel('organizers')}>
             {t.org.chat.channelOrganizers}
           </ChannelTab>
-          <ChannelTab active={channel === 'group'} onClick={() => setChannel('group')}>
+          <ChannelTab active={channel === 'group'} onClick={() => switchChannel('group')}>
             {t.org.chat.channelGroup}
           </ChannelTab>
         </div>
@@ -161,13 +182,21 @@ export function OrgChatScreen() {
         <LockedPanel title={t.org.chat.lockedTitle} body={t.org.chat.lockedBody} />
       ) : (
         <>
-          <MessageThread messages={active.messages} sent={sent} members={members} />
+          <MessageThread
+            messages={active.messages}
+            sent={sent}
+            members={members}
+            reactionOverrides={reactionOverrides}
+            onToggleReaction={(id, emoji, current) => toggleReaction(channel, id, emoji, current)}
+            onReply={setReplyingTo}
+            onMemberTap={setSelected}
+          />
           <Composer
             groupName={title}
-            onSendText={(text) => sendText(channel, text)}
+            onSendText={handleSendText}
             onPickFile={(file) => sendAttachment(channel, file)}
-            replyPreview={null}
-            onCancelReply={() => {}}
+            replyPreview={replyPreview}
+            onCancelReply={() => setReplyingTo(null)}
           />
         </>
       )}
@@ -177,7 +206,12 @@ export function OrgChatScreen() {
         onClose={() => setMembersOpen(false)}
         title={title}
         members={members}
+        onMemberTap={(m) => {
+          setMembersOpen(false)
+          setSelected(m)
+        }}
       />
+      <MemberSheet member={selected} onClose={() => setSelected(null)} />
     </div>
   )
 }
@@ -186,10 +220,18 @@ function MessageThread({
   messages,
   sent,
   members,
+  reactionOverrides,
+  onToggleReaction,
+  onReply,
+  onMemberTap,
 }: {
   messages: ChatMessage[]
   sent: ChatMessage[]
   members: ChatMember[]
+  reactionOverrides: Record<string, MessageReaction[]>
+  onToggleReaction: (messageId: string, emoji: string, current: MessageReaction[]) => void
+  onReply: (message: ChatMessage) => void
+  onMemberTap: (member: ChatMember) => void
 }) {
   const bottomRef = useRef<HTMLDivElement>(null)
   const byId = useMemo(() => new Map(members.map((m) => [m.id, m])), [members])
@@ -201,9 +243,22 @@ function MessageThread({
 
   return (
     <div className="flex flex-1 flex-col gap-2.5 overflow-y-auto p-3.5">
-      {all.map((m) => (
-        <OrgMessageBubble key={m.id} message={m} author={byId.get(m.authorId)} />
-      ))}
+      {all.map((m) => {
+        // Displayed reactions = this-session overlay if present, else what the server sent.
+        const reactions = reactionOverrides[m.id] ?? m.reactions ?? []
+        const author = byId.get(m.authorId)
+        return (
+          <MessageBubble
+            key={m.id}
+            message={m}
+            author={author}
+            onAuthorTap={author ? () => onMemberTap(author) : undefined}
+            reactions={reactions}
+            onToggleReaction={(emoji) => onToggleReaction(m.id, emoji, reactions)}
+            onReply={() => onReply(m)}
+          />
+        )
+      })}
       <div ref={bottomRef} />
     </div>
   )

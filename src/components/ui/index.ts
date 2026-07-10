@@ -7,6 +7,7 @@
 export { Avatar } from './Avatar'
 export { Sheet } from './Sheet'
 export { Button } from './Button'
+export { GroupPhotoButton } from './GroupPhotoButton'
 export { Field } from './Field'
 export { Badge } from './Badge'
 export { Skeleton } from './Skeleton'

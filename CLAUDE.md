@@ -145,8 +145,10 @@ Shared building blocks: **`Avatar`** (photo-or-initials on a color tile),
 **`Sheet`** (bottom sheet: backdrop, slide-up, Escape/focus handling), **`Button`**
 (`primary`/`accent`/`ghost` × sizes; pass `href` for a link), **`Field`** (text
 input with the pine focus ring), **`Badge`** (status pill: `pine`/`amber`/`danger`/
-`muted`), **`Skeleton`** (loading block). Import from the barrel: `import { Button,
-Avatar } from '.../components/ui'`.
+`muted`), **`Skeleton`** (loading block), **`GroupPhotoButton`** (group-identity
+photo tile with emoji fallback; pass `onPick` to make it an uploader with a "+"
+badge, omit for a read-only tile — shared by the participant + organizer chat
+headers). Import from the barrel: `import { Button, Avatar } from '.../components/ui'`.
 
 **Don't hand-roll these inline.** If you're about to write an avatar, an overlay
 sheet, a styled button/input, a status pill, or a loading block, use the primitive

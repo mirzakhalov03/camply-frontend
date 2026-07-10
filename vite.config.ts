@@ -47,4 +47,10 @@ export default defineConfig({
       '/api': 'http://localhost:4000',
     },
   },
+  // Allow the production `preview` server to be reached through a Cloudflare quick
+  // tunnel (https://*.trycloudflare.com) — needed to install/test the PWA on a phone
+  // over HTTPS. The leading dot matches any random tunnel subdomain.
+  preview: {
+    allowedHosts: ['.trycloudflare.com'],
+  },
 })

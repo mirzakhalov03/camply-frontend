@@ -19,7 +19,7 @@ function useNavItems(): NavItem[] {
   const { t } = useTranslation()
   const { data: summary } = useOrganizerSummary()
   return [
-    { to: '/org/camps', label: t.org.nav.camps, icon: <CampsIcon /> },
+    { to: '/org/camps', label: t.org.nav.main, icon: <CampsIcon /> },
     { to: '/org/chat', label: t.org.nav.chat, icon: <ChatIcon />, badge: summary?.unreadChat },
     { to: '/org/profile', label: t.org.nav.profile, icon: <ProfileIcon /> },
   ]

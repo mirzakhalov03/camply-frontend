@@ -11,6 +11,9 @@ import type { CheckinStatus } from '../api/services/roster.service'
 
   `isLeader` marks the group leader (each group has one). Iroda Bekova / River Hawks
   matches the SOS banner on the dashboard — one coherent story across the app.
+
+  `phone`, `age`, and `socials` back the organizer's participant peek sheet (call +
+  socials), mirroring the shape the chat's ChatMember already exposes.
 */
 export type RosterSeed = {
   id: string
@@ -22,8 +25,17 @@ export type RosterSeed = {
   /** Canonical CAMP_GROUPS id, or null if not yet assigned to a group. */
   groupId: string | null
   city: string
+  age: number
   status: CheckinStatus
   isLeader?: boolean
+  /** E.164 phone for the organizer's call button. */
+  phone?: string
+  socials?: {
+    telegram?: string
+    instagram?: string
+    facebook?: string
+    linkedin?: string
+  }
 }
 
 export const rosterMock: RosterSeed[] = [
@@ -35,8 +47,11 @@ export const rosterMock: RosterSeed[] = [
     avatarColor: '#0f6b4f',
     groupId: 'wolves',
     city: 'Tashkent',
+    age: 16,
     status: 'in',
     isLeader: true,
+    phone: '+998901112233',
+    socials: { telegram: '@sardor', instagram: '@sardor.aliyev' },
   },
   {
     id: 'p-aziza',
@@ -45,7 +60,10 @@ export const rosterMock: RosterSeed[] = [
     avatarColor: '#5aa9c4',
     groupId: 'wolves',
     city: 'Tashkent',
+    age: 15,
     status: 'in',
+    phone: '+998901112244',
+    socials: { instagram: '@aziza.r' },
   },
   {
     id: 'p-bekzod',
@@ -54,7 +72,10 @@ export const rosterMock: RosterSeed[] = [
     avatarColor: '#2f8f6b',
     groupId: 'wolves',
     city: 'Samarkand',
+    age: 17,
     status: 'in',
+    phone: '+998901112255',
+    socials: { telegram: '@bekzodt' },
   },
   {
     id: 'p-malika',
@@ -63,7 +84,9 @@ export const rosterMock: RosterSeed[] = [
     avatarColor: '#c97b5a',
     groupId: 'wolves',
     city: 'Fergana',
+    age: 14,
     status: 'out',
+    phone: '+998901112266',
   },
   // River Hawks
   {
@@ -73,8 +96,11 @@ export const rosterMock: RosterSeed[] = [
     avatarColor: '#5f7d6a',
     groupId: 'hawks',
     city: 'Andijan',
+    age: 16,
     status: 'in',
     isLeader: true,
+    phone: '+998901113311',
+    socials: { telegram: '@jasuro', instagram: '@jasur.odilov' },
   },
   {
     id: 'p-dilnoza',
@@ -83,7 +109,10 @@ export const rosterMock: RosterSeed[] = [
     avatarColor: '#e0982a',
     groupId: 'hawks',
     city: 'Bukhara',
+    age: 15,
     status: 'out',
+    phone: '+998901113322',
+    socials: { instagram: '@dilnoza.k' },
   },
   {
     id: 'p-iroda',
@@ -92,7 +121,10 @@ export const rosterMock: RosterSeed[] = [
     avatarColor: '#c97b5a',
     groupId: 'hawks',
     city: 'Namangan',
+    age: 16,
     status: 'out',
+    phone: '+998901113333',
+    socials: { telegram: '@irodab' },
   },
   {
     id: 'p-kamola',
@@ -101,7 +133,9 @@ export const rosterMock: RosterSeed[] = [
     avatarColor: '#3f9d8e',
     groupId: 'hawks',
     city: 'Tashkent',
+    age: 14,
     status: 'in',
+    phone: '+998901113344',
   },
   // Summit Foxes
   {
@@ -111,8 +145,11 @@ export const rosterMock: RosterSeed[] = [
     avatarColor: '#c97b5a',
     groupId: 'foxes',
     city: 'Andijan',
+    age: 17,
     status: 'in',
     isLeader: true,
+    phone: '+998901114411',
+    socials: { telegram: '@eldors', instagram: '@eldor.saidov' },
   },
   {
     id: 'p-nigora',
@@ -121,7 +158,10 @@ export const rosterMock: RosterSeed[] = [
     avatarColor: '#5aa9c4',
     groupId: 'foxes',
     city: 'Tashkent',
+    age: 15,
     status: 'in',
+    phone: '+998901114422',
+    socials: { instagram: '@nigora.a' },
   },
   {
     id: 'p-otabek',
@@ -130,7 +170,9 @@ export const rosterMock: RosterSeed[] = [
     avatarColor: '#0f6b4f',
     groupId: 'foxes',
     city: 'Samarkand',
+    age: 16,
     status: 'in',
+    phone: '+998901114433',
   },
   // Trail Blazers
   {
@@ -140,8 +182,11 @@ export const rosterMock: RosterSeed[] = [
     avatarColor: '#e0982a',
     groupId: 'blazers',
     city: 'Bukhara',
+    age: 16,
     status: 'in',
     isLeader: true,
+    phone: '+998901115511',
+    socials: { telegram: '@gulnorai', instagram: '@gulnora.ismoilova' },
   },
   {
     id: 'p-sherzod',
@@ -150,7 +195,10 @@ export const rosterMock: RosterSeed[] = [
     avatarColor: '#5f7d6a',
     groupId: 'blazers',
     city: 'Tashkent',
+    age: 17,
     status: 'out',
+    phone: '+998901115522',
+    socials: { telegram: '@sherzodk' },
   },
   {
     id: 'p-zarina',
@@ -159,6 +207,9 @@ export const rosterMock: RosterSeed[] = [
     avatarColor: '#3f9d8e',
     groupId: 'blazers',
     city: 'Fergana',
+    age: 15,
     status: 'in',
+    phone: '+998901115533',
+    socials: { instagram: '@zarina.h' },
   },
 ]

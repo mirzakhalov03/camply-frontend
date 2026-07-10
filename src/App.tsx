@@ -19,6 +19,7 @@ import { ScheduleTab } from './components/organizer/detail/schedule/ScheduleTab'
 import { AnnouncementsTab } from './components/organizer/detail/announcements/AnnouncementsTab'
 import { OrgChatScreen } from './components/organizer/chat/OrgChatScreen'
 import { OrgProfileScreen } from './components/organizer/profile/OrgProfileScreen'
+import { OrgNotificationsScreen } from './components/organizer/notifications/OrgNotificationsScreen'
 import { OrgTeamScreen } from './components/organizer/team/OrgTeamScreen'
 import { OrgComingSoon } from './components/organizer/OrgComingSoon'
 import { useTranslation } from './i18n/useTranslation'
@@ -68,6 +69,7 @@ function App() {
           <Route path="announcements" element={<AnnouncementsTab />} />
         </Route>
         <Route path="chat" element={<OrgChatScreen />} />
+        <Route path="notifications" element={<OrgNotificationsScreen />} />
         <Route path="profile" element={<OrgProfileScreen />} />
         <Route path="team" element={<OrgTeamScreen />} />
       </Route>
