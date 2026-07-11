@@ -1,5 +1,4 @@
 import { queryClient } from '../../lib/queryClient'
-import { useAuthStore } from '../../store/useAuthStore'
 import { campKeys } from '../queryKeys'
 
 /*
@@ -39,8 +38,9 @@ let socket: WebSocket | null = null
 /** Open the single socket for a camp. No-op if one is already open. */
 export function connectRealtime(campId: string) {
   if (socket) return
-  const token = useAuthStore.getState().token
-  socket = new WebSocket(`${WS_URL}?campId=${campId}&token=${token ?? ''}`)
+  // Auth rides the httpOnly session cookie on the WS handshake (same-origin via
+  // the dev proxy), so no token goes in the URL.
+  socket = new WebSocket(`${WS_URL}?campId=${campId}`)
   socket.onmessage = (e) => handleEvent(JSON.parse(e.data) as RealtimeEvent)
   // TODO (real impl): onclose → backoff-reconnect; onerror → log/monitor.
 }

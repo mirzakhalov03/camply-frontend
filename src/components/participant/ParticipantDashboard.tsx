@@ -1,7 +1,6 @@
-import { useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useCampHome } from '../../lib/campHome'
-import { useProfileStore } from '../../store/useProfileStore'
+import { useLogout } from '../../api/queries/auth.queries'
 import { BottomNav } from './BottomNav'
 import { SosButton } from './sos/SosButton'
 import { SosSheet } from './sos/SosSheet'
@@ -19,8 +18,7 @@ export function ParticipantDashboard() {
   const navigate = useNavigate()
   const location = useLocation()
   const sos = useSos()
-  const resetProfile = useProfileStore((s) => s.reset)
-  const phone = useProfileStore((s) => s.phone)
+  const logout = useLogout()
   // Same cached query HomeScreen uses — here just for the Chat tab's unread badge.
   const { data: home } = useCampHome()
 
@@ -31,21 +29,12 @@ export function ParticipantDashboard() {
   // owned; this is the client stand-in until then.
   const chatBadge = onChat ? undefined : home?.unreadChat
 
-  // Guard: /camp is post-login. If there's no session (no phone captured at
-  // login), bounce back to onboarding instead of showing an empty camp.
-  useEffect(() => {
-    if (!phone) navigate('/', { replace: true })
-  }, [phone, navigate])
-
   const ctx: CampContext = {
     sos,
     goSchedule: () => navigate('/camp/schedule'),
     goAnnouncements: () => navigate('/camp/announcements'),
     goChat: () => navigate('/camp/chat'),
-    logout: () => {
-      resetProfile()
-      navigate('/', { replace: true })
-    },
+    logout: () => logout.mutate(),
   }
 
   return (

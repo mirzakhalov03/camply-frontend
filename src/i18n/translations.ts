@@ -432,6 +432,42 @@ type OrgStrings = {
   }
 }
 
+// Organization admin surface (/admin): login, nav, organizer management, create form.
+type AdminStrings = {
+  login: {
+    title: string
+    subtitle: string
+    username: string
+    password: string
+    cta: string
+    error: string
+  }
+  nav: { organizers: string; logout: string }
+  organizers: {
+    title: string
+    subtitle: string // '{count} organizers'
+    new: string
+    empty: string
+    emptyHint: string
+    loadError: string
+    active: string
+    deactivated: string
+    deactivate: string
+    reactivate: string
+    confirmDeactivate: string
+  }
+  create: {
+    title: string
+    name: string
+    surname: string
+    phone: string
+    password: string
+    submit: string
+    duplicate: string
+    success: string
+  }
+}
+
 export const translations: Record<
   Lang,
   {
@@ -441,6 +477,7 @@ export const translations: Record<
     signup: SignUpStrings
     organizer: OrganizerStrings
     org: OrgStrings
+    admin: AdminStrings
     nav: NavStrings
     home: HomeStrings
     sos: SosStrings
@@ -455,6 +492,40 @@ export const translations: Record<
   }
 > = {
   uz: {
+    admin: {
+      login: {
+        title: 'Tashkilot uchun kirish',
+        subtitle: 'Administrator maʼlumotlarini kiriting',
+        username: 'Foydalanuvchi nomi',
+        password: 'Parol',
+        cta: 'Kirish',
+        error: 'Notoʻgʻri maʼlumotlar',
+      },
+      nav: { organizers: 'Tashkilotchilar', logout: 'Chiqish' },
+      organizers: {
+        title: 'Tashkilotchilar',
+        subtitle: '{count} ta tashkilotchi',
+        new: 'Yangi tashkilotchi',
+        empty: 'Hozircha tashkilotchilar yoʻq',
+        emptyHint: 'Oromgohlarni boshqarish uchun birinchi tashkilotchini yarating.',
+        loadError: 'Tashkilotchilarni yuklab boʻlmadi',
+        active: 'Faol',
+        deactivated: 'Faolsizlantirilgan',
+        deactivate: 'Faolsizlantirish',
+        reactivate: 'Qayta faollashtirish',
+        confirmDeactivate: 'Bu tashkilotchi faolsizlantirilsinmi? U darhol tizimdan chiqariladi.',
+      },
+      create: {
+        title: 'Yangi tashkilotchi',
+        name: 'Ism',
+        surname: 'Familiya',
+        phone: 'Telefon',
+        password: 'Parol',
+        submit: 'Tashkilotchi yaratish',
+        duplicate: 'Bu telefon raqami allaqachon roʻyxatdan oʻtgan',
+        success: 'Tashkilotchi yaratildi',
+      },
+    },
     login: {
       eyebrow: 'Ishtirokchilar uchun',
       welcome: 'Xush kelibsiz!',
@@ -832,6 +903,40 @@ export const translations: Record<
     },
   },
   ru: {
+    admin: {
+      login: {
+        title: 'Вход для организации',
+        subtitle: 'Введите данные администратора',
+        username: 'Имя пользователя',
+        password: 'Пароль',
+        cta: 'Войти',
+        error: 'Неверные данные',
+      },
+      nav: { organizers: 'Организаторы', logout: 'Выйти' },
+      organizers: {
+        title: 'Организаторы',
+        subtitle: '{count} организаторов',
+        new: 'Новый организатор',
+        empty: 'Организаторов пока нет',
+        emptyHint: 'Создайте первого организатора для проведения лагерей.',
+        loadError: 'Не удалось загрузить организаторов',
+        active: 'Активен',
+        deactivated: 'Деактивирован',
+        deactivate: 'Деактивировать',
+        reactivate: 'Активировать',
+        confirmDeactivate: 'Деактивировать этого организатора? Он будет немедленно отключён.',
+      },
+      create: {
+        title: 'Новый организатор',
+        name: 'Имя',
+        surname: 'Фамилия',
+        phone: 'Телефон',
+        password: 'Пароль',
+        submit: 'Создать организатора',
+        duplicate: 'Этот телефон уже зарегистрирован',
+        success: 'Организатор создан',
+      },
+    },
     login: {
       eyebrow: 'Для участников',
       welcome: 'Добро пожаловать!',
@@ -1194,6 +1299,40 @@ export const translations: Record<
     },
   },
   en: {
+    admin: {
+      login: {
+        title: 'Organization sign in',
+        subtitle: 'Enter your admin credentials',
+        username: 'Username',
+        password: 'Password',
+        cta: 'Sign in',
+        error: 'Invalid credentials',
+      },
+      nav: { organizers: 'Organizers', logout: 'Log out' },
+      organizers: {
+        title: 'Organizers',
+        subtitle: '{count} organizers',
+        new: 'New organizer',
+        empty: 'No organizers yet',
+        emptyHint: 'Create the first organizer to run camps.',
+        loadError: 'Could not load organizers',
+        active: 'Active',
+        deactivated: 'Deactivated',
+        deactivate: 'Deactivate',
+        reactivate: 'Reactivate',
+        confirmDeactivate: 'Deactivate this organizer? They will be signed out immediately.',
+      },
+      create: {
+        title: 'New organizer',
+        name: 'Name',
+        surname: 'Surname',
+        phone: 'Phone',
+        password: 'Password',
+        submit: 'Create organizer',
+        duplicate: 'That phone is already registered',
+        success: 'Organizer created',
+      },
+    },
     login: {
       eyebrow: 'For participants',
       welcome: 'Welcome!',

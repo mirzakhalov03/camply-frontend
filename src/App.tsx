@@ -22,6 +22,12 @@ import { OrgProfileScreen } from './components/organizer/profile/OrgProfileScree
 import { OrgNotificationsScreen } from './components/organizer/notifications/OrgNotificationsScreen'
 import { OrgTeamScreen } from './components/organizer/team/OrgTeamScreen'
 import { OrgComingSoon } from './components/organizer/OrgComingSoon'
+import { RequireAuth } from './components/auth/RequireAuth'
+import { RequireAdmin } from './components/auth/RequireAdmin'
+import { AdminShell } from './components/organization/AdminShell'
+import { AdminLogin } from './components/organization/AdminLogin'
+import { OrganizersScreen } from './components/organization/organizers/OrganizersScreen'
+import { useCurrentUser } from './api/queries/auth.queries'
 import { useTranslation } from './i18n/useTranslation'
 
 /*
@@ -30,52 +36,77 @@ import { useTranslation } from './i18n/useTranslation'
   organizer and organization surfaces will slot in as sibling top-level routes
   (`/org`, `/admin`) — that's why the structure is split by surface here.
 */
+/* Revalidates the session cookie on load (participant only — see useCurrentUser).
+   Renders nothing; the store/interceptor do the syncing. */
+function SessionBoot() {
+  useCurrentUser()
+  return null
+}
+
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Onboarding />} />
+    <>
+      <SessionBoot />
+      <Routes>
+        <Route path="/" element={<Onboarding />} />
 
-      <Route path="/camp" element={<ParticipantDashboard />}>
-        <Route index element={<Navigate to="home" replace />} />
-        <Route path="home" element={<HomeScreen />} />
-        <Route path="chat" element={<ChatScreen />} />
-        <Route path="ranks" element={<RanksScreen />} />
-        <Route path="profile" element={<ProfileScreen />} />
-        {/* Not-yet-built destinations — still real routes so links/pushes resolve. */}
-        <Route path="announcements" element={<AnnouncementsScreen />} />
-        <Route path="announcements/:id" element={<AnnouncementDetailScreen />} />
-        <Route path="map" element={<ComingSoonRoute />} />
-        <Route path="schedule" element={<ScheduleScreen />} />
-      </Route>
+        <Route element={<RequireAuth requireProfile />}>
+          <Route path="/camp" element={<ParticipantDashboard />}>
+            <Route index element={<Navigate to="home" replace />} />
+            <Route path="home" element={<HomeScreen />} />
+            <Route path="chat" element={<ChatScreen />} />
+            <Route path="ranks" element={<RanksScreen />} />
+            <Route path="profile" element={<ProfileScreen />} />
+            {/* Not-yet-built destinations — still real routes so links/pushes resolve. */}
+            <Route path="announcements" element={<AnnouncementsScreen />} />
+            <Route path="announcements/:id" element={<AnnouncementDetailScreen />} />
+            <Route path="map" element={<ComingSoonRoute />} />
+            <Route path="schedule" element={<ScheduleScreen />} />
+          </Route>
+        </Route>
 
-      {/*
+        {/*
         Organizer surface (slice 1: shell + camps dashboard). Chat, Profile, the
         Map tab, and Camp Detail are real routes today so nav + deep links resolve;
         each lands a "coming soon" until its slice. `camps/new` precedes
         `camps/:campId` so "new" isn't captured as a camp id.
       */}
-      <Route path="/org" element={<OrganizerShell />}>
-        <Route index element={<Navigate to="camps" replace />} />
-        <Route path="camps" element={<CampsScreen />} />
-        {/* Camp Detail (slice 2): tabbed layout, each tab a deep-linkable route.
-            Participants + Groups are built; the rest land a "coming soon". */}
-        <Route path="camps/:campId" element={<CampDetailShell />}>
-          <Route index element={<Navigate to="participants" replace />} />
-          <Route path="participants" element={<ParticipantsTab />} />
-          <Route path="groups" element={<GroupsTab />} />
-          <Route path="map" element={<OrgComingSoon />} />
-          <Route path="leaderboard" element={<LeaderboardTab />} />
-          <Route path="schedule" element={<ScheduleTab />} />
-          <Route path="announcements" element={<AnnouncementsTab />} />
+        <Route element={<RequireAuth minRole="organizer" />}>
+          <Route path="/org" element={<OrganizerShell />}>
+            <Route index element={<Navigate to="camps" replace />} />
+            <Route path="camps" element={<CampsScreen />} />
+            {/* Camp Detail (slice 2): tabbed layout, each tab a deep-linkable route.
+              Participants + Groups are built; the rest land a "coming soon". */}
+            <Route path="camps/:campId" element={<CampDetailShell />}>
+              <Route index element={<Navigate to="participants" replace />} />
+              <Route path="participants" element={<ParticipantsTab />} />
+              <Route path="groups" element={<GroupsTab />} />
+              <Route path="map" element={<OrgComingSoon />} />
+              <Route path="leaderboard" element={<LeaderboardTab />} />
+              <Route path="schedule" element={<ScheduleTab />} />
+              <Route path="announcements" element={<AnnouncementsTab />} />
+            </Route>
+            <Route path="chat" element={<OrgChatScreen />} />
+            <Route path="notifications" element={<OrgNotificationsScreen />} />
+            <Route path="profile" element={<OrgProfileScreen />} />
+            <Route path="team" element={<OrgTeamScreen />} />
+          </Route>
         </Route>
-        <Route path="chat" element={<OrgChatScreen />} />
-        <Route path="notifications" element={<OrgNotificationsScreen />} />
-        <Route path="profile" element={<OrgProfileScreen />} />
-        <Route path="team" element={<OrgTeamScreen />} />
-      </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        {/* Organization admin surface — the third surface, org-only. Its own login
+            page (no link from the participant landing); the dashboard tree is
+            guarded by RequireAdmin (exact role 'organization'). */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route element={<RequireAdmin />}>
+          <Route path="/admin" element={<AdminShell />}>
+            <Route index element={<Navigate to="organizers" replace />} />
+            <Route path="organizers" element={<OrganizersScreen />} />
+          </Route>
+        </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   )
 }
 

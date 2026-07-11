@@ -91,10 +91,10 @@ data feature should follow:
 Real server interaction lives here, split by concern:
 
 - **`api/axiosInstance.ts`** — the single HTTP client. `baseURL` is `VITE_API_URL ??
-  '/api'` (Vite proxies `/api/*` to Express :4000 in dev). A **request interceptor**
-  attaches the bearer token from `useAuthStore.getState().token`; a **response
-  interceptor** normalizes errors to a plain `Error` (backend `message`) and clears
-  the session on a **401**. Never call `fetch`/`axios` directly elsewhere.
+  '/api'` (Vite proxies `/api/*` to Express :4000 in dev). It sends the httpOnly
+  session cookie (`withCredentials`); there is no bearer token. A response
+  interceptor normalizes errors to an `ApiError` (backend `message` + `status`) and
+  clears the session on a **401**. Never call `fetch`/`axios` directly elsewhere.
 - **`api/services/<domain>.service.ts`** — thin, typed wrappers over `axiosInstance`
   (one object per domain, e.g. `authService.login/register/me`). They own the
   endpoint + the request/response **types** (the data contract) and read `res.data`.
@@ -128,8 +128,8 @@ UI-owned state only (never mirror server data here). Stores: `useProfileStore`
 (registration data = the current user's editable profile), `useOrganizerStore` (the
 organizer's onboarding identity — `role` + `group`; the organizer twin of
 `useProfileStore`, committed on profile submit via ProfileForm's `onCommit` seam),
-`useAuthStore` (the auth **session** — `token` + `user`; the token source for the axios
-interceptor), `useThemeStore` (dark mode), `useChatStore`, `useGroupStore`, and
+`useAuthStore` (the auth **session** identity — `user`; the cookie is the real session,
+re-validated on boot via `useCurrentUser`), `useThemeStore` (dark mode), `useChatStore`, `useGroupStore`, and
 `i18n/useLanguageStore`. Anything that must survive a reload / PWA relaunch uses the
 `persist` middleware (theme, language, **auth**).
 
@@ -159,7 +159,8 @@ and `ChatHeader`, and the SOS sheet (its press-and-hold flow is not a generic Sh
 ### Navigation — React Router (`react-router-dom`)
 
 `main.tsx` wraps the app in `BrowserRouter`; `App.tsx` is the route table, split by
-surface so `/org` and `/admin` can slot in as siblings later:
+surface — the participant `/camp`, organizer `/org`, and organization `/admin` trees
+sit as siblings:
 
 - `/` → `Onboarding` (login → congrats → form). The onboarding pager stays **local
   state**, not routes, so its slide animation is preserved; "Enter the camp"
@@ -168,6 +169,14 @@ surface so `/org` and `/admin` can slot in as siblings later:
   `home`/`chat`/`ranks`/`profile` (tabs) and `map`/`schedule`/`announcements`/
   `notifications` (secondary). Every screen is a **real URL** so push notifications
   deep-link to it. `BottomNav` uses `NavLink` — active state is driven by the URL.
+- `/admin` → the **organization admin surface** (third surface). Its own login page
+  at `/admin/login` (username + password — no link from the participant landing),
+  guarded by `RequireAdmin` (exact role `organization`, not `minRole`). `AdminShell`
+  mirrors `OrganizerShell` (sidebar + bottom nav, `<Outlet context>` via
+  `adminContext.ts`); child `organizers` is the create/list/deactivate dashboard,
+  reading the `organizers` service/query pair (`adminOrganizerKeys`). Logout here is a
+  **real** `POST /auth/logout` (the org has a genuine cookie session that
+  `useCurrentUser` revalidates on boot — a local-only clear would sign it back in).
 
 The shell shares state with routed screens via **Outlet context** (`useCamp()` in
 `src/components/participant/campContext.ts`) — this is how the single `useSos()`
@@ -208,7 +217,7 @@ new tokens; don't reach for arbitrary values.
 
 ### Components — `src/components/<domain>/`
 
-Grouped by domain: `auth`, `signup`, `organizer`, `participant` (plus shared
+Grouped by domain: `auth`, `signup`, `organizer`, `participant`, `organization` (plus shared
 primitives in **`ui/`**). The participant app is further split by feature: `chat`,
 `home`, `profile`, `ranks`, `sos`. Keep this grouping; keep components reusable but
 not over-abstracted.

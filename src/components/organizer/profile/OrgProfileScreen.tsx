@@ -92,7 +92,7 @@ export function OrgProfileScreen() {
           <InfoRow
             icon="📞"
             label={t.profile.phone}
-            value={user ? fmtPhone(user.phone) : '—'}
+            value={user?.phone ? fmtPhone(user.phone) : '—'}
             last
           />
         </div>

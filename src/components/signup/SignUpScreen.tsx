@@ -7,6 +7,8 @@ type Props = {
   onBack?: () => void
   /** Final step after the badge is created — no home screen exists yet. */
   onEnterCamp?: () => void
+  /** Fired right after the profile commits — persist it to the backend. */
+  onCommit?: () => void
   /** True once this screen is the visible step — gates the title typewriter. */
   active?: boolean
 }
@@ -18,7 +20,7 @@ type Props = {
   and the celebration overlay. All fields and layout live in ProfileForm, shared
   with the organizer flow.
 */
-export function SignUpScreen({ onBack, onEnterCamp, active = true }: Props) {
+export function SignUpScreen({ onBack, onEnterCamp, onCommit, active = true }: Props) {
   const { t } = useTranslation()
 
   return (
@@ -29,6 +31,7 @@ export function SignUpScreen({ onBack, onEnterCamp, active = true }: Props) {
       submitValid={t.signup.enterValid}
       submitInvalid={t.signup.enterInvalid}
       onBack={onBack}
+      onCommit={onCommit}
       active={active}
       ageBracket={(age) =>
         age < 13

@@ -38,6 +38,16 @@ export const organizerKeys = {
   orgChat: ['organizer', 'chat'] as const,
 }
 
+/*
+  The organization ADMIN surface (/admin) managing organizer accounts. Distinct
+  from `organizerKeys` above (which is a logged-in organizer's own back-office):
+  this is the super-admin's list of all organizers it creates/deactivates.
+*/
+export const adminOrganizerKeys = {
+  all: ['adminOrganizers'] as const,
+  list: () => [...adminOrganizerKeys.all, 'list'] as const,
+}
+
 /** Everything owned by / read within a single camp. */
 export const campKeys = {
   all: (campId: string) => ['camp', campId] as const,

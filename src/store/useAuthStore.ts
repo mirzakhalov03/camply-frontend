@@ -2,47 +2,44 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 /*
-  CLIENT state — the auth SESSION: the token and the identity the backend hands
-  back at login. This is the one place the app's bearer token lives; the axios
-  request interceptor reads it from here (useAuthStore.getState().token) to
-  authorize every call, and the response interceptor clears it on a 401.
+  CLIENT state — the auth SESSION identity. The real session is an httpOnly cookie
+  the browser holds; this store only caches WHO you are (for rendering + route
+  guards). Persisted, so a logged-in identity survives reload / PWA relaunch; the
+  cookie is re-validated on boot via GET /auth/me (useCurrentUser).
 
-  Persisted, so a logged-in session survives a reload / PWA relaunch. This holds
-  WHO you are + your token — not your editable profile fields (name, city,
-  socials); those stay in useProfileStore. Server-authored data (membership,
-  points) stays in React Query. Keeping the three apart is what makes each swap
-  to a real endpoint local.
+  Editable profile fields (email, socials) live in useProfileStore; server-authored
+  camp data (membership, points) stays in React Query. Keeping them apart is what
+  makes each swap to a real endpoint local.
 */
-
-// The role hierarchy (Context.md): organization super-admin > organizer >
-// participant. The backend is the source of truth for this — a client value is
-// a convenience, never a permission (guardrail: enforce the hierarchy server-side).
 export type AuthRole = 'participant' | 'organizer' | 'organization'
 
 export type AuthUser = {
   id: string
-  phone: string
+  // Null for the organization super-admin, which logs in by username, not phone.
+  phone: string | null
   name: string
   surname: string
   role: AuthRole
+  cityId: string | null
+  age: number | null
+  photo: string | null
+  profileComplete: boolean
 }
 
 type AuthState = {
-  token: string | null
   user: AuthUser | null
-  /** Commit a fresh session (called from useLogin / useRegister on success). */
-  setSession: (session: { token: string; user: AuthUser }) => void
-  /** Drop the session — log out, or an interceptor 401. */
+  /** Commit the identity (from login / complete-profile / boot revalidation). */
+  setUser: (user: AuthUser) => void
+  /** Drop the session — logout, or an interceptor 401. */
   clear: () => void
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      token: null,
       user: null,
-      setSession: ({ token, user }) => set({ token, user }),
-      clear: () => set({ token: null, user: null }),
+      setUser: (user) => set({ user }),
+      clear: () => set({ user: null }),
     }),
     { name: 'camply-auth' },
   ),

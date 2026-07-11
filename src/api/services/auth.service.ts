@@ -1,47 +1,46 @@
 import { axiosInstance } from '../axiosInstance'
-import type { AuthUser, AuthRole } from '../../store/useAuthStore'
+import type { AuthUser } from '../../store/useAuthStore'
 
 /*
-  The auth SERVICE — the backend boundary for sign-in. A service is a thin,
-  typed wrapper over axiosInstance: it knows the endpoint + the request/response
-  shapes, nothing about React. Queries (api/queries/) call these; components
-  never do.
+  The auth SERVICE — the backend boundary for participant sign-in. A thin, typed
+  wrapper over axiosInstance: it knows the endpoints + the request/response shapes,
+  nothing about React. Queries (api/queries/) call these; components never do.
 
-  The request/response types below are the DATA CONTRACT — what the backend will
-  send and receive. Adjust them to the real API when it lands; the queries and UI
-  depend on these shapes, not on axios.
+  Contract note: /auth/login wraps the user as { user }; /auth/me (GET and PATCH)
+  return the user flat. The service unwraps both to a plain AuthUser.
 */
 
-/** Login is phone-first (matches the onboarding flow — no password yet). */
-export type LoginRequest = { phone: string }
+/*
+  Participants/organizers sign in by phone (9 national digits; organizers add a
+  password). The organization signs in by username + password — it has no phone.
+*/
+export type LoginRequest =
+  { phone: string; password?: string } | { username: string; password: string }
 
-/** Everything the registration form commits, plus phone + chosen role. */
-export type RegisterRequest = {
-  phone: string
-  name: string
-  surname: string
+/** What the participant completes after claiming their spot. */
+export type CompleteProfileRequest = {
   cityId: string
   age: number
-  role: AuthRole
   photo?: string | null
 }
 
-/** Both login and register return a session: the token + who you are. */
-export type AuthSession = { token: string; user: AuthUser }
-
 export const authService = {
-  login: async (body: LoginRequest): Promise<AuthSession> => {
-    const { data } = await axiosInstance.post<AuthSession>('/auth/login', body)
-    return data
-  },
-
-  register: async (body: RegisterRequest): Promise<AuthSession> => {
-    const { data } = await axiosInstance.post<AuthSession>('/auth/register', body)
-    return data
+  login: async (body: LoginRequest): Promise<AuthUser> => {
+    const { data } = await axiosInstance.post<{ user: AuthUser }>('/auth/login', body)
+    return data.user
   },
 
   me: async (): Promise<AuthUser> => {
     const { data } = await axiosInstance.get<AuthUser>('/auth/me')
     return data
+  },
+
+  completeProfile: async (body: CompleteProfileRequest): Promise<AuthUser> => {
+    const { data } = await axiosInstance.patch<AuthUser>('/auth/me', body)
+    return data
+  },
+
+  logout: async (): Promise<void> => {
+    await axiosInstance.post('/auth/logout')
   },
 }
