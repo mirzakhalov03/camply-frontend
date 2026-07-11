@@ -173,10 +173,28 @@ sit as siblings:
   at `/admin/login` (username + password — no link from the participant landing),
   guarded by `RequireAdmin` (exact role `organization`, not `minRole`). `AdminShell`
   mirrors `OrganizerShell` (sidebar + bottom nav, `<Outlet context>` via
-  `adminContext.ts`); child `organizers` is the create/list/deactivate dashboard,
-  reading the `organizers` service/query pair (`adminOrganizerKeys`). Logout here is a
-  **real** `POST /auth/logout` (the org has a genuine cookie session that
-  `useCurrentUser` revalidates on boot — a local-only clear would sign it back in).
+  `adminContext.ts`). Three screens, index → `dashboard`: **`dashboard`** (landing —
+  live stat tiles + recent organizers, all derived from the real `GET /organizers`
+  via `useOrganizers()`, plus a mock camps count; quick action reuses
+  `NewOrganizerSheet`), **`camps`** (org-wide read-only camp list — see below), and
+  **`organizers`** (the invite/list/deactivate dashboard, `organizers` service/query
+  pair keyed by `adminOrganizerKeys`). Organizers are onboarded by **emailed magic
+  link**: `NewOrganizerSheet` collects `{name, surname, email}` (not phone/password)
+  and `OrganizerRow` is **status-driven** — *pending* (amber, email, Resend/Revoke),
+  *active* (pine, phone, Deactivate), *deactivated* (muted, Reactivate). The invited
+  organizer completes onboarding on a **public** page at **`/invite/:token`**
+  (`components/invite/InviteAcceptScreen.tsx`, outside all auth guards) — enter phone
+  → session starts → land on `/org`. Data: `invites.service.ts` + `invites.queries.ts`
+  (`useInvite`/`useAcceptInvite`), keyed by `inviteKeys`. Logout here is a **real** `POST /auth/logout`
+  (the org has a genuine cookie session that `useCurrentUser` revalidates on boot — a
+  local-only clear would sign it back in).
+
+  > **Camps is on the mock→real seam.** The backend has **no camps API yet** (no Camp
+  > model, no `/camps` route). `adminCamps.service.ts` returns `mockAdminCamps` with
+  > the real `GET /camps` call commented out, keyed by `adminCampKeys` (kept separate
+  > from the organizer's own `organizerKeys`). It's read-only by design — no "create
+  > camp" button (the org rarely creates camps, and a dead button violates the "hidden
+  > button ≠ permission" guardrail). Flip the one commented line when the endpoint lands.
 
 The shell shares state with routed screens via **Outlet context** (`useCamp()` in
 `src/components/participant/campContext.ts`) — this is how the single `useSos()`

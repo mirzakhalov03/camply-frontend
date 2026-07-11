@@ -36,20 +36,29 @@ export function Sheet({
   const panelRef = useRef<HTMLDivElement>(null)
   const { handleProps, panelStyle, backdropStyle } = useSheetDrag(onClose, panelRef)
 
+  // Keep the latest onClose in a ref so the focus effect below can depend on [open]
+  // ALONE. Callers pass an inline onClose (new identity every render); if it were an
+  // effect dependency, the effect would re-run on every render and panelRef.focus()
+  // would steal focus from inputs on each keystroke (making text fields untypable).
+  const onCloseRef = useRef(onClose)
+  useEffect(() => {
+    onCloseRef.current = onClose
+  })
+
   useEffect(() => {
     if (!open) return
     const previouslyFocused = document.activeElement as HTMLElement | null
     panelRef.current?.focus()
 
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') onCloseRef.current()
     }
     document.addEventListener('keydown', onKey)
     return () => {
       document.removeEventListener('keydown', onKey)
       previouslyFocused?.focus?.()
     }
-  }, [open, onClose])
+  }, [open])
 
   if (!open) return null
 

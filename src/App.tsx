@@ -28,6 +28,9 @@ import { RequireAdmin } from './components/auth/RequireAdmin'
 import { AdminShell } from './components/organization/AdminShell'
 import { AdminLogin } from './components/organization/AdminLogin'
 import { OrganizersScreen } from './components/organization/organizers/OrganizersScreen'
+import { AdminCampsScreen } from './components/organization/camps/AdminCampsScreen'
+import { DashboardScreen } from './components/organization/dashboard/DashboardScreen'
+import { InviteAcceptScreen } from './components/invite/InviteAcceptScreen'
 import { useCurrentUser } from './api/queries/auth.queries'
 import { useTranslation } from './i18n/useTranslation'
 
@@ -50,6 +53,9 @@ function App() {
       <SessionBoot />
       <Routes>
         <Route path="/" element={<Onboarding />} />
+
+        {/* Public organizer-invite accept page — token-gated, no auth guard. */}
+        <Route path="/invite/:token" element={<InviteAcceptScreen />} />
 
         <Route element={<RequireAuth requireProfile />}>
           <Route path="/camp" element={<ParticipantDashboard />}>
@@ -145,7 +151,9 @@ function App() {
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route element={<RequireAdmin />}>
           <Route path="/admin" element={<AdminShell />}>
-            <Route index element={<Navigate to="organizers" replace />} />
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<DashboardScreen />} />
+            <Route path="camps" element={<AdminCampsScreen />} />
             <Route path="organizers" element={<OrganizersScreen />} />
           </Route>
         </Route>
