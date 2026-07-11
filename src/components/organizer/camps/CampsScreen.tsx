@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { interpolate } from '../../../lib/interpolate'
 import { useOrganizerCamps, useOrganizerSummary } from '../../../api/queries/camps.queries'
@@ -6,10 +7,10 @@ import { useLeaderboard, deriveLeaderboard } from '../../../lib/leaderboard'
 import { useOrg } from '../orgContext'
 import { StatStrip } from './StatStrip'
 import { HelpBanner } from './HelpBanner'
-import { QuickLinks } from './QuickLinks'
 import { StandingsWidget } from './StandingsWidget'
-import { CampCard } from './CampCard'
 import { CampsSkeleton } from './CampsSkeleton'
+import { CAMP_FEATURES, type CampFeature } from '../detail/campFeatures'
+import { FeatureCard } from '../detail/FeatureCard'
 import type { OrganizerCamp } from '../../../api/services/camps.service'
 
 /*
@@ -26,7 +27,8 @@ import type { OrganizerCamp } from '../../../api/services/camps.service'
 export function CampsScreen() {
   const { t } = useTranslation()
   const c = t.org.camps
-  const { openCamp, openCampMap, openNotifications } = useOrg()
+  const navigate = useNavigate()
+  const { openCampMap, openNotifications } = useOrg()
 
   const campsQuery = useOrganizerCamps()
   const summaryQuery = useOrganizerSummary()
@@ -53,6 +55,23 @@ export function CampsScreen() {
   const primary: OrganizerCamp | undefined = camps.find((x) => x.status === 'active') ?? camps[0]
   const standings = leaderboard ? deriveLeaderboard(leaderboard) : null
   const activeHelp = help?.[0] ?? null
+  const alertCount = help?.length ?? 0
+  const leaderName = standings?.rows[0]?.name ?? null
+
+  // One card renderer for every feature — the home is the single launcher. Each card
+  // links straight to the feature full-screen for the primary camp (no in-between hub).
+  const renderFeature = (f: CampFeature, camp: OrganizerCamp) => (
+    <FeatureCard
+      key={f.key}
+      to={`/org/camps/${camp.id}/${f.to}`}
+      icon={f.icon}
+      tint={f.tint}
+      label={f.label(t)}
+      stat={f.stat({ t, camp, summary, alertCount, leaderName })}
+    />
+  )
+  const liveOps = CAMP_FEATURES.filter((f) => f.key === 'map' || f.key === 'leaderboard')
+  const otherFeatures = CAMP_FEATURES.filter((f) => f.key !== 'map' && f.key !== 'leaderboard')
 
   return (
     <div className="flex flex-col gap-3.5 px-5 pb-6 pt-4 md:px-8 md:pb-8">
@@ -63,13 +82,13 @@ export function CampsScreen() {
         </p>
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-display font-bold text-content">{primary?.name ?? c.yourCamps}</h1>
-          {/* Notifications — nudged up slightly (-translate-y-1.5) so it sits a touch
-              above the heading baseline. */}
+          {/* Notifications — nudged up (-translate-y-2.5) so it sits a touch above
+              the heading baseline. */}
           <button
             type="button"
             onClick={openNotifications}
             aria-label={c.notifications}
-            className="relative flex h-[42px] w-[42px] flex-none -translate-y-1.5 items-center justify-center rounded-input border border-line bg-surface text-pine shadow-[0_3px_12px_rgba(20,40,30,0.05)] active:scale-95"
+            className="relative flex h-[42px] w-[42px] flex-none -translate-y-2.5 items-center justify-center rounded-input border border-line bg-surface text-pine shadow-[0_3px_12px_rgba(20,40,30,0.05)] active:scale-95"
           >
             <BellIcon />
           </button>
@@ -82,25 +101,27 @@ export function CampsScreen() {
         <HelpBanner help={activeHelp} onView={() => openCampMap(activeHelp.campId)} />
       ) : null}
 
-      {/* Live-ops shortcuts + standings — two columns from md. */}
-      <div className="grid gap-3.5 md:grid-cols-2">
-        <QuickLinks
-          summary={summary}
-          alertCount={help?.length ?? 0}
-          leaderName={standings?.rows[0]?.name ?? null}
-          onMap={() => primary && openCampMap(primary.id)}
-          onLeaderboard={() => primary && openCamp(primary.id)}
-        />
-        {standings ? (
-          <StandingsWidget
-            rows={standings.rows}
-            onViewAll={() => primary && openCamp(primary.id)}
-          />
-        ) : null}
-      </div>
+      {/* Live-ops: Live map + Leaderboard, the priority surfaces, as big cards. */}
+      {primary ? (
+        <div className="grid grid-cols-2 gap-2.5 md:gap-3.5">
+          {liveOps.map((f) => renderFeature(f, primary))}
+        </div>
+      ) : null}
 
-      {/* The organizer's current camp */}
-      {primary ? <CampCard camp={primary} onOpen={() => openCamp(primary.id)} /> : null}
+      {/* Top groups standings — "View all" opens the leaderboard feature directly. */}
+      {standings ? (
+        <StandingsWidget
+          rows={standings.rows}
+          onViewAll={() => primary && navigate(`/org/camps/${primary.id}/leaderboard`)}
+        />
+      ) : null}
+
+      {/* The rest of the features, each opening full-screen for the primary camp. */}
+      {primary ? (
+        <div className="grid grid-cols-2 gap-2.5 md:gap-3.5 lg:grid-cols-4">
+          {otherFeatures.map((f) => renderFeature(f, primary))}
+        </div>
+      ) : null}
     </div>
   )
 }

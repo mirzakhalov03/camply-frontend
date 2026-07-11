@@ -1,6 +1,8 @@
+import { useRef } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { interpolate } from '../../../lib/interpolate'
 import { sosReasons, sosContext, type SosReasonKey } from '../../../lib/mockCamp'
+import { useSheetDrag } from '../../../lib/useSheetDrag'
 import { formatEta, type SosStage } from './useSos'
 
 type Props = {
@@ -34,6 +36,8 @@ export function SosSheet({
   onCancelHelp,
 }: Props) {
   const { t } = useTranslation()
+  const panelRef = useRef<HTMLDivElement>(null)
+  const { handleProps, panelStyle, backdropStyle } = useSheetDrag(onClose, panelRef)
   if (stage === null) return null
 
   const reasonLabel = reason
@@ -42,14 +46,23 @@ export function SosSheet({
 
   return (
     <div className="absolute inset-0 z-50">
-      <div className="absolute inset-0 bg-[rgba(40,10,6,0.5)]" onClick={onClose} />
+      <div
+        style={backdropStyle}
+        className="absolute inset-0 bg-[rgba(40,10,6,0.5)]"
+        onClick={onClose}
+      />
 
-      <div className="animate-sheet-up absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[26px] bg-surface-2 shadow-[0_-12px_34px_rgba(0,0,0,0.28)]">
+      <div
+        ref={panelRef}
+        style={panelStyle}
+        className="animate-sheet-up absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[26px] bg-surface-2 shadow-[0_-12px_34px_rgba(0,0,0,0.28)]"
+      >
         {stage === 'reason' && (
           <ReasonStage
             reason={reason}
             holdPct={holdPct}
             onClose={onClose}
+            handleProps={handleProps}
             onPickReason={onPickReason}
             onHoldStart={onHoldStart}
             onHoldEnd={onHoldEnd}
@@ -74,6 +87,7 @@ function ReasonStage({
   reason,
   holdPct,
   onClose,
+  handleProps,
   onPickReason,
   onHoldStart,
   onHoldEnd,
@@ -81,6 +95,7 @@ function ReasonStage({
   reason: SosReasonKey | null
   holdPct: number
   onClose: () => void
+  handleProps: ReturnType<typeof useSheetDrag>['handleProps']
   onPickReason: (key: SosReasonKey) => void
   onHoldStart: () => void
   onHoldEnd: () => void
@@ -90,7 +105,17 @@ function ReasonStage({
 
   return (
     <div className="overflow-y-auto px-5 pb-6 pt-2">
-      <div className="mx-auto mb-4 mt-1.5 h-1 w-10 rounded-full bg-line" />
+      {/* Grab handle closes the sheet — same affordance as the shared Sheet. Safe
+          here: this is the pre-send "reason" stage, so it just cancels (no alert
+          is live yet); the active stage has no handle. */}
+      <button
+        type="button"
+        aria-label={t.notfound.back}
+        {...handleProps}
+        className="group mx-auto mb-3 mt-1 flex w-full touch-none cursor-grab justify-center pb-2 pt-1 active:cursor-grabbing"
+      >
+        <span className="h-1 w-10 rounded-full bg-line transition group-active:w-12 group-active:bg-muted" />
+      </button>
 
       <div className="flex items-center gap-3">
         <div className="flex h-11 w-11 flex-none items-center justify-center rounded-[14px] bg-danger-tint text-[22px]">

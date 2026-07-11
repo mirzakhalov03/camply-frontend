@@ -22,12 +22,13 @@ export type RegisterRequest = {
   surname: string
   cityId: string
   age: number
+  /** Sent by the form but IGNORED by the backend — /register always creates a participant. */
   role: AuthRole
   photo?: string | null
 }
 
-/** Both login and register return a session: the token + who you are. */
-export type AuthSession = { token: string; user: AuthUser }
+/** Both login and register return the identity; the session lives in the httpOnly cookie. */
+export type AuthSession = { user: AuthUser }
 
 export const authService = {
   login: async (body: LoginRequest): Promise<AuthSession> => {

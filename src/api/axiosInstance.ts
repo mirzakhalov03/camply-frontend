@@ -12,18 +12,15 @@ import { useAuthStore } from '../store/useAuthStore'
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? '/api',
   timeout: 15_000,
+  withCredentials: true, // send/receive the httpOnly session cookie
   headers: { 'Content-Type': 'application/json' },
 })
 
 /*
-  Request: attach the bearer token. Read straight from the store (not a hook)
-  so it works outside React — the token is whatever the current session holds.
+  No request interceptor: the credential is the backend's httpOnly `camply_sid`
+  cookie, sent automatically because of `withCredentials`. JavaScript can't read
+  it (that's the point — an XSS bug can't steal it), so there's no token to attach.
 */
-axiosInstance.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token
-  if (token) config.headers.Authorization = `Bearer ${token}`
-  return config
-})
 
 /** The backend's error envelope — adjust the field names when the API is real. */
 type ApiErrorBody = { message?: string; error?: string }

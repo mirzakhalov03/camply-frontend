@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../store/useAuthStore'
 import { useProfileStore } from '../../store/useProfileStore'
 import { useOrganizerStore } from '../../store/useOrganizerStore'
@@ -19,6 +19,7 @@ import type { OrgContext } from './orgContext'
 */
 export function OrganizerShell() {
   const navigate = useNavigate()
+  const location = useLocation()
   const user = useAuthStore((s) => s.user)
   const clearAuth = useAuthStore((s) => s.clear)
   const resetProfile = useProfileStore((s) => s.reset)
@@ -29,6 +30,14 @@ export function OrganizerShell() {
   useEffect(() => {
     if (!isOrganizer) navigate('/', { replace: true })
   }, [isOrganizer, navigate])
+
+  // Every /org screen scrolls inside this one persistent <main> (see below), so its
+  // scrollTop carries over across navigation — open a feature after scrolling the
+  // launcher and it lands mid-page. Reset to the top on each route change.
+  const mainRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    mainRef.current?.scrollTo({ top: 0 })
+  }, [location.pathname])
 
   // Avoid a flash of the back-office while the redirect effect runs.
   if (!isOrganizer) return null
@@ -51,7 +60,7 @@ export function OrganizerShell() {
     <div className="relative mx-auto flex h-dvh w-full max-w-6xl overflow-hidden bg-canvas shadow-sm">
       <OrganizerSidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <main className="min-h-0 flex-1 overflow-y-auto">
+        <main ref={mainRef} className="min-h-0 flex-1 overflow-y-auto">
           <Outlet context={ctx} />
         </main>
         <OrganizerBottomNav />

@@ -82,7 +82,6 @@ export function Onboarding() {
                 // closures — the profile form has just committed name/surname.
                 const p = useProfileStore.getState()
                 useAuthStore.getState().setSession({
-                  token: 'mock-organizer-session',
                   user: {
                     id: 'org-me',
                     phone: p.phone,

@@ -40,12 +40,12 @@ export function useRegister() {
   })
 }
 
-/** GET /auth/me → the authenticated user; only runs once a token exists. */
+/** GET /auth/me → the authenticated user; only runs once we have a stored identity. */
 export function useCurrentUser() {
-  const token = useAuthStore((s) => s.token)
+  const user = useAuthStore((s) => s.user)
   return useQuery({
     queryKey: authKeys.me,
     queryFn: authService.me,
-    enabled: Boolean(token),
+    enabled: Boolean(user),
   })
 }
