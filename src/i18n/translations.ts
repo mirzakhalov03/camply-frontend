@@ -306,6 +306,7 @@ type OrgStrings = {
     statParticipants: string
     statGroups: string
     statOnSite: string
+    statWeather: string
     notifications: string // aria-label + notifications screen title
     notificationsSubtitle: string // 'Sent to participants'
     // Live help banner (SOS)
@@ -545,6 +546,7 @@ export const translations: Record<
         statParticipants: 'Ishtirokchi',
         statGroups: 'Guruh',
         statOnSite: 'Hozir shu yerda',
+        statWeather: 'Harorat',
         notifications: 'Bildirishnomalar',
         notificationsSubtitle: 'Ishtirokchilarga yuborilgan',
         needsHelp: '{name} yordamga muhtoj',
@@ -927,6 +929,7 @@ export const translations: Record<
         statParticipants: 'Участников',
         statGroups: 'Групп',
         statOnSite: 'На месте',
+        statWeather: 'Погода',
         notifications: 'Уведомления',
         notificationsSubtitle: 'Отправлено участникам',
         needsHelp: '{name} нужна помощь',
@@ -1295,6 +1298,7 @@ export const translations: Record<
         statParticipants: 'Participants',
         statGroups: 'Groups',
         statOnSite: 'On-site',
+        statWeather: 'Weather',
         notifications: 'Notifications',
         notificationsSubtitle: 'Sent to participants',
         needsHelp: '{name} needs help',
