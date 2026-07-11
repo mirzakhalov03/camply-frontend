@@ -306,6 +306,7 @@ type OrgStrings = {
     statParticipants: string
     statGroups: string
     statOnSite: string
+    statWeather: string
     notifications: string // aria-label + notifications screen title
     notificationsSubtitle: string // 'Sent to participants'
     // Live help banner (SOS)
@@ -354,6 +355,12 @@ type OrgStrings = {
     statParticipants: string
     statGroups: string
     statCheckedIn: string
+    hubParticipantsStat: string // '{count} total'
+    hubGroupsStat: string // '{count} groups'
+    hubScheduleStat: string // 'Day {current}/{total}'
+    hubScheduleStatEmpty: string
+    hubAnnouncementsStat: string
+    hubStatEmpty: string
     searchParticipants: string // 'Search {count} participants…'
     statusIn: string
     statusOut: string
@@ -610,6 +617,7 @@ export const translations: Record<
         statParticipants: 'Ishtirokchi',
         statGroups: 'Guruh',
         statOnSite: 'Hozir shu yerda',
+        statWeather: 'Harorat',
         notifications: 'Bildirishnomalar',
         notificationsSubtitle: 'Ishtirokchilarga yuborilgan',
         needsHelp: '{name} yordamga muhtoj',
@@ -651,6 +659,12 @@ export const translations: Record<
         statParticipants: 'Ishtirokchi',
         statGroups: 'Guruh',
         statCheckedIn: 'Roʻyxatda',
+        hubParticipantsStat: 'Jami {count} ta',
+        hubGroupsStat: '{count} guruh',
+        hubScheduleStat: '{current}/{total}-kun',
+        hubScheduleStatEmpty: 'Jadval',
+        hubAnnouncementsStat: 'Eʼlonlar',
+        hubStatEmpty: '—',
         searchParticipants: '{count} ishtirokchini qidirish…',
         statusIn: 'Hududda',
         statusOut: 'Tashqarida',
@@ -1020,6 +1034,7 @@ export const translations: Record<
         statParticipants: 'Участников',
         statGroups: 'Групп',
         statOnSite: 'На месте',
+        statWeather: 'Погода',
         notifications: 'Уведомления',
         notificationsSubtitle: 'Отправлено участникам',
         needsHelp: '{name} нужна помощь',
@@ -1061,6 +1076,12 @@ export const translations: Record<
         statParticipants: 'Участников',
         statGroups: 'Групп',
         statCheckedIn: 'Отмечено',
+        hubParticipantsStat: 'Всего {count}',
+        hubGroupsStat: '{count} групп',
+        hubScheduleStat: 'День {current}/{total}',
+        hubScheduleStatEmpty: 'Расписание',
+        hubAnnouncementsStat: 'Объявления',
+        hubStatEmpty: '—',
         searchParticipants: 'Поиск среди {count} участников…',
         statusIn: 'На месте',
         statusOut: 'Снаружи',
@@ -1416,6 +1437,7 @@ export const translations: Record<
         statParticipants: 'Participants',
         statGroups: 'Groups',
         statOnSite: 'On-site',
+        statWeather: 'Weather',
         notifications: 'Notifications',
         notificationsSubtitle: 'Sent to participants',
         needsHelp: '{name} needs help',
@@ -1457,6 +1479,12 @@ export const translations: Record<
         statParticipants: 'Participants',
         statGroups: 'Groups',
         statCheckedIn: 'Checked in',
+        hubParticipantsStat: '{count} total',
+        hubGroupsStat: '{count} groups',
+        hubScheduleStat: 'Day {current}/{total}',
+        hubScheduleStatEmpty: 'Timeline',
+        hubAnnouncementsStat: 'Broadcasts',
+        hubStatEmpty: '—',
         searchParticipants: 'Search {count} participants…',
         statusIn: 'In',
         statusOut: 'Out',

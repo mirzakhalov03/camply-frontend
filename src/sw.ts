@@ -14,6 +14,12 @@ type PushPayload = {
   type?: string
 }
 
+// Activate a new build immediately instead of parking it in "waiting" until every
+// tab closes — so a single refresh picks up the latest version (no stale cache).
+self.addEventListener('install', () => {
+  self.skipWaiting()
+})
+
 // Take control quickly so a freshly-installed SW can receive pushes.
 self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim())

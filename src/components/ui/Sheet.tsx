@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react'
+import { useSheetDrag } from '../../lib/useSheetDrag'
 
 /*
   The one bottom sheet. Dimmed backdrop + a surface that slides up from the edge
@@ -33,6 +34,7 @@ export function Sheet({
   className = '',
 }: Props) {
   const panelRef = useRef<HTMLDivElement>(null)
+  const { handleProps, panelStyle, backdropStyle } = useSheetDrag(onClose, panelRef)
 
   useEffect(() => {
     if (!open) return
@@ -57,6 +59,7 @@ export function Sheet({
         type="button"
         aria-label={closeLabel}
         onClick={onClose}
+        style={backdropStyle}
         className="absolute inset-0 bg-black/40"
       />
       <div
@@ -64,9 +67,20 @@ export function Sheet({
         role="dialog"
         aria-modal="true"
         tabIndex={-1}
+        style={panelStyle}
         className={`animate-sheet-up absolute inset-x-0 bottom-0 rounded-t-card bg-surface-2 px-[18px] pb-7 pt-2 shadow-[0_-10px_30px_rgba(0,0,0,0.22)] outline-none ${className}`}
       >
-        <div className="mx-auto mb-4 mt-1.5 h-1 w-10 rounded-full bg-line" />
+        {/* Grab handle — pull it DOWN to dismiss (drag past a threshold closes; a
+            small pull springs back). A plain tap does nothing; Enter/Space closes
+            for keyboard users. See useSheetDrag. */}
+        <button
+          type="button"
+          aria-label={closeLabel}
+          {...handleProps}
+          className="group mx-auto mb-3 flex w-full touch-none cursor-grab justify-center pb-2 pt-1 active:cursor-grabbing"
+        >
+          <span className="h-1 w-10 rounded-full bg-line transition group-active:w-12 group-active:bg-muted" />
+        </button>
         {title && <div className="text-subhead font-bold text-content">{title}</div>}
         {subtitle && <div className="mb-4 mt-0.5 text-body text-muted">{subtitle}</div>}
         {children}

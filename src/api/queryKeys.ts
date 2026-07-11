@@ -18,6 +18,15 @@ export const authKeys = {
 }
 
 /*
+  Weather is DEVICE-scoped, not camp-scoped: it reads the user's current location,
+  so it's the same across every camp they run and lives at the root, not under a
+  campId.
+*/
+export const weatherKeys = {
+  current: ['weather', 'current'] as const,
+}
+
+/*
   Organizer-scoped, CROSS-camp resources — the back-office dashboard reads that
   span every camp the organizer runs, so they sit ABOVE any single campId (unlike
   campKeys below). A single-camp view still reads camp-scoped keys from campKeys.

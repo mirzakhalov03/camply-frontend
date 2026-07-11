@@ -12,6 +12,7 @@ import { ComingSoon } from './components/participant/ComingSoon'
 import { OrganizerShell } from './components/organizer/OrganizerShell'
 import { CampsScreen } from './components/organizer/camps/CampsScreen'
 import { CampDetailShell } from './components/organizer/detail/CampDetailShell'
+import { FeatureShell } from './components/organizer/detail/FeatureShell'
 import { ParticipantsTab } from './components/organizer/detail/participants/ParticipantsTab'
 import { GroupsTab } from './components/organizer/detail/groups/GroupsTab'
 import { LeaderboardTab } from './components/organizer/detail/leaderboard/LeaderboardTab'
@@ -75,16 +76,61 @@ function App() {
           <Route path="/org" element={<OrganizerShell />}>
             <Route index element={<Navigate to="camps" replace />} />
             <Route path="camps" element={<CampsScreen />} />
-            {/* Camp Detail (slice 2): tabbed layout, each tab a deep-linkable route.
-              Participants + Groups are built; the rest land a "coming soon". */}
+            {/* Camp Detail: the /org/camps home is the launcher; each feature is a
+                deep-linkable route rendered full-screen inside FeatureShell (back arrow
+                -> home). URLs are unchanged so push/deep-links still resolve. A bare
+                camp URL has no per-camp hub -- redirect it to the home launcher. Map
+                lands a "coming soon" for now. */}
             <Route path="camps/:campId" element={<CampDetailShell />}>
-              <Route index element={<Navigate to="participants" replace />} />
-              <Route path="participants" element={<ParticipantsTab />} />
-              <Route path="groups" element={<GroupsTab />} />
-              <Route path="map" element={<OrgComingSoon />} />
-              <Route path="leaderboard" element={<LeaderboardTab />} />
-              <Route path="schedule" element={<ScheduleTab />} />
-              <Route path="announcements" element={<AnnouncementsTab />} />
+              <Route index element={<Navigate to="/org/camps" replace />} />
+              <Route
+                path="participants"
+                element={
+                  <FeatureShell featureKey="participants">
+                    <ParticipantsTab />
+                  </FeatureShell>
+                }
+              />
+              <Route
+                path="groups"
+                element={
+                  <FeatureShell featureKey="groups">
+                    <GroupsTab />
+                  </FeatureShell>
+                }
+              />
+              <Route
+                path="map"
+                element={
+                  <FeatureShell featureKey="map">
+                    <OrgComingSoon />
+                  </FeatureShell>
+                }
+              />
+              <Route
+                path="leaderboard"
+                element={
+                  <FeatureShell featureKey="leaderboard">
+                    <LeaderboardTab />
+                  </FeatureShell>
+                }
+              />
+              <Route
+                path="schedule"
+                element={
+                  <FeatureShell featureKey="schedule">
+                    <ScheduleTab />
+                  </FeatureShell>
+                }
+              />
+              <Route
+                path="announcements"
+                element={
+                  <FeatureShell featureKey="announcements">
+                    <AnnouncementsTab />
+                  </FeatureShell>
+                }
+              />
             </Route>
             <Route path="chat" element={<OrgChatScreen />} />
             <Route path="notifications" element={<OrgNotificationsScreen />} />

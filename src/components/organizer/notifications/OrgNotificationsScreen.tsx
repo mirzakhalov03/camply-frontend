@@ -19,7 +19,7 @@ export function OrgNotificationsScreen() {
   const { data, isPending, isError } = useAnnouncements()
 
   return (
-    <div className="pb-24 md:pb-8">
+    <div className="pb-6 md:pb-8">
       <div className="bg-gradient-to-b from-pine to-deep px-5 pb-6 pt-5 md:px-8">
         <div className="flex items-center gap-3">
           <button
