@@ -1,6 +1,4 @@
-import { rosterMock } from '../../lib/mockRoster'
-import { CAMP_GROUPS } from '../../lib/groups'
-// import { axiosInstance } from '../axiosInstance' // ← enable when the endpoint exists
+import { axiosInstance } from '../axiosInstance'
 
 /*
   The camp-groups SERVICE — the organizer's Groups tab. The DATA CONTRACT is a group
@@ -30,27 +28,7 @@ export type CampGroupDetail = {
 
 export const campGroupsService = {
   /** Groups that have members in this camp, in canonical CAMP_GROUPS order. */
-  list: async (_campId: string): Promise<CampGroupDetail[]> => {
-    // return (await axiosInstance.get<CampGroupDetail[]>(`/organizer/camps/${_campId}/groups`)).data
-    return CAMP_GROUPS.map((g) => {
-      const members: GroupMember[] = rosterMock
-        .filter((p) => p.groupId === g.id)
-        .map((p) => ({
-          id: p.id,
-          name: p.name,
-          initials: p.initials,
-          avatarColor: p.avatarColor,
-          photo: p.photo ?? null,
-          isLeader: Boolean(p.isLeader),
-        }))
-      return {
-        id: g.id,
-        name: g.name,
-        color: g.color,
-        memberCount: members.length,
-        leaderName: members.find((m) => m.isLeader)?.name ?? null,
-        members,
-      }
-    }).filter((g) => g.memberCount > 0)
+  list: async (campId: string): Promise<CampGroupDetail[]> => {
+    return (await axiosInstance.get<CampGroupDetail[]>(`/organizer/camps/${campId}/groups`)).data
   },
 }

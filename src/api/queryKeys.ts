@@ -67,9 +67,10 @@ export const adminCampKeys = {
   list: () => [...adminCampKeys.all, 'list'] as const,
 }
 
-/** A single public organizer invite (accept page), keyed by its token. */
+/** A pending organizer team invite, looked up by its token (pre-auth). */
 export const inviteKeys = {
-  detail: (token: string) => ['invite', token] as const,
+  all: ['invite'] as const,
+  detail: (token: string) => [...inviteKeys.all, token] as const,
 }
 
 /** Everything owned by / read within a single camp. */

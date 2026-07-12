@@ -10,6 +10,8 @@ import { AnnouncementDetailScreen } from './components/participant/announcements
 import { ScheduleScreen } from './components/participant/schedule/ScheduleScreen'
 import { ComingSoon } from './components/participant/ComingSoon'
 import { OrganizerShell } from './components/organizer/OrganizerShell'
+import { InviteAccept } from './components/organizer/InviteAccept'
+import { OrganizerOnboarding } from './components/organizer/OrganizerOnboarding'
 import { CampsScreen } from './components/organizer/camps/CampsScreen'
 import { CampDetailShell } from './components/organizer/detail/CampDetailShell'
 import { FeatureShell } from './components/organizer/detail/FeatureShell'
@@ -30,7 +32,6 @@ import { AdminLogin } from './components/organization/AdminLogin'
 import { OrganizersScreen } from './components/organization/organizers/OrganizersScreen'
 import { AdminCampsScreen } from './components/organization/camps/AdminCampsScreen'
 import { DashboardScreen } from './components/organization/dashboard/DashboardScreen'
-import { InviteAcceptScreen } from './components/invite/InviteAcceptScreen'
 import { useCurrentUser } from './api/queries/auth.queries'
 import { useTranslation } from './i18n/useTranslation'
 
@@ -54,8 +55,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Onboarding />} />
 
-        {/* Public organizer-invite accept page — token-gated, no auth guard. */}
-        <Route path="/invite/:token" element={<InviteAcceptScreen />} />
+        {/* Public — the emailed organizer magic link lands here, no session yet. */}
+        <Route path="/invite/:token" element={<InviteAccept />} />
 
         <Route element={<RequireAuth requireProfile />}>
           <Route path="/camp" element={<ParticipantDashboard />}>
@@ -78,7 +79,13 @@ function App() {
         each lands a "coming soon" until its slice. `camps/new` precedes
         `camps/:campId` so "new" isn't captured as a camp id.
       */}
+        {/* Organizer onboarding — reachable by an organizer whose profile is still
+            incomplete (fresh off the invite accept), so NOT profile-gated. */}
         <Route element={<RequireAuth minRole="organizer" />}>
+          <Route path="/org/welcome" element={<OrganizerOnboarding />} />
+        </Route>
+
+        <Route element={<RequireAuth minRole="organizer" requireProfile />}>
           <Route path="/org" element={<OrganizerShell />}>
             <Route index element={<Navigate to="camps" replace />} />
             <Route path="camps" element={<CampsScreen />} />

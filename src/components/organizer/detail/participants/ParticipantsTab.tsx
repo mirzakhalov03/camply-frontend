@@ -8,6 +8,7 @@ import type { RosterParticipant } from '../../../../api/services/roster.service'
 import { useCampDetail } from '../campDetailContext'
 import { RosterRow } from './RosterRow'
 import { ParticipantPeekSheet } from './ParticipantPeekSheet'
+import { AddParticipantSheet } from './AddParticipantSheet'
 
 /*
   Participants tab — the camp roster with client-side search (name / group / city).
@@ -22,6 +23,7 @@ export function ParticipantsTab() {
   const [query, setQuery] = useState('')
   // Which participant's peek sheet is open (null = closed).
   const [selected, setSelected] = useState<RosterParticipant | null>(null)
+  const [addOpen, setAddOpen] = useState(false)
   const rosterQuery = useRoster(camp.id)
 
   const filtered = useMemo(() => {
@@ -40,16 +42,28 @@ export function ParticipantsTab() {
 
   return (
     <div className="flex flex-col gap-2 pt-1">
-      {/* Search */}
-      <label className="mb-1 flex items-center gap-2.5 rounded-input border border-line bg-surface px-3.5 py-2.5">
-        <SearchIcon />
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={interpolate(d.searchParticipants, { count: rosterQuery.data.length })}
-          className="min-w-0 flex-1 bg-transparent text-body text-content outline-none placeholder:text-muted"
-        />
-      </label>
+      {/* Search + add */}
+      <div className="mb-1 flex items-center gap-2">
+        <label className="flex flex-1 items-center gap-2.5 rounded-input border border-line bg-surface px-3.5 py-2.5">
+          <SearchIcon />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={interpolate(d.searchParticipants, { count: rosterQuery.data.length })}
+            className="min-w-0 flex-1 bg-transparent text-body text-content outline-none placeholder:text-muted"
+          />
+        </label>
+        <button
+          type="button"
+          onClick={() => setAddOpen(true)}
+          className="flex h-[42px] flex-none items-center gap-1.5 rounded-input bg-pine px-3.5 text-caption font-bold text-white active:scale-95"
+        >
+          <span aria-hidden className="text-body leading-none">
+            +
+          </span>
+          {t.addParticipant.title}
+        </button>
+      </div>
 
       {filtered.length === 0 ? (
         <p className="py-8 text-center text-body text-muted">{d.noResults}</p>
@@ -67,6 +81,8 @@ export function ParticipantsTab() {
           navigate(`../map?focus=${p.id}`)
         }}
       />
+
+      <AddParticipantSheet open={addOpen} onClose={() => setAddOpen(false)} campId={camp.id} />
     </div>
   )
 }

@@ -1,5 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { campsService } from '../services/camps.service'
+import type { CreateCampBody } from '../services/camps.service'
 import { organizerKeys } from '../queryKeys'
 
 /*
@@ -29,5 +30,17 @@ export function useOrganizerCamp(campId: string) {
     queryKey: organizerKeys.camp(campId),
     queryFn: () => campsService.get(campId),
     enabled: Boolean(campId),
+  })
+}
+
+/** POST /organizer/camps → refresh the camps list and the header summary counts. */
+export function useCreateCamp() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (body: CreateCampBody) => campsService.create(body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: organizerKeys.camps })
+      queryClient.invalidateQueries({ queryKey: organizerKeys.summary })
+    },
   })
 }

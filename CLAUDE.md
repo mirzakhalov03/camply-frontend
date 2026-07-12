@@ -23,7 +23,7 @@ No test runner is configured, by project preference — don't add or suggest tes
 
 > **Known caveat — `format:check` fails tree-wide on Windows.** The repo is checked
 > out with CRLF (`core.autocrlf=true`, no `.gitattributes`) while Prettier defaults
-> to `endOfLine: lf`, so `format:check` warns on *every* file regardless of content.
+> to `endOfLine: lf`, so `format:check` warns on _every_ file regardless of content.
 > Don't "fix" this by running `format --write` across the tree — that rewrites line
 > endings on 80+ files and buries real diffs. Format only files you touched, and
 > preserve endings: `npx prettier --write --end-of-line auto <files>`. (A proper fix
@@ -53,12 +53,12 @@ those, not for row count.
 
 - **Server data → React Query only.** Never mirror it into Zustand — two sources of
   truth drift. Zustand is for client-owned UI state (theme, language, sheet open/
-  close, SOS hold, the socket *connection*) — never rosters/chat/leaderboards.
+  close, SOS hold, the socket _connection_) — never rosters/chat/leaderboards.
 - **Don't add Redux / a normalized global store.** That solves high-volume,
   heavily cross-referenced entities; React Query's per-key cache already gives
   sharing + dedup for bounded camp data.
 - **Don't add GraphQL.** No over-fetching problem worth a new stack — REST/axios
-  through `src/api/` is the boundary. (tRPC is a *maybe-later*, only if the backend
+  through `src/api/` is the boundary. (tRPC is a _maybe-later_, only if the backend
   is TS and we want end-to-end types — a backend decision, not now.)
 - **Realtime is a bridge INTO the query cache, not a parallel state system** (see
   `api/realtime/`). Analytics, cross-camp, and big lists are `[LATER]` (§10) — don't
@@ -70,7 +70,7 @@ Each feature's server data flows through one module in `src/lib/` (e.g. `chat.ts
 `campHome.ts`, `leaderboard.ts`, `membership.ts`). The pattern, which every new
 data feature should follow:
 
-1. Export **TypeScript types** describing what the backend *will* serve — the "data
+1. Export **TypeScript types** describing what the backend _will_ serve — the "data
    contract." Components depend on these types, never on where data comes from.
 2. Export an async `fetch<X>()` that is the single boundary. **Today it returns
    mock data** (`src/lib/mock*.ts`) with the real call commented out:
@@ -91,7 +91,7 @@ data feature should follow:
 Real server interaction lives here, split by concern:
 
 - **`api/axiosInstance.ts`** — the single HTTP client. `baseURL` is `VITE_API_URL ??
-  '/api'` (Vite proxies `/api/*` to Express :4000 in dev). It sends the httpOnly
+'/api'` (Vite proxies `/api/*` to Express :4000 in dev). It sends the httpOnly
   session cookie (`withCredentials`); there is no bearer token. A response
   interceptor normalizes errors to an `ApiError` (backend `message` + `status`) and
   clears the session on a **401**. Never call `fetch`/`axios` directly elsewhere.
@@ -112,14 +112,14 @@ Real server interaction lives here, split by concern:
   invalidate just their slice.
 - **`api/realtime/realtimeBridge.ts`** — the single WebSocket. Server-pushed events
   route into the **same** query cache the UI reads: `setQueryData` for high-frequency
-  streams (map pins — *not* invalidate), `invalidateQueries` for low-frequency nudges
+  streams (map pins — _not_ invalidate), `invalidateQueries` for low-frequency nudges
   (leaderboard), append for chat. No new store, no component changes. Stub today —
   `connectRealtime(campId)` isn't called yet; wire it from a camp-scoped provider.
 
 Flow: **component → query hook → service → axiosInstance → backend**, with realtime
 writing into the cache from the side. Auth is the worked example (`auth.service.ts` +
 `auth.queries.ts`); mirror it for each new domain. Note `useCurrentUser()` (GET
-`/auth/me`) is the *server* identity — distinct from `useMe()` (the client profile
+`/auth/me`) is the _server_ identity — distinct from `useMe()` (the client profile
 assembler); don't conflate them.
 
 ### Client state — Zustand stores
@@ -164,7 +164,19 @@ sit as siblings:
 
 - `/` → `Onboarding` (login → congrats → form). The onboarding pager stays **local
   state**, not routes, so its slide animation is preserved; "Enter the camp"
-  `navigate('/camp/home')`.
+  `navigate('/camp/home')`. `/` is now **participant-only** — the old mock organizer
+  login (`isKnownOrganizer` / fabricated `org-me` session) is **gone**. A signed-in
+  organizer who lands on `/` is bounced to their surface.
+- `/invite/:token` → `InviteAccept` (**public**, outside all guards) — where the
+  emailed organizer magic link lands. Greets by name (`GET /invite/:token`), captures
+  the phone (sent as raw 9 digits), and on accept starts a real organizer session →
+  `/org/welcome`. `/org/welcome` → `OrganizerOnboarding` (organizer-guarded but **not**
+  profile-gated, since a fresh organizer's profile is incomplete): the real
+  `completeProfile` step. The `/org/*` tree is now `requireProfile`, so an incomplete
+  organizer is redirected to `/org/welcome`. Organizer camp/roster **writes** are wired
+  (`campsService.create` / `rosterService.add` → the "+ New camp" and "+ Add
+  participant" sheets). Design/plan:
+  `../docs/superpowers/{specs,plans}/2026-07-12-organizer-onboarding-chain*.md`.
 - `/camp` → `ParticipantDashboard` **layout** rendering `<Outlet>`; children
   `home`/`chat`/`ranks`/`profile` (tabs) and `map`/`schedule`/`announcements`/
   `notifications` (secondary). Every screen is a **real URL** so push notifications
@@ -183,9 +195,10 @@ sit as siblings:
   and `OrganizerRow` is **status-driven** — *pending* (amber, email, Resend/Revoke),
   *active* (pine, phone, Deactivate), *deactivated* (muted, Reactivate). The invited
   organizer completes onboarding on a **public** page at **`/invite/:token`**
-  (`components/invite/InviteAcceptScreen.tsx`, outside all auth guards) — enter phone
-  → session starts → land on `/org`. Data: `invites.service.ts` + `invites.queries.ts`
-  (`useInvite`/`useAcceptInvite`), keyed by `inviteKeys`. Logout here is a **real** `POST /auth/logout`
+  (`components/organizer/InviteAccept.tsx`, outside all auth guards) — enter phone
+  → session starts → land on `/org/welcome` to finish onboarding. Data:
+  `invite.service.ts` + `invite.queries.ts` (`useInvite`/`useAcceptInvite`), keyed by
+  `inviteKeys`. Logout here is a **real** `POST /auth/logout`
   (the org has a genuine cookie session that `useCurrentUser` revalidates on boot — a
   local-only clear would sign it back in).
 

@@ -1,5 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { rosterService } from '../services/roster.service'
+import type { AddRosterBody } from '../services/roster.service'
 import { campKeys } from '../queryKeys'
 
 /*
@@ -13,5 +14,16 @@ export function useRoster(campId: string) {
     queryKey: campKeys.roster(campId),
     queryFn: () => rosterService.list(campId),
     enabled: Boolean(campId),
+  })
+}
+
+/** POST /organizer/camps/:id/roster → refresh this camp's roster. */
+export function useAddRoster(campId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (body: AddRosterBody) => rosterService.add(campId, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: campKeys.roster(campId) })
+    },
   })
 }

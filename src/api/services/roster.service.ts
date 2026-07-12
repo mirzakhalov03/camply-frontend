@@ -1,6 +1,4 @@
-import { rosterMock } from '../../lib/mockRoster'
-import { CAMP_GROUPS } from '../../lib/groups'
-// import { axiosInstance } from '../axiosInstance' // ← enable when the endpoint exists
+import { axiosInstance } from '../axiosInstance'
 
 /*
   The roster SERVICE — the backend boundary for a camp's participant list, as the
@@ -36,27 +34,21 @@ export type RosterParticipant = {
   }
 }
 
-const GROUP_NAME = new Map(CAMP_GROUPS.map((g) => [g.id, g.name]))
+/** Body for adding a participant to a camp's roster by phone. */
+export type AddRosterBody = {
+  phone: string
+  groupId?: string | null
+}
 
 export const rosterService = {
   /** The camp's participants, alphabetical by name (server-ordered). */
-  list: async (_campId: string): Promise<RosterParticipant[]> => {
-    // return (await axiosInstance.get<RosterParticipant[]>(`/organizer/camps/${_campId}/roster`)).data
-    return rosterMock
-      .map((p) => ({
-        id: p.id,
-        name: p.name,
-        initials: p.initials,
-        avatarColor: p.avatarColor,
-        photo: p.photo ?? null,
-        groupId: p.groupId,
-        groupName: p.groupId ? (GROUP_NAME.get(p.groupId) ?? null) : null,
-        city: p.city,
-        age: p.age,
-        status: p.status,
-        phone: p.phone,
-        socials: p.socials,
-      }))
-      .sort((a, b) => a.name.localeCompare(b.name))
+  list: async (campId: string): Promise<RosterParticipant[]> => {
+    return (await axiosInstance.get<RosterParticipant[]>(`/organizer/camps/${campId}/roster`)).data
+  },
+
+  /** Adds a participant (by phone) to the camp's roster, optionally into a group. */
+  add: async (campId: string, body: AddRosterBody): Promise<RosterParticipant> => {
+    return (await axiosInstance.post<RosterParticipant>(`/organizer/camps/${campId}/roster`, body))
+      .data
   },
 }

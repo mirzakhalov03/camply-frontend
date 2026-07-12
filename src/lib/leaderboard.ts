@@ -1,44 +1,16 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { leaderboardMock } from './mockLeaderboard'
-// import { api } from './api' // ← enable when the backend endpoint exists
-
 /*
-  ============================================================================
-  DATA CONTRACT — the raw shape the backend + organizer dashboard will return.
-  ============================================================================
-  This is deliberately "dumb" data: groups with scores, and who the current
-  participant is. It carries NO ranks, NO "you" flag, NO trend — because a real
-  API wouldn't. All of that is computed by `deriveLeaderboard()` below. Keeping
-  the raw shape backend-honest is what makes the future swap a one-liner.
+  This module is the PURE leaderboard view model — the ranking math and the shapes
+  the screen renders. The data contract (Leaderboard/LeaderboardGroup/…) and the
+  fetch/mutation hooks migrated to api/services/leaderboard.service.ts +
+  api/queries/leaderboard.queries.ts (see CLAUDE.md). We re-export the contract
+  types below so existing type-only importers keep working.
 */
-export type LeaderboardBreakdown = {
-  activities: number
-  attendance: number
-  challenges: number
-}
-
-export type LeaderboardGroup = {
-  id: string
-  name: string
-  /** Organizer-assigned group color — runtime data, applied as an inline style. */
-  color: string
-  /** Group photo URL (organizer/backend-set later); falls back to the initials tile. */
-  photo?: string
-  /** Current total points. */
-  score: number
-  /** Score at the last ranking snapshot — drives the trend arrow. */
-  previousScore: number
-  breakdown: LeaderboardBreakdown
-}
-
-export type Leaderboard = {
-  /** Scoring period label, e.g. "Week 1". Organizer/backend owned. Part of the
-      API shape; not surfaced in the UI yet (kept for a future period selector). */
-  periodLabel: string
-  groups: LeaderboardGroup[]
-  /** The current participant's group id — used to mark "you". Null if unassigned. */
-  currentGroupId: string | null
-}
+export type {
+  Leaderboard,
+  LeaderboardGroup,
+  LeaderboardBreakdown,
+} from '../api/services/leaderboard.service'
+import type { Leaderboard, LeaderboardBreakdown } from '../api/services/leaderboard.service'
 
 /*
   ============================================================================
@@ -122,57 +94,4 @@ export function deriveLeaderboard(data: Leaderboard): LeaderboardView {
   const nextAhead = you && you.rank > 1 ? (rows[you.rank - 2] ?? null) : null
 
   return { rows, you, nextAhead }
-}
-
-/*
-  The single data boundary. Today returns the mock; when the backend lands, swap
-  the body for the commented `api.get` line and NOTHING downstream changes —
-  deriveLeaderboard and every component keep working untouched.
-*/
-export async function fetchLeaderboard(): Promise<Leaderboard> {
-  // return api.get<Leaderboard>('/camps/current/leaderboard')
-  return leaderboardMock
-}
-
-/*
-  One key for the leaderboard cache, defined once so the read hook and the write
-  mutation below can't drift. (This lib module predates the api/queryKeys registry;
-  it migrates there when the endpoint lands — see CLAUDE.md.)
-*/
-const LEADERBOARD_KEY = ['leaderboard'] as const
-
-/*
-  React Query hook. Caches by queryKey so any component can call useLeaderboard()
-  and share one request + one cache — same pattern as useCampHome().
-*/
-export function useLeaderboard() {
-  return useQuery({ queryKey: LEADERBOARD_KEY, queryFn: fetchLeaderboard })
-}
-
-/*
-  The WRITE side — the organizer awards / deducts a group's points. This is the
-  shared-domain payoff: it writes the SAME ['leaderboard'] cache the participant
-  Ranks screen reads, so a running participant board would re-rank live. The update
-  is optimistic (onMutate → setQueryData); the commented mutationFn is where the
-  real POST lands, and deriveLeaderboard recomputes ranks + trend from the new score.
-*/
-export function useAdjustGroupPoints() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: async (_vars: { groupId: string; delta: number }) => {
-      // await api.post(`/camps/current/leaderboard/${_vars.groupId}/points`, { delta: _vars.delta })
-    },
-    onMutate: ({ groupId, delta }) => {
-      qc.setQueryData<Leaderboard>(LEADERBOARD_KEY, (prev) =>
-        prev
-          ? {
-              ...prev,
-              groups: prev.groups.map((g) =>
-                g.id === groupId ? { ...g, score: Math.max(0, g.score + delta) } : g,
-              ),
-            }
-          : prev,
-      )
-    },
-  })
 }

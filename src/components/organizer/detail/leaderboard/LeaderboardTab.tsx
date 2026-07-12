@@ -1,12 +1,8 @@
 import { useState } from 'react'
 import { Skeleton } from '../../../ui'
 import { useTranslation } from '../../../../i18n/useTranslation'
-import {
-  useLeaderboard,
-  useAdjustGroupPoints,
-  deriveLeaderboard,
-  type RankedGroup,
-} from '../../../../lib/leaderboard'
+import { deriveLeaderboard, type RankedGroup } from '../../../../lib/leaderboard'
+import { useLeaderboard, useAdjustGroupPoints } from '../../../../api/queries/leaderboard.queries'
 import { OrgLeaderboardRow } from './OrgLeaderboardRow'
 import { PointsWheelSheet } from './PointsWheelSheet'
 

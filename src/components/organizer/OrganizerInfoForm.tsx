@@ -15,6 +15,12 @@ type Props = {
   onEnterDashboard?: () => void
   /** True once this screen is the visible step — gates the title typewriter. */
   active?: boolean
+  /** Show the coordinator group picker. False during first-run onboarding — a
+      fresh organizer has no camp yet, so groups are assigned later per camp. */
+  withGroup?: boolean
+  /** Fired when the profile+role commit (right after useProfileStore is written),
+      with the picked role — the caller's hook to persist via PATCH /auth/me. */
+  onSubmit?: (role: OrganizerRole) => void
 }
 
 /*
@@ -25,13 +31,20 @@ type Props = {
   before submit enables (extraValid), and they persist into useOrganizerStore via
   the `onCommit` seam. Copy and the success overlay use the organizer i18n bundle.
 */
-export function OrganizerInfoForm({ onBack, onEnterDashboard, active = true }: Props) {
+export function OrganizerInfoForm({
+  onBack,
+  onEnterDashboard,
+  active = true,
+  withGroup = true,
+  onSubmit,
+}: Props) {
   const { t } = useTranslation()
   const [role, setRole] = useState<OrganizerRole | null>(null)
   const [group, setGroup] = useState<CampGroup | null>(null)
   const setIdentity = useOrganizerStore((s) => s.setIdentity)
 
-  const isCoordinator = role === 'coordinator'
+  // The group step only exists when enabled AND a coordinator is picked.
+  const showGroup = withGroup && role === 'coordinator'
 
   // Picking a non-coordinator role clears any group chosen earlier, so a stale
   // group never gets committed.
@@ -40,8 +53,9 @@ export function OrganizerInfoForm({ onBack, onEnterDashboard, active = true }: P
     if (next !== 'coordinator') setGroup(null)
   }
 
-  // Role required; coordinators also need a group before they can enter.
-  const extraValid = Boolean(role) && (!isCoordinator || Boolean(group))
+  // Role required; coordinators also need a group before they can enter (only
+  // when the group step is shown).
+  const extraValid = Boolean(role) && (!showGroup || Boolean(group))
 
   return (
     <ProfileForm
@@ -54,7 +68,9 @@ export function OrganizerInfoForm({ onBack, onEnterDashboard, active = true }: P
       active={active}
       extraValid={extraValid}
       onCommit={() => {
-        if (role) setIdentity(role, isCoordinator ? group : null)
+        if (!role) return
+        setIdentity(role, showGroup ? group : null)
+        onSubmit?.(role)
       }}
       extraFields={
         <>
@@ -65,7 +81,7 @@ export function OrganizerInfoForm({ onBack, onEnterDashboard, active = true }: P
             <RolePicker value={role} onChange={handleRole} labels={t.organizer.roles} />
           </div>
 
-          {isCoordinator && (
+          {showGroup && (
             <div className="animate-drop">
               <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#9aa79f]">
                 {t.organizer.groupLabel}
