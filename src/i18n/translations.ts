@@ -449,7 +449,7 @@ type AdminStrings = {
     cta: string
     error: string
   }
-  nav: { organizers: string; logout: string }
+  nav: { dashboard: string; camps: string; organizers: string; logout: string }
   organizers: {
     title: string
     subtitle: string // '{count} organizers'
@@ -462,6 +462,10 @@ type AdminStrings = {
     deactivate: string
     reactivate: string
     confirmDeactivate: string
+    pending: string
+    resend: string
+    revoke: string
+    confirmRevoke: string
   }
   create: {
     title: string
@@ -469,16 +473,58 @@ type AdminStrings = {
     surname: string
     phone: string
     password: string
+    email: string
+    sent: string // 'Invitation sent to {email}'
+    copyLink: string
     submit: string
     duplicate: string
     success: string
   }
+  dashboard: {
+    title: string
+    subtitle: string
+    stats: {
+      organizers: string
+      active: string
+      deactivated: string
+      pending: string
+      camps: string
+    }
+    quickActions: { addOrganizer: string; viewCamps: string }
+    recentOrganizers: string
+    loadError: string
+  }
+  camps: {
+    title: string
+    subtitle: string // '{count} camps'
+    by: string // 'by {name}'
+    statusActive: string
+    statusUpcoming: string
+    statusDraft: string
+    statusArchived: string
+    empty: string
+    emptyHint: string
+    loadError: string
+    participants: string // '{count} participants'
+  }
+}
+
+type InviteStrings = {
+  title: string // 'Welcome, {name}'
+  subtitle: string
+  phoneLabel: string
+  submit: string
+  loading: string
+  invalid: string
+  expired: string
+  loadError: string
 }
 
 export const translations: Record<
   Lang,
   {
     login: LoginStrings
+    invite: InviteStrings
     congrats: CongratsStrings
     notfound: NotFoundStrings
     signup: SignUpStrings
@@ -508,7 +554,12 @@ export const translations: Record<
         cta: 'Kirish',
         error: 'Notoʻgʻri maʼlumotlar',
       },
-      nav: { organizers: 'Tashkilotchilar', logout: 'Chiqish' },
+      nav: {
+        dashboard: 'Boshqaruv',
+        camps: 'Oromgohlar',
+        organizers: 'Tashkilotchilar',
+        logout: 'Chiqish',
+      },
       organizers: {
         title: 'Tashkilotchilar',
         subtitle: '{count} ta tashkilotchi',
@@ -521,6 +572,10 @@ export const translations: Record<
         deactivate: 'Faolsizlantirish',
         reactivate: 'Qayta faollashtirish',
         confirmDeactivate: 'Bu tashkilotchi faolsizlantirilsinmi? U darhol tizimdan chiqariladi.',
+        pending: 'Kutilmoqda',
+        resend: 'Qayta yuborish',
+        revoke: 'Bekor qilish',
+        confirmRevoke: 'Bu taklifnoma bekor qilinsinmi?',
       },
       create: {
         title: 'Yangi tashkilotchi',
@@ -528,10 +583,53 @@ export const translations: Record<
         surname: 'Familiya',
         phone: 'Telefon',
         password: 'Parol',
+        email: 'Email',
+        sent: '{email} manziliga taklifnoma yuborildi',
+        copyLink: 'Havoladan nusxa olish',
         submit: 'Tashkilotchi yaratish',
-        duplicate: 'Bu telefon raqami allaqachon roʻyxatdan oʻtgan',
+        duplicate: 'Bu email allaqachon roʻyxatdan oʻtgan',
         success: 'Tashkilotchi yaratildi',
       },
+      dashboard: {
+        title: 'Boshqaruv paneli',
+        subtitle: 'Tashkilot umumiy koʻrinishi',
+        stats: {
+          organizers: 'Tashkilotchilar',
+          active: 'Faol',
+          deactivated: 'Faolsiz',
+          pending: 'Kutilmoqda',
+          camps: 'Oromgohlar',
+        },
+        quickActions: {
+          addOrganizer: 'Tashkilotchi qoʻshish',
+          viewCamps: 'Oromgohlarni koʻrish',
+        },
+        recentOrganizers: 'Soʻnggi tashkilotchilar',
+        loadError: 'Maʼlumotlarni yuklab boʻlmadi',
+      },
+      camps: {
+        title: 'Oromgohlar',
+        subtitle: '{count} ta oromgoh',
+        by: '{name} tomonidan',
+        statusActive: 'Faol',
+        statusUpcoming: 'Tez orada',
+        statusDraft: 'Qoralama',
+        statusArchived: 'Arxivlangan',
+        empty: 'Hozircha oromgohlar yoʻq',
+        emptyHint: 'Tashkilotchilar oromgoh yaratganda, ular shu yerda koʻrinadi.',
+        loadError: 'Oromgohlarni yuklab boʻlmadi',
+        participants: '{count} ishtirokchi',
+      },
+    },
+    invite: {
+      title: 'Xush kelibsiz, {name}',
+      subtitle: 'Tashkilotchi sifatida kirish uchun telefon raqamingizni kiriting.',
+      phoneLabel: 'Telefon raqam',
+      submit: 'Kirish',
+      loading: 'Yuklanmoqda…',
+      invalid: 'Taklifnoma yaroqsiz.',
+      expired: 'Taklifnoma muddati tugagan.',
+      loadError: 'Taklifnomani yuklab boʻlmadi.',
     },
     login: {
       eyebrow: 'Ishtirokchilar uchun',
@@ -926,7 +1024,12 @@ export const translations: Record<
         cta: 'Войти',
         error: 'Неверные данные',
       },
-      nav: { organizers: 'Организаторы', logout: 'Выйти' },
+      nav: {
+        dashboard: 'Панель',
+        camps: 'Лагеря',
+        organizers: 'Организаторы',
+        logout: 'Выйти',
+      },
       organizers: {
         title: 'Организаторы',
         subtitle: '{count} организаторов',
@@ -939,6 +1042,10 @@ export const translations: Record<
         deactivate: 'Деактивировать',
         reactivate: 'Активировать',
         confirmDeactivate: 'Деактивировать этого организатора? Он будет немедленно отключён.',
+        pending: 'Ожидает',
+        resend: 'Отправить снова',
+        revoke: 'Отменить',
+        confirmRevoke: 'Отменить это приглашение?',
       },
       create: {
         title: 'Новый организатор',
@@ -946,10 +1053,53 @@ export const translations: Record<
         surname: 'Фамилия',
         phone: 'Телефон',
         password: 'Пароль',
+        email: 'Email',
+        sent: 'Приглашение отправлено на {email}',
+        copyLink: 'Скопировать ссылку',
         submit: 'Создать организатора',
-        duplicate: 'Этот телефон уже зарегистрирован',
+        duplicate: 'Этот email уже зарегистрирован',
         success: 'Организатор создан',
       },
+      dashboard: {
+        title: 'Панель управления',
+        subtitle: 'Обзор организации',
+        stats: {
+          organizers: 'Организаторы',
+          active: 'Активные',
+          deactivated: 'Неактивные',
+          pending: 'Ожидают',
+          camps: 'Лагеря',
+        },
+        quickActions: {
+          addOrganizer: 'Добавить организатора',
+          viewCamps: 'Посмотреть лагеря',
+        },
+        recentOrganizers: 'Недавние организаторы',
+        loadError: 'Не удалось загрузить данные',
+      },
+      camps: {
+        title: 'Лагеря',
+        subtitle: '{count} лагерей',
+        by: 'Организатор: {name}',
+        statusActive: 'Активный',
+        statusUpcoming: 'Скоро',
+        statusDraft: 'Черновик',
+        statusArchived: 'Архив',
+        empty: 'Пока нет лагерей',
+        emptyHint: 'Когда организаторы создадут лагеря, они появятся здесь.',
+        loadError: 'Не удалось загрузить лагеря',
+        participants: '{count} участников',
+      },
+    },
+    invite: {
+      title: 'Добро пожаловать, {name}',
+      subtitle: 'Введите номер телефона, чтобы войти как организатор.',
+      phoneLabel: 'Номер телефона',
+      submit: 'Войти',
+      loading: 'Загрузка…',
+      invalid: 'Приглашение недействительно.',
+      expired: 'Срок приглашения истёк.',
+      loadError: 'Не удалось загрузить приглашение.',
     },
     login: {
       eyebrow: 'Для участников',
@@ -1329,7 +1479,12 @@ export const translations: Record<
         cta: 'Sign in',
         error: 'Invalid credentials',
       },
-      nav: { organizers: 'Organizers', logout: 'Log out' },
+      nav: {
+        dashboard: 'Dashboard',
+        camps: 'Camps',
+        organizers: 'Organizers',
+        logout: 'Log out',
+      },
       organizers: {
         title: 'Organizers',
         subtitle: '{count} organizers',
@@ -1342,6 +1497,10 @@ export const translations: Record<
         deactivate: 'Deactivate',
         reactivate: 'Reactivate',
         confirmDeactivate: 'Deactivate this organizer? They will be signed out immediately.',
+        pending: 'Pending',
+        resend: 'Resend',
+        revoke: 'Revoke',
+        confirmRevoke: 'Revoke this invitation?',
       },
       create: {
         title: 'New organizer',
@@ -1349,10 +1508,53 @@ export const translations: Record<
         surname: 'Surname',
         phone: 'Phone',
         password: 'Password',
+        email: 'Email',
+        sent: 'Invitation sent to {email}',
+        copyLink: 'Copy link',
         submit: 'Create organizer',
-        duplicate: 'That phone is already registered',
+        duplicate: 'That email is already registered',
         success: 'Organizer created',
       },
+      dashboard: {
+        title: 'Dashboard',
+        subtitle: 'Organization overview',
+        stats: {
+          organizers: 'Organizers',
+          active: 'Active',
+          deactivated: 'Deactivated',
+          pending: 'Pending',
+          camps: 'Camps',
+        },
+        quickActions: {
+          addOrganizer: 'Add organizer',
+          viewCamps: 'View camps',
+        },
+        recentOrganizers: 'Recent organizers',
+        loadError: "Couldn't load data",
+      },
+      camps: {
+        title: 'Camps',
+        subtitle: '{count} camps',
+        by: 'by {name}',
+        statusActive: 'Active',
+        statusUpcoming: 'Upcoming',
+        statusDraft: 'Draft',
+        statusArchived: 'Archived',
+        empty: 'No camps yet',
+        emptyHint: "When organizers create camps, they'll appear here.",
+        loadError: "Couldn't load camps",
+        participants: '{count} participants',
+      },
+    },
+    invite: {
+      title: 'Welcome, {name}',
+      subtitle: 'Enter your phone number to join as an organizer.',
+      phoneLabel: 'Phone number',
+      submit: 'Enter',
+      loading: 'Loading…',
+      invalid: 'This invitation is invalid.',
+      expired: 'This invitation has expired.',
+      loadError: "Couldn't load the invitation.",
     },
     login: {
       eyebrow: 'For participants',
