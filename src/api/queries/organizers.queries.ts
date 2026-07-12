@@ -31,3 +31,19 @@ export function useSetOrganizerActive() {
     onSuccess: () => qc.invalidateQueries({ queryKey: adminOrganizerKeys.all }),
   })
 }
+
+export function useResendInvite() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => organizersService.resendInvite(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: adminOrganizerKeys.all }),
+  })
+}
+
+export function useRevokeInvite() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => organizersService.revokeInvite(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: adminOrganizerKeys.all }),
+  })
+}

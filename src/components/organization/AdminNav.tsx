@@ -17,7 +17,11 @@ type NavItem = { to: string; label: string; icon: ReactNode }
 
 function useNavItems(): NavItem[] {
   const { t } = useTranslation()
-  return [{ to: '/admin/organizers', label: t.admin.nav.organizers, icon: <OrganizersIcon /> }]
+  return [
+    { to: '/admin/dashboard', label: t.admin.nav.dashboard, icon: <DashboardIcon /> },
+    { to: '/admin/camps', label: t.admin.nav.camps, icon: <CampsIcon /> },
+    { to: '/admin/organizers', label: t.admin.nav.organizers, icon: <OrganizersIcon /> },
+  ]
 }
 
 /* ── Mobile: bottom tab bar (hidden from md up) ─────────────────────────── */
@@ -110,6 +114,42 @@ export function AdminSidebar({ onLogout }: { onLogout: () => void }) {
 
 /* ── Icons ─────────────────────────────────────────────────────────────── */
 const icon = 'stroke-current flex-none'
+function DashboardIcon() {
+  return (
+    <svg
+      width="23"
+      height="23"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="2.1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={icon}
+    >
+      <rect x="3" y="3" width="7" height="9" rx="1.5" />
+      <rect x="14" y="3" width="7" height="5" rx="1.5" />
+      <rect x="14" y="12" width="7" height="9" rx="1.5" />
+      <rect x="3" y="16" width="7" height="5" rx="1.5" />
+    </svg>
+  )
+}
+function CampsIcon() {
+  return (
+    <svg
+      width="23"
+      height="23"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="2.1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={icon}
+    >
+      <path d="M12 4 3 20h18L12 4Z" />
+      <path d="M12 4v16" />
+    </svg>
+  )
+}
 function OrganizersIcon() {
   return (
     <svg

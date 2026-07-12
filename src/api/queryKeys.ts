@@ -57,6 +57,16 @@ export const adminOrganizerKeys = {
   list: () => [...adminOrganizerKeys.all, 'list'] as const,
 }
 
+/*
+  The org admin's CAMPS list — every camp across every organizer (a different
+  projection than organizerKeys, which is one organizer's own camps). Mock-backed
+  today via adminCamps.service.ts; the key is ready for the real /camps endpoint.
+*/
+export const adminCampKeys = {
+  all: ['adminCamps'] as const,
+  list: () => [...adminCampKeys.all, 'list'] as const,
+}
+
 /** A pending organizer team invite, looked up by its token (pre-auth). */
 export const inviteKeys = {
   all: ['invite'] as const,
