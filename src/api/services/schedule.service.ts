@@ -1,6 +1,5 @@
-import { scheduleMock } from '../../lib/mockSchedule'
 import { CURRENT_CAMP_ID } from './announcements.service'
-// import { axiosInstance } from '../axiosInstance' // ← enable when the endpoint exists
+import { axiosInstance } from '../axiosInstance'
 
 /*
   The schedule SERVICE — the backend boundary for the participant timeline. The
@@ -145,17 +144,12 @@ function sortByStart(list: Activity[]): Activity[] {
 export type NewActivity = Omit<Activity, 'id'>
 
 export const scheduleService = {
-  list: async (_campId: string = CURRENT_CAMP_ID): Promise<Activity[]> => {
-    // return (await axiosInstance.get<Activity[]>(`/camps/${_campId}/schedule`)).data
-    return sortByStart(scheduleMock)
+  list: async (campId: string = CURRENT_CAMP_ID): Promise<Activity[]> => {
+    return sortByStart((await axiosInstance.get<Activity[]>(`/camps/${campId}/schedule`)).data)
   },
 
-  /** Organizer creates an activity. Mutates the mock store today (persists for the
-      session); the commented line is the real POST. Returns the created record. */
+  /** Organizer creates an activity. Returns the created record. */
   create: async (activity: NewActivity): Promise<Activity> => {
-    // return (await axiosInstance.post<Activity>(`/camps/${activity.campId}/schedule`, activity)).data
-    const created: Activity = { ...activity, id: `act_local_${Date.now()}` }
-    scheduleMock.push(created)
-    return created
+    return (await axiosInstance.post<Activity>(`/camps/${activity.campId}/schedule`, activity)).data
   },
 }

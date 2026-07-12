@@ -1,5 +1,4 @@
-import { organizerCampsMock, organizerSummaryMock } from '../../lib/mockOrganizerCamps'
-// import { axiosInstance } from '../axiosInstance' // ← enable when the endpoint exists
+import { axiosInstance } from '../axiosInstance'
 
 /*
   The camps SERVICE — the backend boundary for the ORGANIZER dashboard. The types
@@ -52,24 +51,37 @@ export type OrganizerSummary = {
   onSite: number
 }
 
+/** Body for creating a new camp (organizer onboarding + camp-create flow). */
+export type CreateCampBody = {
+  name: string
+  location: string
+  /** ISO datetime */
+  startsAt: string
+  /** ISO datetime */
+  endsAt: string
+  capacity?: number
+  languages?: ('en' | 'uz' | 'ru')[]
+  coverImage?: string | null
+}
+
 export const campsService = {
   /** Every camp the organizer can open, newest/active first (server-ordered). */
   list: async (): Promise<OrganizerCamp[]> => {
-    // return (await axiosInstance.get<OrganizerCamp[]>('/organizer/camps')).data
-    return organizerCampsMock
+    return (await axiosInstance.get<OrganizerCamp[]>('/organizer/camps')).data
+  },
+
+  /** Creates a new camp under the organizer's organization. */
+  create: async (body: CreateCampBody): Promise<OrganizerCamp> => {
+    return (await axiosInstance.post<OrganizerCamp>('/organizer/camps', body)).data
   },
 
   /** Cross-camp totals for the dashboard header + quick links. */
   summary: async (): Promise<OrganizerSummary> => {
-    // return (await axiosInstance.get<OrganizerSummary>('/organizer/summary')).data
-    return organizerSummaryMock
+    return (await axiosInstance.get<OrganizerSummary>('/organizer/summary')).data
   },
 
   /** A single camp (detail screen, slice 2). Throws if the id is unknown. */
   get: async (campId: string): Promise<OrganizerCamp> => {
-    // return (await axiosInstance.get<OrganizerCamp>(`/organizer/camps/${campId}`)).data
-    const found = organizerCampsMock.find((c) => c.id === campId)
-    if (!found) throw new Error('Camp not found')
-    return found
+    return (await axiosInstance.get<OrganizerCamp>(`/organizer/camps/${campId}`)).data
   },
 }

@@ -1,5 +1,6 @@
 import { useTranslation } from '../../../i18n/useTranslation'
-import { useLeaderboard, deriveLeaderboard } from '../../../lib/leaderboard'
+import { deriveLeaderboard } from '../../../lib/leaderboard'
+import { useLeaderboard } from '../../../api/queries/leaderboard.queries'
 import { useGroupStore } from '../../../store/useGroupStore'
 import { PodiumHeader } from './PodiumHeader'
 import { YourStandingCard, type Comparison } from './YourStandingCard'

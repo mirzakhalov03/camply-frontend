@@ -17,11 +17,18 @@ import type { AuthUser } from '../../store/useAuthStore'
 export type LoginRequest =
   { phone: string; password?: string } | { username: string; password: string }
 
-/** What the participant completes after claiming their spot. */
+/*
+  What the participant/organizer completes after claiming their spot. Shared by
+  both roles: name/surname are always sent; `subRole` is organizer-only (the team
+  role they're onboarding into) and left off for participants.
+*/
 export type CompleteProfileRequest = {
+  name: string
+  surname: string
   cityId: string
   age: number
   photo?: string | null
+  subRole?: string
 }
 
 export const authService = {

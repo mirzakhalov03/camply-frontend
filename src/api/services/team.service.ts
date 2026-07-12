@@ -1,6 +1,5 @@
-import { teamMock } from '../../lib/mockTeam'
 import type { OrganizerRole } from '../../components/organizer/roles'
-// import { axiosInstance } from '../axiosInstance' // ← enable when the endpoint exists
+import { axiosInstance } from '../axiosInstance'
 
 /*
   The team SERVICE — the organizer's co-organizers + pending invites. The DATA
@@ -41,26 +40,16 @@ export type Team = {
 
 export const teamService = {
   list: async (): Promise<Team> => {
-    // return (await axiosInstance.get<Team>('/organizer/team')).data
-    return teamMock
+    return (await axiosInstance.get<Team>('/organizer/team')).data
   },
 
-  /** Invite a teammate by phone + sub-role. Adds a pending invite for the session. */
+  /** Invite a teammate by phone + sub-role. */
   invite: async (input: { phone: string; role: OrganizerRole }): Promise<PendingInvite> => {
-    // return (await axiosInstance.post<PendingInvite>('/organizer/team/invites', input)).data
-    const created: PendingInvite = {
-      id: `inv-${Date.now()}`,
-      phone: input.phone,
-      role: input.role,
-      sentAt: new Date().toISOString(),
-    }
-    teamMock.pending.unshift(created)
-    return created
+    return (await axiosInstance.post<PendingInvite>('/organizer/team/invites', input)).data
   },
 
   /** Cancel a pending invite. */
   cancelInvite: async (id: string): Promise<void> => {
-    // await axiosInstance.delete(`/organizer/team/invites/${id}`)
-    teamMock.pending = teamMock.pending.filter((p) => p.id !== id)
+    await axiosInstance.delete(`/organizer/team/invites/${id}`)
   },
 }

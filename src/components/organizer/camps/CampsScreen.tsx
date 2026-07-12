@@ -1,9 +1,12 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { interpolate } from '../../../lib/interpolate'
 import { useOrganizerCamps, useOrganizerSummary } from '../../../api/queries/camps.queries'
+import { NewCampSheet } from './NewCampSheet'
 import { useActiveHelpRequests } from '../../../api/queries/helpRequests.queries'
-import { useLeaderboard, deriveLeaderboard } from '../../../lib/leaderboard'
+import { deriveLeaderboard } from '../../../lib/leaderboard'
+import { useLeaderboard } from '../../../api/queries/leaderboard.queries'
 import { useOrg } from '../orgContext'
 import { StatStrip } from './StatStrip'
 import { HelpBanner } from './HelpBanner'
@@ -29,6 +32,7 @@ export function CampsScreen() {
   const c = t.org.camps
   const navigate = useNavigate()
   const { openCampMap, openNotifications } = useOrg()
+  const [newCampOpen, setNewCampOpen] = useState(false)
 
   const campsQuery = useOrganizerCamps()
   const summaryQuery = useOrganizerSummary()
@@ -82,16 +86,28 @@ export function CampsScreen() {
         </p>
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-display font-bold text-content">{primary?.name ?? c.yourCamps}</h1>
-          {/* Notifications — nudged up (-translate-y-2.5) so it sits a touch above
-              the heading baseline. */}
-          <button
-            type="button"
-            onClick={openNotifications}
-            aria-label={c.notifications}
-            className="relative flex h-[42px] w-[42px] flex-none -translate-y-2.5 items-center justify-center rounded-input border border-line bg-surface text-pine shadow-[0_3px_12px_rgba(20,40,30,0.05)] active:scale-95"
-          >
-            <BellIcon />
-          </button>
+          {/* Actions — the create-camp entry sits beside notifications, both nudged
+              up (-translate-y-2.5) so they sit a touch above the heading baseline. */}
+          <div className="flex flex-none -translate-y-2.5 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setNewCampOpen(true)}
+              className="flex h-[42px] items-center gap-1.5 rounded-input bg-pine px-3.5 text-caption font-bold text-white shadow-[0_3px_12px_rgba(20,40,30,0.05)] active:scale-95"
+            >
+              <span aria-hidden className="text-body leading-none">
+                +
+              </span>
+              {t.createCamp.title}
+            </button>
+            <button
+              type="button"
+              onClick={openNotifications}
+              aria-label={c.notifications}
+              className="relative flex h-[42px] w-[42px] items-center justify-center rounded-input border border-line bg-surface text-pine shadow-[0_3px_12px_rgba(20,40,30,0.05)] active:scale-95"
+            >
+              <BellIcon />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -122,6 +138,8 @@ export function CampsScreen() {
           {otherFeatures.map((f) => renderFeature(f, primary))}
         </div>
       ) : null}
+
+      <NewCampSheet open={newCampOpen} onClose={() => setNewCampOpen(false)} />
     </div>
   )
 }

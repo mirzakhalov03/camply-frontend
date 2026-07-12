@@ -57,6 +57,12 @@ export const adminOrganizerKeys = {
   list: () => [...adminOrganizerKeys.all, 'list'] as const,
 }
 
+/** A pending organizer team invite, looked up by its token (pre-auth). */
+export const inviteKeys = {
+  all: ['invite'] as const,
+  detail: (token: string) => [...inviteKeys.all, token] as const,
+}
+
 /** Everything owned by / read within a single camp. */
 export const campKeys = {
   all: (campId: string) => ['camp', campId] as const,

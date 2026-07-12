@@ -1,5 +1,4 @@
-import { announcementsMock } from '../../lib/mockAnnouncements'
-// import { axiosInstance } from '../axiosInstance' // ← enable when the endpoint exists
+import { axiosInstance } from '../axiosInstance'
 
 /*
   The announcements SERVICE — the backend boundary for the participant feed. The
@@ -56,28 +55,19 @@ function sortForFeed(list: Announcement[]): Announcement[] {
 export type NewAnnouncement = Omit<Announcement, 'id' | 'createdAt'>
 
 export const announcementsService = {
-  list: async (_campId: string): Promise<Announcement[]> => {
-    // return (await axiosInstance.get<Announcement[]>(`/camps/${_campId}/announcements`)).data
-    return sortForFeed(announcementsMock)
+  list: async (campId: string): Promise<Announcement[]> => {
+    return sortForFeed(
+      (await axiosInstance.get<Announcement[]>(`/camps/${campId}/announcements`)).data,
+    )
   },
 
-  getById: async (_campId: string, id: string): Promise<Announcement> => {
-    // return (await axiosInstance.get<Announcement>(`/camps/${_campId}/announcements/${id}`)).data
-    const found = announcementsMock.find((a) => a.id === id)
-    if (!found) throw new Error('Announcement not found')
-    return found
+  getById: async (campId: string, id: string): Promise<Announcement> => {
+    return (await axiosInstance.get<Announcement>(`/camps/${campId}/announcements/${id}`)).data
   },
 
-  /** Organizer posts an announcement. Prepends to the mock store today (persists for
-      the session); the commented line is the real POST. Returns the created record. */
+  /** Organizer posts an announcement. Returns the created record. */
   create: async (input: NewAnnouncement): Promise<Announcement> => {
-    // return (await axiosInstance.post<Announcement>(`/camps/${input.campId}/announcements`, input)).data
-    const created: Announcement = {
-      ...input,
-      id: `a_local_${Date.now()}`,
-      createdAt: new Date().toISOString(),
-    }
-    announcementsMock.unshift(created)
-    return created
+    return (await axiosInstance.post<Announcement>(`/camps/${input.campId}/announcements`, input))
+      .data
   },
 }

@@ -475,6 +475,41 @@ type AdminStrings = {
   }
 }
 
+// Invite landing (organizer onboarding, step 1): phone confirmation for
+// whoever opens the invite link an organization sent them.
+type InviteStrings = {
+  greeting: string // 'Welcome, {name}'
+  subtitle: string
+  phone: string
+  submit: string
+  invalid: string
+  expired: string
+  phoneTaken: string
+}
+
+// Organizer dashboard → new camp form.
+type CreateCampStrings = {
+  title: string
+  name: string
+  location: string
+  starts: string
+  ends: string
+  capacity: string
+  submit: string
+  dateError: string
+  success: string
+}
+
+// Organizer dashboard → add participant by phone.
+type AddParticipantStrings = {
+  title: string
+  phone: string
+  submit: string
+  duplicate: string
+  tooMany: string
+  success: string
+}
+
 export const translations: Record<
   Lang,
   {
@@ -496,6 +531,9 @@ export const translations: Record<
     announcements: AnnouncementsStrings
     schedule: ScheduleStrings
     pwa: PwaStrings
+    invite: InviteStrings
+    createCamp: CreateCampStrings
+    addParticipant: AddParticipantStrings
   }
 > = {
   uz: {
@@ -915,6 +953,35 @@ export const translations: Record<
       offlineReady: 'Camply oflayn ishlashga tayyor.',
       dismiss: 'Yopish',
     },
+    invite: {
+      greeting: 'Xush kelibsiz, {name}',
+      subtitle: 'Hisobingizni yakunlash uchun telefon raqamingizni kiriting.',
+      phone: 'Telefon raqam',
+      submit: 'Davom etish',
+      invalid: 'Taklif havolasi yaroqsiz.',
+      expired:
+        'Taklif havolasining muddati tugagan. Tashkilotingizdan yangisini yuborishni soʻrang.',
+      phoneTaken: 'Bu telefon raqami allaqachon roʻyxatdan oʻtgan.',
+    },
+    createCamp: {
+      title: 'Yangi oromgoh',
+      name: 'Oromgoh nomi',
+      location: 'Manzil',
+      starts: 'Boshlanish sanasi',
+      ends: 'Tugash sanasi',
+      capacity: 'Sigʻim (ixtiyoriy)',
+      submit: 'Oromgoh yaratish',
+      dateError: 'Tugash sanasi boshlanish sanasidan keyin boʻlishi kerak.',
+      success: 'Oromgoh yaratildi',
+    },
+    addParticipant: {
+      title: 'Ishtirokchi qoʻshish',
+      phone: 'Telefon raqam',
+      submit: 'Ishtirokchi qoʻshish',
+      duplicate: 'Bu telefon raqami bu oromgohda allaqachon mavjud.',
+      tooMany: 'Bu telefon raqami allaqachon 2 ta oromgohda ishtirok etmoqda.',
+      success: 'Ishtirokchi qoʻshildi',
+    },
   },
   ru: {
     admin: {
@@ -1317,6 +1384,34 @@ export const translations: Record<
       reload: 'Обновить',
       offlineReady: 'Camply готов к работе офлайн.',
       dismiss: 'Закрыть',
+    },
+    invite: {
+      greeting: 'Добро пожаловать, {name}',
+      subtitle: 'Введите номер телефона, чтобы завершить настройку аккаунта.',
+      phone: 'Номер телефона',
+      submit: 'Продолжить',
+      invalid: 'Ссылка-приглашение недействительна.',
+      expired: 'Срок действия ссылки-приглашения истёк. Попросите организацию отправить новую.',
+      phoneTaken: 'Этот номер телефона уже зарегистрирован.',
+    },
+    createCamp: {
+      title: 'Новый лагерь',
+      name: 'Название лагеря',
+      location: 'Место проведения',
+      starts: 'Дата начала',
+      ends: 'Дата окончания',
+      capacity: 'Вместимость (необязательно)',
+      submit: 'Создать лагерь',
+      dateError: 'Дата окончания должна быть позже даты начала.',
+      success: 'Лагерь создан',
+    },
+    addParticipant: {
+      title: 'Добавить участника',
+      phone: 'Номер телефона',
+      submit: 'Добавить участника',
+      duplicate: 'Этот номер уже добавлен в этот лагерь.',
+      tooMany: 'Этот номер уже участвует в 2 лагерях.',
+      success: 'Участник добавлен',
     },
   },
   en: {
@@ -1721,6 +1816,34 @@ export const translations: Record<
       reload: 'Reload',
       offlineReady: 'Camply is ready to work offline.',
       dismiss: 'Dismiss',
+    },
+    invite: {
+      greeting: 'Welcome, {name}',
+      subtitle: 'Enter your phone number to finish setting up your account.',
+      phone: 'Phone number',
+      submit: 'Continue',
+      invalid: 'This invite link is invalid.',
+      expired: 'This invite link has expired. Ask your organization to send a new one.',
+      phoneTaken: 'That phone number is already registered.',
+    },
+    createCamp: {
+      title: 'New camp',
+      name: 'Camp name',
+      location: 'Location',
+      starts: 'Start date',
+      ends: 'End date',
+      capacity: 'Capacity (optional)',
+      submit: 'Create camp',
+      dateError: 'End date must be after the start date.',
+      success: 'Camp created',
+    },
+    addParticipant: {
+      title: 'Add participant',
+      phone: 'Phone number',
+      submit: 'Add participant',
+      duplicate: 'That phone is already in this camp.',
+      tooMany: 'That phone is already in 2 camps.',
+      success: 'Participant added',
     },
   },
 }

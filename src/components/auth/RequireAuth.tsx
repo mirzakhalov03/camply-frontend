@@ -20,6 +20,10 @@ export function RequireAuth({ minRole = 'participant', requireProfile = false }:
   const user = useAuthStore((s) => s.user)
   if (!user) return <Navigate to="/" replace />
   if (RANK[user.role] < RANK[minRole]) return <Navigate to="/" replace />
-  if (requireProfile && !user.profileComplete) return <Navigate to="/" replace />
+  if (requireProfile && !user.profileComplete) {
+    // An unfinished organizer resumes at their onboarding step; a participant
+    // resumes at the landing (which drops them back into profile setup).
+    return <Navigate to={user.role === 'organizer' ? '/org/welcome' : '/'} replace />
+  }
   return <Outlet />
 }
