@@ -16,7 +16,8 @@ accumulated:
 2. **`lib/` is a junk drawer.** 30 files mixing four unrelated concerns: pure
    utilities, hooks, the shared `queryClient`, mock-era data-contract modules
    (mid-migration), and mock fixtures. As `api/services` flipped to real endpoints,
-   **12 modules orphaned** (0 importers) but were never deleted.
+   **8 mock fixtures orphaned** (0 references, verified against every import form
+   including sibling `./` imports) but were never deleted.
 3. **`store/` holds a non-store.** `useMe` is a selector hook that reads
    `useProfileStore` and assembles an identity — it is not a Zustand store and does
    not belong in `store/`.
@@ -62,37 +63,47 @@ surface boundary already correctly lives at the `components/` layer.
 `interpolate.ts` (27 importers), `relativeTime.ts` (11), `phone.ts` (5),
 `initials.ts`, `formatFileSize.ts`, `cities.ts`, `geolocation.ts`.
 
-**Create `src/hooks/`** — hooks, moved out of `lib/` and `store/`:
-`useSheetDrag.ts`, `useTypewriter.ts`, `push/usePushNotifications.ts`, and
-`useMe.ts` (from `store/` — see §3).
+**Create `src/hooks/`** — the push feature and stray hooks, moved out of `lib/`
+and `store/`: `useSheetDrag.ts`, `useTypewriter.ts`, `useMe.ts` (from `store/` —
+see §3), and the **push pair** `usePushNotifications.ts` + `pushClient.ts`
+(moved together from `lib/push/`; `pushClient` is `usePushNotifications`'s only
+consumer, so they stay colocated and the `./pushClient` sibling import is
+unchanged). `pushClient` is not a hook, but the push unit is cohesive and the
+hook is its sole entry point — colocation beats by-type purity here.
 
 **Move to `api/`** — `lib/queryClient.ts` → `src/api/queryClient.ts`. It is
 shared React Query infra and belongs with the api layer. Updates its 2 importers
 (`main.tsx`, `api/realtime/realtimeBridge.ts`).
 
-**Delete 12 dead files** (0 importers, verified by static scan):
-- `lib/api.ts` — the old fetch wrapper, superseded by `api/axiosInstance.ts`; now
-  fully orphaned (CLAUDE.md said to delete it once the last consumer migrated —
-  that has happened).
-- `lib/push/pushClient.ts`.
-- 10 dead mocks: `mockAnnouncements`, `mockChat`, `mockLeaderboard`,
-  `mockMembership`, `mockOrganizerCamps`, `mockOrganizers`, `mockParticipants`,
-  `mockRoster`, `mockSchedule`, `mockTeam`.
+**Delete 8 dead mock fixtures** (0 references, verified across every import form
+incl. sibling `./`): `mockAnnouncements`, `mockLeaderboard`, `mockOrganizerCamps`,
+`mockOrganizers`, `mockParticipants`, `mockRoster`, `mockSchedule`, `mockTeam`.
+Then remove the now-empty `lib/push/` directory (both its files moved to `hooks/`).
 
-Then remove the now-empty `lib/push/` directory.
+**Explicitly NOT deleted (corrected during planning — earlier scan false-positives):**
+- `lib/api.ts` — the old fetch wrapper. It has no *active* importers, but three
+  data-contract modules (`campHome`, `chat`, `membership`) reference it in their
+  **commented mock→real seam lines** (`// import { api } from './api'`). CLAUDE.md's
+  documented rule is to keep `api.ts` until the last such module migrates. Migrating
+  them is a non-goal here, so `api.ts` stays in the transitional zone.
+- `mockChat`, `mockMembership` — actively imported by `chat.ts` / `membership.ts`
+  via `./mockChat` / `./mockMembership`. Alive.
+- `pushClient.ts` — imported by `usePushNotifications`. Alive (moves to `hooks/`).
 
-**Leave in `lib/` (the transitional mock-era zone):** the 5 still-in-use
-data-contract modules — `campHome.ts`, `chat.ts`, `leaderboard.ts`,
-`membership.ts`, `groups.ts`.
+**Leave in `lib/` (the transitional mock-era zone):** `api.ts` + the 5 still-in-use
+data-contract modules — `campHome.ts`, `chat.ts`, `leaderboard.ts`, `membership.ts`,
+`groups.ts`.
 
-**Create `src/lib/mocks/`** and move the 4 **alive** mock fixtures into it:
-`mockAdminCamps.ts`, `mockHelpRequests.ts`, `mockOrgChat.ts`, `mockCamp.ts`.
-After this, `lib/` is self-documenting: `lib/*.ts` = data contracts awaiting
-migration, `lib/mocks/` = fixtures behind the mock→real seam. (4 importer
-updates: 3 in `api/services`, 1 in `components/participant/sos`.)
+**Create `src/lib/mocks/`** and move the 6 **alive** mock fixtures into it:
+`mockAdminCamps.ts`, `mockCamp.ts`, `mockHelpRequests.ts`, `mockOrgChat.ts`,
+`mockChat.ts`, `mockMembership.ts`. After this, `lib/` is self-documenting:
+`lib/*.ts` = contracts (+ `api.ts`) awaiting migration, `lib/mocks/` = fixtures
+behind the mock→real seam. Importer updates: 3 in `api/services`, 1 in
+`components/participant/sos`, and 2 sibling imports inside `lib/`
+(`chat.ts` → `./mocks/mockChat`, `membership.ts` → `./mocks/mockMembership`).
 
-**Resulting `lib/`:** 5 contract modules + `mocks/` (4 files) = 9 files, down
-from 30.
+**Resulting `lib/`:** `api.ts` + 5 contract modules + `mocks/` (6 files) = 12
+files, down from 32 (30 top-level + `push/`'s 2).
 
 ### 3. `store/` cleanup
 
@@ -108,8 +119,9 @@ files is over-engineering, not an improvement.
 
 - Add the `@/` alias convention (Stack notes): `@/` → `src/`, convert-as-you-touch.
 - Reframe the `lib/` section: the shrunken mock-era **transitional zone** holding
-  only not-yet-migrated data-contract modules + `lib/mocks/` fixtures; `api.ts`
-  deleted; "don't add here" reinforced.
+  `api.ts` + not-yet-migrated data-contract modules + `lib/mocks/` fixtures;
+  "don't add here" reinforced. (`api.ts` stays until the last contract migrates —
+  the existing rule is unchanged, just restated for the new layout.)
 - Add `utils/` and `hooks/` architecture sections.
 - Update the `store/` section: `useMe` now lives in `hooks/`.
 - Note `queryClient` now lives in `api/`.
@@ -121,12 +133,14 @@ The build must be green at every step. Verify each with `npm run typecheck`
 
 1. **Alias infra only** (tsconfig `paths` + vite `resolve.alias`), no file moves.
    `typecheck` green (alias present, unused).
-2. **Delete 12 dead files.** `typecheck` proves nothing referenced them.
+2. **Delete 8 dead mock fixtures.** `typecheck` proves nothing referenced them.
 3. **`utils/`** — create, move 7 files, update importers to `@/utils/*`. `typecheck`.
-4. **`hooks/`** — create, move 4 files (incl. `useMe` from `store/`), update
-   importers, remove empty `lib/push/`. `typecheck`.
+4. **`hooks/`** — create, move 5 files (`useSheetDrag`, `useTypewriter`, `useMe`
+   from `store/`, and the `usePushNotifications` + `pushClient` pair from
+   `lib/push/`), update importers, remove empty `lib/push/`. `typecheck`.
 5. **`queryClient`** — move to `api/`, update `main.tsx` + `api/realtime`. `typecheck`.
-6. **`lib/mocks/`** — create, move 4 alive mocks, update importers. `typecheck`.
+6. **`lib/mocks/`** — create, move 6 alive mocks, update importers (incl. 2 sibling
+   imports inside `lib/`). `typecheck`.
 7. **CLAUDE.md** updates.
 8. **Final verification:** `npm run validate` (lint + format:check + typecheck) +
    `npm run build` + a dev smoke loading one participant, one organizer, and one
