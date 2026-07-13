@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { PHONE_LENGTH, formatUzPhone, toPhoneDigits } from '../../lib/phone'
+import { PHONE_LENGTH, formatUzPhone, toPhoneDigits } from '@/utils/phone'
 
 /* Brand-controlled Uzbek flag — replaces the OS emoji so it renders identically
    on every device. Simplified bands + crescent; decorative, so aria-hidden. */

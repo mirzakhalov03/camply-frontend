@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
-import { interpolate } from '../../../lib/interpolate'
+import { interpolate } from '@/utils/interpolate'
 import { Button, Skeleton } from '../../ui'
 import { useOrganizers } from '../../../api/queries/organizers.queries'
 import { OrganizerRow } from './OrganizerRow'

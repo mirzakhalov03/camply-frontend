@@ -4,7 +4,7 @@ import { authService } from '../services/auth.service'
 import { authKeys } from '../queryKeys'
 import { useAuthStore, type AuthUser } from '../../store/useAuthStore'
 import { useProfileStore } from '../../store/useProfileStore'
-import { CITIES } from '../../lib/cities'
+import { CITIES } from '@/utils/cities'
 
 /*
   The auth QUERIES — the React layer over authService. Components call these hooks;

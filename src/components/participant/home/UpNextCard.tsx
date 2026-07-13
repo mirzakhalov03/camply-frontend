@@ -1,6 +1,6 @@
 import { useTranslation } from '../../../i18n/useTranslation'
-import { interpolate } from '../../../lib/interpolate'
-import { clockTime } from '../../../lib/relativeTime'
+import { interpolate } from '@/utils/interpolate'
+import { clockTime } from '@/utils/relativeTime'
 import type { Activity } from '../../../api/services/schedule.service'
 
 type Props = {

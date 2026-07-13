@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
-import { interpolate } from '../../../lib/interpolate'
+import { interpolate } from '@/utils/interpolate'
 import { Button, Field, Sheet } from '../../ui'
 import { ApiError } from '../../../api/axiosInstance'
 import { useCreateOrganizer } from '../../../api/queries/organizers.queries'

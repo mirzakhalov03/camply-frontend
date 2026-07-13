@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { CITIES, type City } from '../../lib/cities'
+import { CITIES, type City } from '@/utils/cities'
 import { useTranslation } from '../../i18n/useTranslation'
-import { interpolate } from '../../lib/interpolate'
+import { interpolate } from '@/utils/interpolate'
 
 type Props = {
   /** The chosen city, or null before the camper picks one. */

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from '../../../../i18n/useTranslation'
 import { Button, Sheet } from '../../../ui'
 import { PhoneInput } from '../../../auth/PhoneInput'
-import { PHONE_LENGTH } from '../../../../lib/phone'
+import { PHONE_LENGTH } from '@/utils/phone'
 import { ApiError } from '../../../../api/axiosInstance'
 import { useAddRoster } from '../../../../api/queries/roster.queries'
 

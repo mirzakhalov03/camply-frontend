@@ -1,5 +1,5 @@
 import { useTranslation } from '../../../i18n/useTranslation'
-import { relativeTime } from '../../../lib/relativeTime'
+import { relativeTime } from '@/utils/relativeTime'
 import { Badge } from '../../ui'
 import type { Announcement } from '../../../api/services/announcements.service'
 

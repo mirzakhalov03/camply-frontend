@@ -1,5 +1,5 @@
 import { useTranslation } from '../../../i18n/useTranslation'
-import { interpolate } from '../../../lib/interpolate'
+import { interpolate } from '@/utils/interpolate'
 import { Avatar, Badge, Button, Sheet } from '../../ui'
 import type { ChatMember } from '../../../lib/chat'
 

@@ -1,5 +1,5 @@
 import { useTranslation } from '../../../i18n/useTranslation'
-import { interpolate } from '../../../lib/interpolate'
+import { interpolate } from '@/utils/interpolate'
 import { Badge } from '../../ui'
 import type { AdminCamp, AdminCampStatus } from '../../../api/services/adminCamps.service'
 

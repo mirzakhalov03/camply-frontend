@@ -1,4 +1,4 @@
-import { interpolate } from '../../lib/interpolate'
+import { interpolate } from '@/utils/interpolate'
 
 type Props = {
   initials: string

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { Avatar } from '../../ui'
 import type { ChatMessage, ChatMember, MessageReaction } from '../../../lib/chat'
-import { formatFileSize } from '../../../lib/formatFileSize'
+import { formatFileSize } from '@/utils/formatFileSize'
 
 // Quick reactions offered when you tap someone's message.
 const QUICK_REACTIONS = ['👍', '❤️', '😂', '🔥', '👏']

@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { useProfileStore } from '../../../store/useProfileStore'
-import { formatUzPhone } from '../../../lib/phone'
+import { formatUzPhone } from '@/utils/phone'
 
 /*
   Contact card: email, phone, city. Phone comes from login and city from

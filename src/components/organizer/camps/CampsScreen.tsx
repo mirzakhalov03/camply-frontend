@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from '../../../i18n/useTranslation'
-import { interpolate } from '../../../lib/interpolate'
+import { interpolate } from '@/utils/interpolate'
 import { useOrganizerCamps, useOrganizerSummary } from '../../../api/queries/camps.queries'
 import { NewCampSheet } from './NewCampSheet'
 import { useActiveHelpRequests } from '../../../api/queries/helpRequests.queries'

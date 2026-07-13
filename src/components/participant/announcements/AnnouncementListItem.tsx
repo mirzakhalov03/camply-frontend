@@ -1,6 +1,6 @@
 import { useTranslation } from '../../../i18n/useTranslation'
-import { relativeTime } from '../../../lib/relativeTime'
-import { initials } from '../../../lib/initials'
+import { relativeTime } from '@/utils/relativeTime'
+import { initials } from '@/utils/initials'
 import { Avatar, Badge } from '../../ui'
 import type { Announcement } from '../../../api/services/announcements.service'
 

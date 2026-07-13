@@ -1,6 +1,6 @@
 import { Avatar } from '../../../ui'
 import { useTranslation } from '../../../../i18n/useTranslation'
-import { interpolate } from '../../../../lib/interpolate'
+import { interpolate } from '@/utils/interpolate'
 import type { CampGroupDetail } from '../../../../api/services/campGroups.service'
 
 /*
