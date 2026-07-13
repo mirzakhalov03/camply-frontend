@@ -98,9 +98,11 @@ data-contract modules — `campHome.ts`, `chat.ts`, `leaderboard.ts`, `membershi
 `mockAdminCamps.ts`, `mockCamp.ts`, `mockHelpRequests.ts`, `mockOrgChat.ts`,
 `mockChat.ts`, `mockMembership.ts`. After this, `lib/` is self-documenting:
 `lib/*.ts` = contracts (+ `api.ts`) awaiting migration, `lib/mocks/` = fixtures
-behind the mock→real seam. Importer updates: 3 in `api/services`, 1 in
-`components/participant/sos`, and 2 sibling imports inside `lib/`
-(`chat.ts` → `./mocks/mockChat`, `membership.ts` → `./mocks/mockMembership`).
+behind the mock→real seam. Importer updates: `api/services` (adminCamps,
+helpRequests, orgChat), `components/participant/sos` (SosSheet, useSos → mockCamp),
+and 3 sibling imports inside `lib/` (`chat.ts` → mockChat, `membership.ts` →
+mockMembership, `campHome.ts` → mockCamp). Each moved mock's own type import
+(to a contract module or a service) converts to `@/` in the same move.
 
 **Resulting `lib/`:** `api.ts` + 5 contract modules + `mocks/` (6 files) = 12
 files, down from 32 (30 top-level + `push/`'s 2).
