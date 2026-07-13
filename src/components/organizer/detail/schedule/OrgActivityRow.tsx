@@ -1,5 +1,5 @@
 import { useTranslation } from '../../../../i18n/useTranslation'
-import { clockTime } from '../../../../lib/relativeTime'
+import { clockTime } from '@/utils/relativeTime'
 import type { Activity } from '../../../../api/services/schedule.service'
 
 /*

@@ -1,4 +1,4 @@
-import { adminCampsMock } from '../../lib/mockAdminCamps'
+import { adminCampsMock } from '@/lib/mocks/mockAdminCamps'
 // import { axiosInstance } from '../axiosInstance' // ← enable when GET /camps exists
 
 /*

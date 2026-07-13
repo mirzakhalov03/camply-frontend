@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { membershipMock } from './mockMembership'
+import { membershipMock } from '@/lib/mocks/mockMembership'
 // import { api } from './api' // ← enable when the backend endpoint exists
 
 /*

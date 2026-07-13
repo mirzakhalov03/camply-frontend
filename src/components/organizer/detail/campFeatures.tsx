@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import type { OrganizerCamp, OrganizerSummary } from '../../../api/services/camps.service'
 import type { useTranslation } from '../../../i18n/useTranslation'
-import { interpolate } from '../../../lib/interpolate'
+import { interpolate } from '@/utils/interpolate'
 
 /*
   The camp-feature registry — the SINGLE SOURCE OF TRUTH for the organizer's camp

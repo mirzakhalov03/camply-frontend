@@ -1,4 +1,4 @@
-import type { CampHome } from './campHome'
+import type { CampHome } from '@/lib/campHome'
 
 /*
   Mock backing store — stands in for the database until the backend exists. This

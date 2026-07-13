@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { campHomeMock } from './mockCamp'
+import { campHomeMock } from '@/lib/mocks/mockCamp'
 // import { api } from './api' // ← enable when the backend endpoint exists
 
 /*

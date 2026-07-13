@@ -1,4 +1,4 @@
-import { getCurrentPosition } from '../../lib/geolocation'
+import { getCurrentPosition } from '@/utils/geolocation'
 
 /*
   The weather SERVICE — the boundary that turns "where is the user" into a current

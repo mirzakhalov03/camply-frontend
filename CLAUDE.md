@@ -37,7 +37,12 @@ No test runner is configured, by project preference — don't add or suggest tes
 - **React 19** + `react-jsx` runtime — no `import React` for JSX.
 - **TypeScript strict-ish**: `noUnusedLocals`/`noUnusedParameters` and
   `verbatimModuleSyntax` are on — use `import type { ... }` for type-only imports.
-- **No path aliases** — imports are relative.
+- **Path alias `@/` → `src/`** (tsconfig `paths` + Vite `resolve.alias`). New and
+  moved code imports via `@/...` (e.g. `@/utils/interpolate`, `@/hooks/useMe`,
+  `@/api/queryClient`). Adoption is **convert-as-you-touch** — untouched files may
+  still use relative imports; convert a file's imports when you edit it, don't
+  mass-rewrite. (`paths` has no `baseUrl` — deprecated in this TS version; it
+  resolves relative to the tsconfig instead.)
 - Prettier: no semicolons, single quotes, trailing commas, width 100.
 
 ## Architecture
@@ -78,13 +83,17 @@ data feature should follow:
 3. Export a `use<X>()` **React Query** hook wrapping `fetch<X>()`, cached by
    `queryKey` so multiple components share one fetch.
 
-`src/lib/queryClient.ts` holds the shared `QueryClient` (wired in `main.tsx`).
+`src/api/queryClient.ts` holds the shared `QueryClient` (wired in `main.tsx`).
 
-> This `lib/<domain>.ts` shape is the **mock-era** boundary. Real backend calls now
-> go through `src/api/` (below). As each endpoint lands, its `lib` module migrates
-> into an `api/services` + `api/queries` pair. `src/lib/api.ts` (the old fetch
-> wrapper) is superseded by `api/axiosInstance.ts` — leave it until the last `lib`
-> module migrates, then delete it. Don't add new features to the `lib` shape.
+> `src/lib/` is now the shrunken **mock-era transitional zone** — only what hasn't
+> migrated yet: the data-contract modules (`campHome`, `chat`, `leaderboard`,
+> `membership`, `groups`), the old fetch wrapper `api.ts` (kept only because those
+> modules' commented mock→real seam lines reference it — it goes when the last of
+> them migrates), and `lib/mocks/` (the live fixtures behind the seam). As each
+> endpoint lands, its `lib` module migrates into an `api/services` + `api/queries`
+> pair. **Don't add new features to the `lib` shape** — new data features start in
+> `api/`. Utilities moved to `@/utils`, hooks to `@/hooks`, `queryClient` to
+> `@/api/queryClient`.
 
 ### Backend boundary — `src/api/` (axios + services + queries)
 
@@ -131,11 +140,12 @@ organizer's onboarding identity — `role` + `group`; the organizer twin of
 `useAuthStore` (the auth **session** identity — `user`; the cookie is the real session,
 re-validated on boot via `useCurrentUser`), `useThemeStore` (dark mode), `useChatStore`, `useGroupStore`, and
 `i18n/useLanguageStore`. Anything that must survive a reload / PWA relaunch uses the
-`persist` middleware (theme, language, **auth**).
+`persist` middleware (theme, language, **auth**). `store/` holds **only** Zustand
+stores; selectors like `useMe` live in `@/hooks`.
 
 **The "me" overlay pattern:** mock rosters ship a placeholder `isMe` member;
 `withMyProfile()` overlays the real person onto it, stopping once the backend serves
-the real roster. Source the current user from **`useMe()`** (`src/store/useMe.ts`) —
+the real roster. Source the current user from **`useMe()`** (`src/hooks/useMe.ts`) —
 it assembles the identity from `useProfileStore` in one place. Don't re-select
 name/surname/photo/city/age/socials individually in a screen; call `useMe()`.
 
@@ -192,8 +202,8 @@ sit as siblings:
   **`organizers`** (the invite/list/deactivate dashboard, `organizers` service/query
   pair keyed by `adminOrganizerKeys`). Organizers are onboarded by **emailed magic
   link**: `NewOrganizerSheet` collects `{name, surname, email}` (not phone/password)
-  and `OrganizerRow` is **status-driven** — *pending* (amber, email, Resend/Revoke),
-  *active* (pine, phone, Deactivate), *deactivated* (muted, Reactivate). The invited
+  and `OrganizerRow` is **status-driven** — _pending_ (amber, email, Resend/Revoke),
+  _active_ (pine, phone, Deactivate), _deactivated_ (muted, Reactivate). The invited
   organizer completes onboarding on a **public** page at **`/invite/:token`**
   (`components/organizer/InviteAccept.tsx`, outside all auth guards) — enter phone
   → session starts → land on `/org/welcome` to finish onboarding. Data:
@@ -215,6 +225,19 @@ instance reaches both the Profile help card and the always-mounted sheet, and ho
 screens get navigation helpers. `/camp` is guarded: no login (no profile `phone`) →
 redirect to `/`. Add screens as routes; keep route paths centralized in the shell/
 `campContext`, not sprinkled across screens.
+
+### Utilities & hooks — `src/utils/`, `src/hooks/`
+
+- **`src/utils/`** — pure, framework-free helpers: `interpolate` (i18n token
+  substitution), `relativeTime`, `phone` (canonicalize/format), `initials`,
+  `formatFileSize`, `cities`, `geolocation`. No React, no side effects.
+- **`src/hooks/`** — reusable React hooks: `useSheetDrag` (bottom-sheet gesture),
+  `useTypewriter`, `useMe` (the client identity **selector** — assembles the
+  current user from `useProfileStore`; it lives here, not in `store/`, because it
+  is a selector, not a Zustand store), and the push pair `usePushNotifications`
+  (+ its internal `pushClient` browser Web-Push client).
+
+Import both via the `@/` alias (`@/utils/x`, `@/hooks/x`).
 
 ### i18n — trilingual, non-negotiable (`src/i18n/`)
 

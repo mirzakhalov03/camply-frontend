@@ -7,8 +7,8 @@ import {
   subscribePush,
   unsubscribePush,
 } from './pushClient'
-import { usePushStore } from '../../store/usePushStore'
-import { useRegisterPush, useUnregisterPush } from '../../api/queries/push.queries'
+import { usePushStore } from '@/store/usePushStore'
+import { useRegisterPush, useUnregisterPush } from '@/api/queries/push.queries'
 
 /*
   The one hook the UI touches for notifications. It orchestrates the browser

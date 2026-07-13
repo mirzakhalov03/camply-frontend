@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
-import { initials } from '../../../lib/initials'
+import { initials } from '@/utils/initials'
 import { useAuthStore } from '../../../store/useAuthStore'
 import { useProfileStore } from '../../../store/useProfileStore'
 import { useOrganizerStore } from '../../../store/useOrganizerStore'

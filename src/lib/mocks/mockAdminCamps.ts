@@ -1,4 +1,4 @@
-import type { AdminCamp } from '../api/services/adminCamps.service'
+import type { AdminCamp } from '@/api/services/adminCamps.service'
 
 /*
   Mock camps for the ORGANIZATION admin view — camps span multiple organizers, so

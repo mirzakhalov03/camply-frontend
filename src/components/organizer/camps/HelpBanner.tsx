@@ -1,7 +1,7 @@
 import { Avatar } from '../../ui'
 import { useTranslation } from '../../../i18n/useTranslation'
-import { interpolate } from '../../../lib/interpolate'
-import { relativeTime } from '../../../lib/relativeTime'
+import { interpolate } from '@/utils/interpolate'
+import { relativeTime } from '@/utils/relativeTime'
 import type { HelpReason, HelpRequest } from '../../../api/services/helpRequests.service'
 
 /*

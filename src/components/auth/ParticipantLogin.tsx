@@ -3,7 +3,7 @@ import { useTranslation } from '../../i18n/useTranslation'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { AnimatedWelcome } from './AnimatedWelcome'
 import { PhoneInput } from './PhoneInput'
-import { PHONE_LENGTH } from '../../lib/phone'
+import { PHONE_LENGTH } from '@/utils/phone'
 import { PineRidge } from './PineRidge'
 
 type Props = {

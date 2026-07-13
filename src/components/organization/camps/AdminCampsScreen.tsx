@@ -1,5 +1,5 @@
 import { useTranslation } from '../../../i18n/useTranslation'
-import { interpolate } from '../../../lib/interpolate'
+import { interpolate } from '@/utils/interpolate'
 import { Skeleton } from '../../ui'
 import { useAdminCamps } from '../../../api/queries/adminCamps.queries'
 import { AdminCampCard } from './AdminCampCard'

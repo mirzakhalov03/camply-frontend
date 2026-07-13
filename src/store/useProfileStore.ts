@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { City } from '../lib/cities'
+import type { City } from '@/utils/cities'
 
 /*
   CLIENT state — the participant's OWN profile: the data they enter and can edit,

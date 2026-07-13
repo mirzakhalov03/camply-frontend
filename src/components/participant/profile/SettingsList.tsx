@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { LANG_LABELS } from '../../../i18n/translations'
 import { LanguageSheet } from './LanguageSheet'
-import { usePushNotifications } from '../../../lib/push/usePushNotifications'
+import { usePushNotifications } from '@/hooks/usePushNotifications'
 
 /*
   Profile settings: language, location sharing, and notifications. Language opens

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
-import { interpolate } from '../../../lib/interpolate'
+import { interpolate } from '@/utils/interpolate'
 import { useOrgChat } from '../../../api/queries/orgChat.queries'
 import type { OrgChatChannelId } from '../../../api/services/orgChat.service'
 import {
@@ -12,7 +12,7 @@ import {
 import { useOrgChatStore } from '../../../store/useOrgChatStore'
 import { useOrganizerStore } from '../../../store/useOrganizerStore'
 import { useGroupStore } from '../../../store/useGroupStore'
-import { useMe } from '../../../store/useMe'
+import { useMe } from '@/hooks/useMe'
 import { Avatar, GroupPhotoButton } from '../../ui'
 import { Composer } from '../../participant/chat/Composer'
 import { MessageBubble } from '../../participant/chat/MessageBubble'

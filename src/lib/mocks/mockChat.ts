@@ -1,4 +1,4 @@
-import type { GroupChat } from './chat'
+import type { GroupChat } from '@/lib/chat'
 
 /*
   Mock backing store for the group chat — stands in for the database until the

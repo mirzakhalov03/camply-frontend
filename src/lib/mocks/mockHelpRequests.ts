@@ -1,4 +1,4 @@
-import type { HelpRequest } from '../api/services/helpRequests.service'
+import type { HelpRequest } from '@/api/services/helpRequests.service'
 
 /*
   Mock backing store for organizer-facing SOS / help requests. Safety is a

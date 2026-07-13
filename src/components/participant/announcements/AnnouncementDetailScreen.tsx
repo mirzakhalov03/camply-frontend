@@ -3,8 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { useAnnouncement } from '../../../api/queries/announcements.queries'
 import { useAnnouncementReads } from '../../../store/useAnnouncementReads'
-import { absoluteDateTime } from '../../../lib/relativeTime'
-import { initials } from '../../../lib/initials'
+import { absoluteDateTime } from '@/utils/relativeTime'
+import { initials } from '@/utils/initials'
 import { Avatar, Badge, Skeleton } from '../../ui'
 
 /*

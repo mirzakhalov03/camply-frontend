@@ -1,5 +1,5 @@
 import { useTranslation } from '../../../i18n/useTranslation'
-import { interpolate } from '../../../lib/interpolate'
+import { interpolate } from '@/utils/interpolate'
 import type { RankedGroup } from '../../../lib/leaderboard'
 
 // Who to compare "you" against, and which way to phrase it. Computed by the
