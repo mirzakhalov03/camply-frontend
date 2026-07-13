@@ -83,7 +83,7 @@ data feature should follow:
 3. Export a `use<X>()` **React Query** hook wrapping `fetch<X>()`, cached by
    `queryKey` so multiple components share one fetch.
 
-`src/lib/queryClient.ts` holds the shared `QueryClient` (wired in `main.tsx`).
+`src/api/queryClient.ts` holds the shared `QueryClient` (wired in `main.tsx`).
 
 > `src/lib/` is now the shrunken **mock-era transitional zone** — only what hasn't
 > migrated yet: the data-contract modules (`campHome`, `chat`, `leaderboard`,
