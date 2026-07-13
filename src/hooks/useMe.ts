@@ -1,5 +1,5 @@
-import { useProfileStore } from './useProfileStore'
-import type { MeIdentity } from '../lib/chat'
+import { useProfileStore } from '@/store/useProfileStore'
+import type { MeIdentity } from '@/lib/chat'
 
 /*
   The current participant's identity, assembled from the profile store in ONE

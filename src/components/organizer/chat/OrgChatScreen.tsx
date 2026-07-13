@@ -12,7 +12,7 @@ import {
 import { useOrgChatStore } from '../../../store/useOrgChatStore'
 import { useOrganizerStore } from '../../../store/useOrganizerStore'
 import { useGroupStore } from '../../../store/useGroupStore'
-import { useMe } from '../../../store/useMe'
+import { useMe } from '@/hooks/useMe'
 import { Avatar, GroupPhotoButton } from '../../ui'
 import { Composer } from '../../participant/chat/Composer'
 import { MessageBubble } from '../../participant/chat/MessageBubble'

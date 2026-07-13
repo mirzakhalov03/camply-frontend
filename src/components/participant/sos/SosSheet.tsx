@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { interpolate } from '@/utils/interpolate'
 import { sosReasons, sosContext, type SosReasonKey } from '../../../lib/mockCamp'
-import { useSheetDrag } from '../../../lib/useSheetDrag'
+import { useSheetDrag } from '@/hooks/useSheetDrag'
 import { formatEta, type SosStage } from './useSos'
 
 type Props = {

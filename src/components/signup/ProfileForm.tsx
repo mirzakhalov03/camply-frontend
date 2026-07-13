@@ -1,6 +1,6 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { useTranslation } from '../../i18n/useTranslation'
-import { useTypewriter } from '../../lib/useTypewriter'
+import { useTypewriter } from '@/hooks/useTypewriter'
 import { useProfileStore } from '../../store/useProfileStore'
 import type { City } from '@/utils/cities'
 import { OnboardingProgress } from '../OnboardingProgress'

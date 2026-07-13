@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react'
-import { useSheetDrag } from '../../lib/useSheetDrag'
+import { useSheetDrag } from '@/hooks/useSheetDrag'
 
 /*
   The one bottom sheet. Dimmed backdrop + a surface that slides up from the edge
