@@ -1,4 +1,4 @@
-import type { OrgChat } from '../api/services/orgChat.service'
+import type { OrgChat } from '@/api/services/orgChat.service'
 
 /*
   Mock backing store for the ORGANIZER chat — the two channels the back-office chats

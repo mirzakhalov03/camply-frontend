@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { sosContext, type SosReasonKey } from '../../../lib/mockCamp'
+import { sosContext, type SosReasonKey } from '@/lib/mocks/mockCamp'
 
 /*
   The SOS state machine, lifted into a hook so the floating button and the sheet

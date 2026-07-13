@@ -1,4 +1,4 @@
-import type { Membership } from './membership'
+import type { Membership } from '@/lib/membership'
 
 /*
   Mock backing store for membership — stands in for the database until the

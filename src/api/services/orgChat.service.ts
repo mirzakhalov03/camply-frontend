@@ -1,4 +1,4 @@
-import { orgChatMock } from '../../lib/mockOrgChat'
+import { orgChatMock } from '@/lib/mocks/mockOrgChat'
 import type { ChatMember, ChatMessage } from '../../lib/chat'
 // import { axiosInstance } from '../axiosInstance' // ← enable when the endpoint exists
 

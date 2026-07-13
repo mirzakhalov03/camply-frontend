@@ -1,4 +1,4 @@
-import { helpRequestsMock } from '../../lib/mockHelpRequests'
+import { helpRequestsMock } from '@/lib/mocks/mockHelpRequests'
 // import { axiosInstance } from '../axiosInstance' // ← enable when the endpoint exists
 
 /*

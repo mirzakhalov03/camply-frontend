@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { groupChatMock } from './mockChat'
+import { groupChatMock } from '@/lib/mocks/mockChat'
 // import { api } from './api' // ← enable when the backend endpoint exists
 
 /*
