@@ -1,4 +1,4 @@
-import { queryClient } from '../../lib/queryClient'
+import { queryClient } from '@/api/queryClient'
 import { campKeys } from '../queryKeys'
 
 /*
