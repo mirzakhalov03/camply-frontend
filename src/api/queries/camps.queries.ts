@@ -44,3 +44,27 @@ export function useCreateCamp() {
     },
   })
 }
+
+export function useUpdateCamp(campId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (body: Partial<CreateCampBody>) => campsService.update(campId, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: organizerKeys.camps })
+      queryClient.invalidateQueries({ queryKey: organizerKeys.summary })
+      queryClient.invalidateQueries({ queryKey: organizerKeys.camp(campId) })
+    },
+  })
+}
+
+export function usePublishCamp() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (campId: string) => campsService.publish(campId),
+    onSuccess: (_data, campId) => {
+      queryClient.invalidateQueries({ queryKey: organizerKeys.camps })
+      queryClient.invalidateQueries({ queryKey: organizerKeys.summary })
+      queryClient.invalidateQueries({ queryKey: organizerKeys.camp(campId) })
+    },
+  })
+}

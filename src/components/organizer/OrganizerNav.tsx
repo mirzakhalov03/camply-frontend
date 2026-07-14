@@ -55,18 +55,13 @@ export function OrganizerBottomNav() {
 /* ── Desktop/tablet: left rail (md and up) ─────────────────────────────── */
 export function OrganizerSidebar() {
   const items = useNavItems()
-  const { data: summary } = useOrganizerSummary()
 
   return (
     <aside className="hidden w-60 flex-none flex-col border-r border-line bg-surface-2 md:flex">
       <div className="flex items-center gap-2.5 px-5 py-6">
-        <span className="flex h-9 w-9 flex-none items-center justify-center rounded-input bg-pine text-heading">
-          🏕
-        </span>
+        <img src="/pwa-192x192.png" alt="Camply" className="h-9 w-9 flex-none rounded-input" />
         <div className="min-w-0">
-          <div className="truncate text-title font-bold text-content">
-            {summary?.organizationName ?? 'Camply'}
-          </div>
+          <div className="truncate text-title font-bold text-content">Camply</div>
           <div className="text-meta text-muted">Organizer</div>
         </div>
       </div>

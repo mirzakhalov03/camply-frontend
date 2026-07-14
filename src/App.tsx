@@ -13,6 +13,7 @@ import { OrganizerShell } from './components/organizer/OrganizerShell'
 import { InviteAccept } from './components/organizer/InviteAccept'
 import { OrganizerOnboarding } from './components/organizer/OrganizerOnboarding'
 import { CampsScreen } from './components/organizer/camps/CampsScreen'
+import { NewCampScreen } from './components/organizer/camps/NewCampScreen'
 import { CampDetailShell } from './components/organizer/detail/CampDetailShell'
 import { FeatureShell } from './components/organizer/detail/FeatureShell'
 import { ParticipantsTab } from './components/organizer/detail/participants/ParticipantsTab'
@@ -31,7 +32,9 @@ import { AdminShell } from './components/organization/AdminShell'
 import { AdminLogin } from './components/organization/AdminLogin'
 import { OrganizersScreen } from './components/organization/organizers/OrganizersScreen'
 import { AdminCampsScreen } from './components/organization/camps/AdminCampsScreen'
-import { DashboardScreen } from './components/organization/dashboard/DashboardScreen'
+import { AdminNewCampScreen } from './components/organization/camps/AdminNewCampScreen'
+import { AdminCampDetailShell } from './components/organization/camps/AdminCampDetailShell'
+import { AdminProfileScreen } from './components/organization/profile/AdminProfileScreen'
 import { useCurrentUser } from './api/queries/auth.queries'
 import { useTranslation } from './i18n/useTranslation'
 
@@ -89,6 +92,7 @@ function App() {
           <Route path="/org" element={<OrganizerShell />}>
             <Route index element={<Navigate to="camps" replace />} />
             <Route path="camps" element={<CampsScreen />} />
+            <Route path="camps/new" element={<NewCampScreen />} />
             {/* Camp Detail: the /org/camps home is the launcher; each feature is a
                 deep-linkable route rendered full-screen inside FeatureShell (back arrow
                 -> home). URLs are unchanged so push/deep-links still resolve. A bare
@@ -158,10 +162,23 @@ function App() {
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route element={<RequireAdmin />}>
           <Route path="/admin" element={<AdminShell />}>
-            <Route index element={<Navigate to="dashboard" replace />} />
-            <Route path="dashboard" element={<DashboardScreen />} />
+            <Route index element={<Navigate to="camps" replace />} />
             <Route path="camps" element={<AdminCampsScreen />} />
-            <Route path="organizers" element={<OrganizersScreen />} />
+            <Route path="camps/new" element={<AdminNewCampScreen />} />
+            <Route path="camps/:campId" element={<AdminCampDetailShell />}>
+              <Route index element={<Navigate to="participants" replace />} />
+              <Route path="participants" element={<ParticipantsTab />} />
+              <Route path="groups" element={<GroupsTab />} />
+              <Route path="leaderboard" element={<LeaderboardTab />} />
+              <Route path="schedule" element={<ScheduleTab />} />
+              <Route path="announcements" element={<AnnouncementsTab />} />
+              <Route path="map" element={<OrgComingSoon />} />
+            </Route>
+            <Route path="team" element={<OrganizersScreen />} />
+            <Route path="profile" element={<AdminProfileScreen />} />
+            {/* Redirects so old deep links / pushes still resolve. */}
+            <Route path="dashboard" element={<Navigate to="camps" replace />} />
+            <Route path="organizers" element={<Navigate to="team" replace />} />
           </Route>
         </Route>
 

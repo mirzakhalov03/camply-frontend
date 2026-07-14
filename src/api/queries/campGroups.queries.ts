@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { campGroupsService } from '../services/campGroups.service'
 import { campKeys } from '../queryKeys'
 
@@ -12,5 +12,21 @@ export function useCampGroups(campId: string) {
     queryKey: campKeys.groups(campId),
     queryFn: () => campGroupsService.list(campId),
     enabled: Boolean(campId),
+  })
+}
+
+export function useCreateGroup(campId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (body: { name: string; color: string }) => campGroupsService.create(campId, body),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: campKeys.groups(campId) }),
+  })
+}
+
+export function useDeleteGroup(campId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (groupId: string) => campGroupsService.remove(campId, groupId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: campKeys.groups(campId) }),
   })
 }

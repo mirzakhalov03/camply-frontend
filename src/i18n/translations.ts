@@ -449,7 +449,14 @@ type AdminStrings = {
     cta: string
     error: string
   }
-  nav: { dashboard: string; camps: string; organizers: string; logout: string }
+  nav: {
+    dashboard: string
+    camps: string
+    organizers: string
+    team: string
+    profile: string
+    logout: string
+  }
   organizers: {
     title: string
     subtitle: string // '{count} organizers'
@@ -507,7 +514,25 @@ type AdminStrings = {
     emptyHint: string
     loadError: string
     participants: string // '{count} participants'
+    total: string
+    active: string
+    create: string
+    createHint: string
   }
+}
+
+// Organization profile screen (/admin/profile) — identity card + settings list.
+type OrgProfileStrings = {
+  title: string
+  role: string
+  email: string
+  phone: string
+  team: string
+  language: string
+  logout: string
+  statCamps: string
+  statParticipants: string
+  statOrganizers: string
 }
 
 // Invite landing (organizer onboarding, step 1): a one-tap confirmation for
@@ -531,6 +556,7 @@ type CreateCampStrings = {
   capacity: string
   submit: string
   dateError: string
+  required: string
   success: string
 }
 
@@ -542,6 +568,38 @@ type AddParticipantStrings = {
   duplicate: string
   tooMany: string
   success: string
+}
+
+// Reusable camp-creation wizard (org + organizer surfaces).
+type CampWizardStrings = {
+  title: string
+  stepInfo: string
+  stepGroups: string
+  stepOrganizers: string
+  stepParticipants: string
+  stepReview: string
+  next: string
+  back: string
+  finish: string
+  groupsTitle: string
+  groupsHint: string
+  groupNamePlaceholder: string
+  addGroup: string
+  groupCount: string // '{count} groups created'
+  remove: string
+  organizersTitle: string
+  organizersHint: string
+  participantsTitle: string
+  participantsHint: string
+  pending: string
+  reviewTitle: string
+  reviewHint: string
+  statGroups: string
+  statOrganizers: string
+  statParticipants: string
+  orgName: string
+  orgSurname: string
+  orgEmail: string
 }
 
 export const translations: Record<
@@ -568,6 +626,8 @@ export const translations: Record<
     pwa: PwaStrings
     createCamp: CreateCampStrings
     addParticipant: AddParticipantStrings
+    campWizard: CampWizardStrings
+    orgProfile: OrgProfileStrings
   }
 > = {
   uz: {
@@ -584,6 +644,8 @@ export const translations: Record<
         dashboard: 'Boshqaruv',
         camps: 'Oromgohlar',
         organizers: 'Tashkilotchilar',
+        team: 'Jamoa',
+        profile: 'Profil',
         logout: 'Chiqish',
       },
       organizers: {
@@ -646,6 +708,10 @@ export const translations: Record<
         emptyHint: 'Tashkilotchilar oromgoh yaratganda, ular shu yerda koʻrinadi.',
         loadError: 'Oromgohlarni yuklab boʻlmadi',
         participants: '{count} ishtirokchi',
+        total: 'Jami lager',
+        active: 'Faol',
+        create: 'Yangi lager yaratish',
+        createHint: 'Maʼlumot · tashkilotchilar · ishtirokchilar',
       },
     },
     login: {
@@ -1047,6 +1113,7 @@ export const translations: Record<
       capacity: 'Sigʻim (ixtiyoriy)',
       submit: 'Oromgoh yaratish',
       dateError: 'Tugash sanasi boshlanish sanasidan keyin boʻlishi kerak.',
+      required: 'Iltimos, barcha majburiy maydonlarni toʻldiring',
       success: 'Oromgoh yaratildi',
     },
     addParticipant: {
@@ -1056,6 +1123,50 @@ export const translations: Record<
       duplicate: 'Bu telefon raqami bu oromgohda allaqachon mavjud.',
       tooMany: 'Bu telefon raqami allaqachon 2 ta oromgohda ishtirok etmoqda.',
       success: 'Ishtirokchi qoʻshildi',
+    },
+    campWizard: {
+      title: 'Yangi lager',
+      stepInfo: 'Maʼlumot',
+      stepGroups: 'Guruhlar',
+      stepOrganizers: 'Tashkilotchi',
+      stepParticipants: 'Ishtirokchi',
+      stepReview: 'Koʻrib chiqish',
+      next: 'Davom etish',
+      back: 'Orqaga',
+      finish: 'Lagerni yaratish',
+      groupsTitle: 'Guruhlarni yaratish',
+      groupsHint: 'Avval guruhlarni tuzing va nomlang. Keyin ularga odam qoʻshasiz.',
+      groupNamePlaceholder: 'Yangi guruh nomi',
+      addGroup: 'Qoʻshish',
+      groupCount: '{count} ta guruh tuzildi',
+      remove: 'Oʻchirish',
+      organizersTitle: 'Tashkilotchilarni qoʻshish',
+      organizersHint:
+        'Ism, email va telefon qoʻshing. Har bir tashkilotchiga roʻyxatdan oʻtish uchun email havola yuboriladi.',
+      participantsTitle: 'Ishtirokchilarni qoʻshish',
+      participantsHint:
+        'Guruhni tanlang, soʻng telefon raqamlarini qoʻshing. Har bir ishtirokchi oʻz raqami bilan kiradi.',
+      pending: 'Roʻyxatdan oʻtishni kutmoqda',
+      reviewTitle: 'Koʻrib chiqing va tasdiqlang',
+      reviewHint: 'Hammasi toʻgʻrimi? Tayyor boʻlsangiz, lagerni yarating.',
+      statGroups: 'Guruh',
+      statOrganizers: 'Tashkilotchi',
+      statParticipants: 'Ishtirokchi',
+      orgName: 'Ism',
+      orgSurname: 'Familiya',
+      orgEmail: 'Email',
+    },
+    orgProfile: {
+      title: 'Tashkilot profili',
+      role: 'Tashkilot',
+      email: 'Email',
+      phone: 'Telefon',
+      team: 'Jamoa va tashkilotchilar',
+      language: 'Til',
+      logout: 'Chiqish',
+      statCamps: 'Lager',
+      statParticipants: 'Ishtirokchi',
+      statOrganizers: 'Tashkilotchi',
     },
   },
   ru: {
@@ -1072,6 +1183,8 @@ export const translations: Record<
         dashboard: 'Панель',
         camps: 'Лагеря',
         organizers: 'Организаторы',
+        team: 'Команда',
+        profile: 'Профиль',
         logout: 'Выйти',
       },
       organizers: {
@@ -1134,6 +1247,10 @@ export const translations: Record<
         emptyHint: 'Когда организаторы создадут лагеря, они появятся здесь.',
         loadError: 'Не удалось загрузить лагеря',
         participants: '{count} участников',
+        total: 'Всего лагерей',
+        active: 'Активные',
+        create: 'Создать лагерь',
+        createHint: 'Данные · организаторы · участники',
       },
     },
     login: {
@@ -1519,6 +1636,7 @@ export const translations: Record<
       capacity: 'Вместимость (необязательно)',
       submit: 'Создать лагерь',
       dateError: 'Дата окончания должна быть позже даты начала.',
+      required: 'Пожалуйста, заполните все обязательные поля',
       success: 'Лагерь создан',
     },
     addParticipant: {
@@ -1528,6 +1646,50 @@ export const translations: Record<
       duplicate: 'Этот номер уже добавлен в этот лагерь.',
       tooMany: 'Этот номер уже участвует в 2 лагерях.',
       success: 'Участник добавлен',
+    },
+    campWizard: {
+      title: 'Новый лагерь',
+      stepInfo: 'Данные',
+      stepGroups: 'Группы',
+      stepOrganizers: 'Организаторы',
+      stepParticipants: 'Участники',
+      stepReview: 'Проверка',
+      next: 'Продолжить',
+      back: 'Назад',
+      finish: 'Создать лагерь',
+      groupsTitle: 'Создать группы',
+      groupsHint: 'Сначала создайте и назовите группы. Затем добавите в них людей.',
+      groupNamePlaceholder: 'Название новой группы',
+      addGroup: 'Добавить',
+      groupCount: 'Создано групп: {count}',
+      remove: 'Удалить',
+      organizersTitle: 'Пригласить организаторов',
+      organizersHint:
+        'Добавьте имя, email и телефон. Каждый организатор получит ссылку для регистрации.',
+      participantsTitle: 'Добавить участников',
+      participantsHint:
+        'Выберите группу, затем добавьте номера. Каждый участник входит по своему номеру.',
+      pending: 'Ожидает регистрации',
+      reviewTitle: 'Проверьте и подтвердите',
+      reviewHint: 'Всё верно? Создайте лагерь, когда будете готовы.',
+      statGroups: 'Группы',
+      statOrganizers: 'Организаторы',
+      statParticipants: 'Участники',
+      orgName: 'Имя',
+      orgSurname: 'Фамилия',
+      orgEmail: 'Email',
+    },
+    orgProfile: {
+      title: 'Профиль организации',
+      role: 'Организация',
+      email: 'Email',
+      phone: 'Телефон',
+      team: 'Команда и организаторы',
+      language: 'Язык',
+      logout: 'Выйти',
+      statCamps: 'Лагеря',
+      statParticipants: 'Участники',
+      statOrganizers: 'Организаторы',
     },
   },
   en: {
@@ -1544,6 +1706,8 @@ export const translations: Record<
         dashboard: 'Dashboard',
         camps: 'Camps',
         organizers: 'Organizers',
+        team: 'Team',
+        profile: 'Profile',
         logout: 'Log out',
       },
       organizers: {
@@ -1606,6 +1770,10 @@ export const translations: Record<
         emptyHint: "When organizers create camps, they'll appear here.",
         loadError: "Couldn't load camps",
         participants: '{count} participants',
+        total: 'Total camps',
+        active: 'Active',
+        create: 'Create new camp',
+        createHint: 'Details · organizers · participants',
       },
     },
     login: {
@@ -1992,6 +2160,7 @@ export const translations: Record<
       capacity: 'Capacity (optional)',
       submit: 'Create camp',
       dateError: 'End date must be after the start date.',
+      required: 'Please fill in all required fields',
       success: 'Camp created',
     },
     addParticipant: {
@@ -2001,6 +2170,50 @@ export const translations: Record<
       duplicate: 'That phone is already in this camp.',
       tooMany: 'That phone is already in 2 camps.',
       success: 'Participant added',
+    },
+    campWizard: {
+      title: 'New camp',
+      stepInfo: 'Details',
+      stepGroups: 'Groups',
+      stepOrganizers: 'Organizers',
+      stepParticipants: 'Participants',
+      stepReview: 'Review',
+      next: 'Continue',
+      back: 'Back',
+      finish: 'Create camp',
+      groupsTitle: 'Create groups',
+      groupsHint: "Name your groups first. You'll add people to them next.",
+      groupNamePlaceholder: 'New group name',
+      addGroup: 'Add',
+      groupCount: '{count} groups created',
+      remove: 'Remove',
+      organizersTitle: 'Invite organizers',
+      organizersHint:
+        'Add name, email and phone. Each organizer gets an email link to finish signing up.',
+      participantsTitle: 'Add participants',
+      participantsHint:
+        'Pick a group, then add phone numbers. Each participant signs up with their own number.',
+      pending: 'Awaiting sign-up',
+      reviewTitle: 'Review & confirm',
+      reviewHint: 'Everything correct? Create the camp when ready.',
+      statGroups: 'Groups',
+      statOrganizers: 'Organizers',
+      statParticipants: 'Participants',
+      orgName: 'First name',
+      orgSurname: 'Last name',
+      orgEmail: 'Email',
+    },
+    orgProfile: {
+      title: 'Organization profile',
+      role: 'Organization',
+      email: 'Email',
+      phone: 'Phone',
+      team: 'Team & organizers',
+      language: 'Language',
+      logout: 'Log out',
+      statCamps: 'Camps',
+      statParticipants: 'Participants',
+      statOrganizers: 'Organizers',
     },
   },
 }
