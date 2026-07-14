@@ -64,6 +64,17 @@ export type CreateCampBody = {
   coverImage?: string | null
 }
 
+export type CreateCampGroupInput = { ref: string; name: string; color: string }
+export type CreateCampParticipantInput = { phone: string; groupRef: string | null }
+
+/** Batch create: camp + its groups + participants in one request. */
+export type CreateFullCampBody = CreateCampBody & {
+  status?: 'draft' | 'published'
+  clientRequestId?: string
+  groups?: CreateCampGroupInput[]
+  participants?: CreateCampParticipantInput[]
+}
+
 export const campsService = {
   /** Every camp the organizer can open, newest/active first (server-ordered). */
   list: async (): Promise<OrganizerCamp[]> => {
@@ -72,6 +83,11 @@ export const campsService = {
 
   /** Creates a new camp under the organizer's organization. */
   create: async (body: CreateCampBody): Promise<OrganizerCamp> => {
+    return (await axiosInstance.post<OrganizerCamp>('/organizer/camps', body)).data
+  },
+
+  /** Creates a camp with its groups + participants in one POST (wizard commit). */
+  createFull: async (body: CreateFullCampBody): Promise<OrganizerCamp> => {
     return (await axiosInstance.post<OrganizerCamp>('/organizer/camps', body)).data
   },
 
