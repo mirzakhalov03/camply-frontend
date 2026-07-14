@@ -600,6 +600,13 @@ type CampWizardStrings = {
   orgName: string
   orgSurname: string
   orgEmail: string
+  stepProgress: string // 'Step {n} of {total}'
+  namePlaceholder: string
+  capacityPlaceholder: string
+  locationPlaceholder: string
+  commitError: string
+  retry: string
+  creating: string
 }
 
 export const translations: Record<
@@ -1155,6 +1162,13 @@ export const translations: Record<
       orgName: 'Ism',
       orgSurname: 'Familiya',
       orgEmail: 'Email',
+      stepProgress: 'Qadam {n} / {total}',
+      namePlaceholder: 'masalan, Boʻstonliq 2026',
+      capacityPlaceholder: 'masalan, 40',
+      locationPlaceholder: 'Manzilni tanlang',
+      commitError: 'Lagerni yaratib boʻlmadi. Qayta urinib koʻring.',
+      retry: 'Qayta urinish',
+      creating: 'Yaratilmoqda…',
     },
     orgProfile: {
       title: 'Tashkilot profili',
@@ -1678,6 +1692,13 @@ export const translations: Record<
       orgName: 'Имя',
       orgSurname: 'Фамилия',
       orgEmail: 'Email',
+      stepProgress: 'Шаг {n} из {total}',
+      namePlaceholder: 'напр., Бустанлык 2026',
+      capacityPlaceholder: 'напр., 40',
+      locationPlaceholder: 'Выберите локацию',
+      commitError: 'Не удалось создать лагерь. Попробуйте ещё раз.',
+      retry: 'Повторить',
+      creating: 'Создание…',
     },
     orgProfile: {
       title: 'Профиль организации',
@@ -2202,6 +2223,13 @@ export const translations: Record<
       orgName: 'First name',
       orgSurname: 'Last name',
       orgEmail: 'Email',
+      stepProgress: 'Step {n} of {total}',
+      namePlaceholder: "e.g. Bo'stonliq Summer 2026",
+      capacityPlaceholder: 'e.g. 40',
+      locationPlaceholder: 'Select location',
+      commitError: 'Could not create the camp. Please try again.',
+      retry: 'Try again',
+      creating: 'Creating…',
     },
     orgProfile: {
       title: 'Organization profile',
