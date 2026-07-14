@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from '../../i18n/useTranslation'
-import { CamplyMark } from '../ui'
 
 /*
   Organization admin navigation, in TWO responsive forms from one item list:
@@ -19,9 +18,9 @@ type NavItem = { to: string; label: string; icon: ReactNode }
 function useNavItems(): NavItem[] {
   const { t } = useTranslation()
   return [
-    { to: '/admin/dashboard', label: t.admin.nav.dashboard, icon: <DashboardIcon /> },
     { to: '/admin/camps', label: t.admin.nav.camps, icon: <CampsIcon /> },
-    { to: '/admin/organizers', label: t.admin.nav.organizers, icon: <OrganizersIcon /> },
+    { to: '/admin/team', label: t.admin.nav.team, icon: <OrganizersIcon /> },
+    { to: '/admin/profile', label: t.admin.nav.profile, icon: <ProfileIcon /> },
   ]
 }
 
@@ -70,9 +69,7 @@ export function AdminSidebar({ onLogout }: { onLogout: () => void }) {
   return (
     <aside className="hidden w-60 flex-none flex-col border-r border-line bg-surface-2 md:flex">
       <div className="flex items-center gap-2.5 px-5 py-6">
-        <span className="flex h-9 w-9 flex-none items-center justify-center rounded-input bg-pine text-white">
-          <CamplyMark variant="mono" className="w-5" title="Camply" />
-        </span>
+        <img src="/pwa-192x192.png" alt="Camply" className="h-9 w-9 flex-none rounded-input" />
         <div className="min-w-0">
           <div className="truncate text-title font-bold text-content">Camply</div>
           <div className="text-meta text-muted">Organization</div>
@@ -115,25 +112,6 @@ export function AdminSidebar({ onLogout }: { onLogout: () => void }) {
 
 /* ── Icons ─────────────────────────────────────────────────────────────── */
 const icon = 'stroke-current flex-none'
-function DashboardIcon() {
-  return (
-    <svg
-      width="23"
-      height="23"
-      viewBox="0 0 24 24"
-      fill="none"
-      strokeWidth="2.1"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={icon}
-    >
-      <rect x="3" y="3" width="7" height="9" rx="1.5" />
-      <rect x="14" y="3" width="7" height="5" rx="1.5" />
-      <rect x="14" y="12" width="7" height="9" rx="1.5" />
-      <rect x="3" y="16" width="7" height="5" rx="1.5" />
-    </svg>
-  )
-}
 function CampsIcon() {
   return (
     <svg
@@ -167,6 +145,23 @@ function OrganizersIcon() {
       <path d="M2.5 20a6.5 6.5 0 0 1 13 0" />
       <path d="M17 4.2a3.4 3.4 0 0 1 0 6.6" />
       <path d="M18.5 14.3A6.5 6.5 0 0 1 21.5 20" />
+    </svg>
+  )
+}
+function ProfileIcon() {
+  return (
+    <svg
+      width="23"
+      height="23"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="2.1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={icon}
+    >
+      <circle cx="12" cy="8" r="3.8" />
+      <path d="M4.5 20.5a7.5 7.5 0 0 1 15 0" />
     </svg>
   )
 }
