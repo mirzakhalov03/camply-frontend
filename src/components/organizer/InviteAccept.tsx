@@ -1,21 +1,19 @@
 import { useState } from 'react'
-import type { FormEvent } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from '../../i18n/useTranslation'
 import { useAcceptInvite, useInvite } from '../../api/queries/invite.queries'
 import { ApiError } from '../../api/axiosInstance'
 import { interpolate } from '@/utils/interpolate'
-import { PHONE_LENGTH } from '@/utils/phone'
 import { LanguageSwitcher } from '../auth/LanguageSwitcher'
-import { PhoneInput } from '../auth/PhoneInput'
 import { Button, Skeleton } from '../ui'
 
 /*
   The public invite-accept landing at /invite/:token — where an organization's
   emailed magic link lands. Controlling that inbox is the identity proof, so this
   screen is deliberately outside every auth guard: it greets the invitee by name
-  (from GET /invite/:token), captures the phone that becomes their login handle,
-  and on accept starts a real organizer session → /org/welcome to finish onboarding.
+  (from GET /invite/:token) and, on a one-tap accept, starts a real organizer
+  session → /org/welcome to finish onboarding. The phone was set by the org at
+  invite time, so there's nothing to type here.
 
   Mirrors AdminLogin's on-brand pine→deep backdrop + surface card so dark mode stays
   intact. Two failure modes are kept visibly distinct: an invalid token (404) vs an
@@ -27,28 +25,15 @@ export function InviteAccept() {
   const navigate = useNavigate()
   const invite = useInvite(token)
   const accept = useAcceptInvite(token)
-  const [phone, setPhone] = useState('')
   const [serverError, setServerError] = useState<string | null>(null)
 
-  const isValid = phone.length === PHONE_LENGTH
-
-  const submit = (e: FormEvent) => {
-    e.preventDefault()
-    if (!isValid) return
+  const onAccept = () => {
     setServerError(null)
-    // The accept endpoint validates exactly 9 national digits — send them raw
-    // (the backend canonicalizes to +998…), never the +998-prefixed form.
-    accept.mutate(phone, {
+    accept.mutate(undefined, {
       onSuccess: () => navigate('/org/welcome', { replace: true }),
       onError: (err) => {
         const status = err instanceof ApiError ? err.status : undefined
-        setServerError(
-          status === 409
-            ? t.invite.phoneTaken
-            : status === 410
-              ? t.invite.expired
-              : t.invite.invalid,
-        )
+        setServerError(status === 410 ? t.invite.expired : t.invite.invalid)
       },
     })
   }
@@ -81,38 +66,28 @@ export function InviteAccept() {
               </h1>
             </div>
           ) : (
-            <form onSubmit={submit}>
+            <div>
               <h1 className="text-subhead font-bold text-content">
                 {interpolate(t.invite.greeting, { name: invite.data?.name ?? '' })}
               </h1>
               <p className="mb-5 mt-1 text-caption text-muted">{t.invite.subtitle}</p>
 
-              <PhoneInput
-                value={phone}
-                onChange={(digits) => {
-                  setPhone(digits)
-                  if (serverError) setServerError(null)
-                }}
-                label={t.invite.phone}
-                error={t.login.phoneError}
-              />
-
               {serverError ? (
-                <p role="alert" className="mt-1 text-caption font-semibold text-danger">
+                <p role="alert" className="mb-2 text-caption font-semibold text-danger">
                   {serverError}
                 </p>
               ) : null}
 
               <Button
-                type="submit"
+                type="button"
                 variant="primary"
                 fullWidth
-                disabled={accept.isPending || !isValid}
-                className="mt-4"
+                disabled={accept.isPending}
+                onClick={onAccept}
               >
                 {t.invite.submit}
               </Button>
-            </form>
+            </div>
           )}
         </div>
       </main>

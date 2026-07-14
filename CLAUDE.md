@@ -178,8 +178,9 @@ sit as siblings:
   login (`isKnownOrganizer` / fabricated `org-me` session) is **gone**. A signed-in
   organizer who lands on `/` is bounced to their surface.
 - `/invite/:token` → `InviteAccept` (**public**, outside all guards) — where the
-  emailed organizer magic link lands. Greets by name (`GET /invite/:token`), captures
-  the phone (sent as raw 9 digits), and on accept starts a real organizer session →
+  emailed organizer magic link lands. Greets by name (`GET /invite/:token`) and, on a
+  **one-tap accept** (no phone to type — the org recorded it at invite time), starts a
+  real organizer session →
   `/org/welcome`. `/org/welcome` → `OrganizerOnboarding` (organizer-guarded but **not**
   profile-gated, since a fresh organizer's profile is incomplete): the real
   `completeProfile` step. The `/org/*` tree is now `requireProfile`, so an incomplete
@@ -201,12 +202,14 @@ sit as siblings:
   `NewOrganizerSheet`), **`camps`** (org-wide read-only camp list — see below), and
   **`organizers`** (the invite/list/deactivate dashboard, `organizers` service/query
   pair keyed by `adminOrganizerKeys`). Organizers are onboarded by **emailed magic
-  link**: `NewOrganizerSheet` collects `{name, surname, email}` (not phone/password)
-  and `OrganizerRow` is **status-driven** — _pending_ (amber, email, Resend/Revoke),
-  _active_ (pine, phone, Deactivate), _deactivated_ (muted, Reactivate). The invited
-  organizer completes onboarding on a **public** page at **`/invite/:token`**
-  (`components/organizer/InviteAccept.tsx`, outside all auth guards) — enter phone
-  → session starts → land on `/org/welcome` to finish onboarding. Data:
+  link**: `NewOrganizerSheet` collects `{name, surname, email, phone}` (phone reuses
+  the auth `PhoneInput`; a 409 maps to `duplicate` vs `duplicatePhone` by the backend
+  message) and `OrganizerRow` is **status-driven** — _pending_ (amber, email + phone,
+  Resend/Revoke), _active_ (pine, phone, Deactivate), _deactivated_ (muted,
+  Reactivate). The invited organizer completes onboarding on a **public** page at
+  **`/invite/:token`** (`components/organizer/InviteAccept.tsx`, outside all auth
+  guards) — **one-tap accept** (phone already on file) → session starts → land on
+  `/org/welcome` to finish onboarding. Data:
   `invite.service.ts` + `invite.queries.ts` (`useInvite`/`useAcceptInvite`), keyed by
   `inviteKeys`. Logout here is a **real** `POST /auth/logout`
   (the org has a genuine cookie session that `useCurrentUser` revalidates on boot — a

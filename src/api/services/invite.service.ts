@@ -25,11 +25,10 @@ export const inviteService = {
     return data
   },
 
-  /** POST /invite/:token/accept — claims the invite, returns the new session identity. */
-  accept: async (token: string, phone: string): Promise<AuthUser> => {
-    const { data } = await axiosInstance.post<{ user: AuthUser }>(`/invite/${token}/accept`, {
-      phone,
-    })
+  /** POST /invite/:token/accept — confirms the invite (phone was set by the org at
+   *  invite time, so no body), returns the new session identity. */
+  accept: async (token: string): Promise<AuthUser> => {
+    const { data } = await axiosInstance.post<{ user: AuthUser }>(`/invite/${token}/accept`)
     return data.user
   },
 }

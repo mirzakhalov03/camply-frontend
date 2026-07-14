@@ -9,7 +9,7 @@ import type { Organizer } from '../../../api/services/organizers.service'
 
 /*
   One organizer row, driven by status:
-   • pending     → shows email; actions Resend + Revoke (revoke deletes the invite)
+   • pending     → shows email + phone; actions Resend + Revoke (revoke deletes the invite)
    • active      → shows phone; action Deactivate (revokes their sessions server-side)
    • deactivated → shows phone; action Reactivate
 */
@@ -47,6 +47,9 @@ export function OrganizerRow({ organizer, last }: { organizer: Organizer; last: 
           {organizer.name} {organizer.surname}
         </div>
         <div className="truncate font-mono text-caption text-muted">{subtitle ?? '—'}</div>
+        {organizer.status === 'pending' && organizer.phone ? (
+          <div className="truncate font-mono text-caption text-muted">{organizer.phone}</div>
+        ) : null}
       </div>
       <Badge tone={badge.tone}>{badge.label}</Badge>
       {organizer.status === 'pending' ? (
