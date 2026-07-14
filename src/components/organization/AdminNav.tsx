@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from '../../i18n/useTranslation'
+import { CamplyMark } from '../ui'
 
 /*
   Organization admin navigation, in TWO responsive forms from one item list:
@@ -69,8 +70,8 @@ export function AdminSidebar({ onLogout }: { onLogout: () => void }) {
   return (
     <aside className="hidden w-60 flex-none flex-col border-r border-line bg-surface-2 md:flex">
       <div className="flex items-center gap-2.5 px-5 py-6">
-        <span className="flex h-9 w-9 flex-none items-center justify-center rounded-input bg-pine text-heading">
-          🏕
+        <span className="flex h-9 w-9 flex-none items-center justify-center rounded-input bg-pine text-white">
+          <CamplyMark variant="mono" className="w-5" title="Camply" />
         </span>
         <div className="min-w-0">
           <div className="truncate text-title font-bold text-content">Camply</div>
