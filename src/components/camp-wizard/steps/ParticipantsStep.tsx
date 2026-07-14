@@ -2,43 +2,33 @@ import { useState } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { PhoneInput } from '../../auth/PhoneInput'
 import { PHONE_LENGTH } from '@/utils/phone'
-import { ApiError } from '../../../api/axiosInstance'
-import { useCampGroups } from '../../../api/queries/campGroups.queries'
-import { useAddRoster, useRoster } from '../../../api/queries/roster.queries'
+import { useCampDraftStore } from '../../../store/useCampDraftStore'
 
-export function ParticipantsStep({ campId }: { campId: string }) {
+export function ParticipantsStep() {
   const { t } = useTranslation()
   const w = t.campWizard
   const a = t.addParticipant
-  const groups = useCampGroups(campId)
-  const roster = useRoster(campId)
-  const add = useAddRoster(campId)
+  const groups = useCampDraftStore((s) => s.groups)
+  const participants = useCampDraftStore((s) => s.participants)
+  const addParticipant = useCampDraftStore((s) => s.addParticipant)
 
-  const [groupId, setGroupId] = useState<string | null>(null)
+  const [groupTempId, setGroupTempId] = useState<string | null>(null)
   const [phone, setPhone] = useState('')
   const [error, setError] = useState<string | null>(null)
 
-  const list = groups.data ?? []
-  const activeGroup = groupId ?? list[0]?.id ?? null
-  const members = (roster.data ?? []).filter((p) => p.groupId === activeGroup)
+  const activeGroup = groupTempId ?? groups[0]?.tempId ?? null
+  const members = participants.filter((p) => p.groupTempId === activeGroup)
   const valid = phone.length === PHONE_LENGTH
 
   const submit = () => {
     if (!valid || !activeGroup) return
+    if (participants.some((p) => p.phone === phone)) {
+      setError(a.duplicate)
+      return
+    }
+    addParticipant(phone, activeGroup)
+    setPhone('')
     setError(null)
-    add.mutate(
-      { phone, groupId: activeGroup },
-      {
-        onSuccess: () => setPhone(''),
-        onError: (err) => {
-          if (err instanceof ApiError && err.status === 409) {
-            setError(err.message.includes('2 camps') ? a.tooMany : a.duplicate)
-          } else {
-            setError(err instanceof Error ? err.message : a.duplicate)
-          }
-        },
-      },
-    )
   }
 
   return (
@@ -49,13 +39,13 @@ export function ParticipantsStep({ campId }: { campId: string }) {
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-1">
-        {list.map((g) => {
-          const on = g.id === activeGroup
+        {groups.map((g) => {
+          const on = g.tempId === activeGroup
           return (
             <button
-              key={g.id}
+              key={g.tempId}
               type="button"
-              onClick={() => setGroupId(g.id)}
+              onClick={() => setGroupTempId(g.tempId)}
               className={`flex-none rounded-full border px-4 py-2 text-caption font-semibold ${
                 on ? 'border-pine bg-green-tint text-pine' : 'border-line bg-surface text-muted'
               }`}
@@ -81,7 +71,7 @@ export function ParticipantsStep({ campId }: { campId: string }) {
         <button
           type="button"
           onClick={submit}
-          disabled={!valid || !activeGroup || add.isPending}
+          disabled={!valid || !activeGroup}
           className="mb-0.5 flex-none rounded-input bg-pine px-4 py-3 text-caption font-bold text-white disabled:opacity-50 active:scale-95"
         >
           {w.addGroup}
@@ -96,11 +86,11 @@ export function ParticipantsStep({ campId }: { campId: string }) {
       <div className="flex flex-col gap-2">
         {members.map((p) => (
           <div
-            key={p.id}
+            key={p.tempId}
             className="flex items-center gap-3 rounded-input border border-line bg-surface px-3.5 py-2.5"
           >
             <div className="min-w-0 flex-1">
-              <div className="truncate font-mono text-body text-content">{p.phone ?? p.name}</div>
+              <div className="truncate font-mono text-body text-content">{p.phone}</div>
               <div className="text-meta text-muted">{w.pending}</div>
             </div>
           </div>
