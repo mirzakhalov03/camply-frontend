@@ -58,16 +58,20 @@ export function OrganizersStep() {
 
       <div className="flex flex-col gap-3 rounded-card border border-line bg-surface p-4">
         <div className="flex gap-3">
-          <Field placeholder={w.orgName} value={name} onChange={(e) => setName(e.target.value)} />
           <Field
-            placeholder={w.orgSurname}
+            placeholder={`${w.orgName} *`}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Field
+            placeholder={`${w.orgSurname} *`}
             value={surname}
             onChange={(e) => setSurname(e.target.value)}
           />
         </div>
         <Field
           type="email"
-          placeholder={w.orgEmail}
+          placeholder={`${w.orgEmail} *`}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           autoComplete="off"
@@ -75,7 +79,7 @@ export function OrganizersStep() {
         <PhoneInput
           value={phone}
           onChange={setPhone}
-          label={t.addParticipant.phone}
+          label={`${t.addParticipant.phone} *`}
           error={t.login.phoneError}
         />
         {error ? (
