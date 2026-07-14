@@ -140,7 +140,7 @@ organizer's onboarding identity — `role` + `group`; the organizer twin of
 `useAuthStore` (the auth **session** identity — `user`; the cookie is the real session,
 re-validated on boot via `useCurrentUser`), `useThemeStore` (dark mode), `useChatStore`, `useGroupStore`,
 `useCampDraftStore` (the camp-creation wizard's uncommitted draft — `info` + `groups` +
-`participants` + a commit ledger; `persist`ed so the whole wizard survives a refresh),
+`participants` + a stable `clientRequestId`; `persist`ed so the whole wizard survives a refresh),
 and `i18n/useLanguageStore`. Anything that must survive a reload / PWA relaunch uses the
 `persist` middleware (theme, language, **auth**, **camp draft**). `store/` holds **only** Zustand
 stores; selectors like `useMe` live in `@/hooks`.
@@ -226,11 +226,13 @@ sit as siblings:
 
   > **The camp-creation wizard (`components/camp-wizard/`) is collect-then-commit, not
   > draft-first.** Every step writes only to `useCampDraftStore` (persisted, refresh-safe);
-  > nothing hits the backend until **Finish**, when `useCommitCampDraft` runs the resumable
-  > sequence `create camp → groups → participants → publish` (its ledger skips work a prior
-  > attempt finished, so a retry never duplicates). The one exception: the org-only
-  > Organizers step invites org-global organizers **immediately** (they're independent of
-  > the camp). The wizard is surface-shared — org passes all 5 step keys, organizer 4.
+  > nothing hits the backend until **Finish**, when `useCommitCampDraft` sends the whole
+  > draft (camp + groups + participants) in **one** `POST /organizer/camps` (batch). The
+  > backend owns consistency + idempotency (dedupe on the store's persisted
+  > `clientRequestId`), so there's no client-side progress ledger — a retry just re-sends
+  > the same payload. The one exception: the org-only Organizers step invites org-global
+  > organizers **immediately** (they're independent of the camp). The wizard is
+  > surface-shared — org passes all 5 step keys, organizer 4.
 
 The shell shares state with routed screens via **Outlet context** (`useCamp()` in
 `src/components/participant/campContext.ts`) — this is how the single `useSos()`
