@@ -138,9 +138,11 @@ UI-owned state only (never mirror server data here). Stores: `useProfileStore`
 organizer's onboarding identity — `role` + `group`; the organizer twin of
 `useProfileStore`, committed on profile submit via ProfileForm's `onCommit` seam),
 `useAuthStore` (the auth **session** identity — `user`; the cookie is the real session,
-re-validated on boot via `useCurrentUser`), `useThemeStore` (dark mode), `useChatStore`, `useGroupStore`, and
-`i18n/useLanguageStore`. Anything that must survive a reload / PWA relaunch uses the
-`persist` middleware (theme, language, **auth**). `store/` holds **only** Zustand
+re-validated on boot via `useCurrentUser`), `useThemeStore` (dark mode), `useChatStore`, `useGroupStore`,
+`useCampDraftStore` (the camp-creation wizard's uncommitted draft — `info` + `groups` +
+`participants` + a commit ledger; `persist`ed so the whole wizard survives a refresh),
+and `i18n/useLanguageStore`. Anything that must survive a reload / PWA relaunch uses the
+`persist` middleware (theme, language, **auth**, **camp draft**). `store/` holds **only** Zustand
 stores; selectors like `useMe` live in `@/hooks`.
 
 **The "me" overlay pattern:** mock rosters ship a placeholder `isMe` member;
@@ -221,6 +223,14 @@ sit as siblings:
   > from the organizer's own `organizerKeys`). It's read-only by design — no "create
   > camp" button (the org rarely creates camps, and a dead button violates the "hidden
   > button ≠ permission" guardrail). Flip the one commented line when the endpoint lands.
+
+  > **The camp-creation wizard (`components/camp-wizard/`) is collect-then-commit, not
+  > draft-first.** Every step writes only to `useCampDraftStore` (persisted, refresh-safe);
+  > nothing hits the backend until **Finish**, when `useCommitCampDraft` runs the resumable
+  > sequence `create camp → groups → participants → publish` (its ledger skips work a prior
+  > attempt finished, so a retry never duplicates). The one exception: the org-only
+  > Organizers step invites org-global organizers **immediately** (they're independent of
+  > the camp). The wizard is surface-shared — org passes all 5 step keys, organizer 4.
 
 The shell shares state with routed screens via **Outlet context** (`useCamp()` in
 `src/components/participant/campContext.ts`) — this is how the single `useSos()`
