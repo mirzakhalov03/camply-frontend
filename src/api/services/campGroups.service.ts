@@ -31,4 +31,18 @@ export const campGroupsService = {
   list: async (campId: string): Promise<CampGroupDetail[]> => {
     return (await axiosInstance.get<CampGroupDetail[]>(`/organizer/camps/${campId}/groups`)).data
   },
+
+  /** Creates an empty group in the camp. Color is a brand-palette hex from CAMP_GROUPS. */
+  create: async (
+    campId: string,
+    body: { name: string; color: string },
+  ): Promise<CampGroupDetail> => {
+    return (await axiosInstance.post<CampGroupDetail>(`/organizer/camps/${campId}/groups`, body))
+      .data
+  },
+
+  /** Removes a group (its members become unassigned server-side). */
+  remove: async (campId: string, groupId: string): Promise<void> => {
+    await axiosInstance.delete(`/organizer/camps/${campId}/groups/${groupId}`)
+  },
 }

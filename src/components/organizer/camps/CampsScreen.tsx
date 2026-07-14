@@ -1,9 +1,7 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { interpolate } from '@/utils/interpolate'
 import { useOrganizerCamps, useOrganizerSummary } from '../../../api/queries/camps.queries'
-import { NewCampSheet } from './NewCampSheet'
 import { useActiveHelpRequests } from '../../../api/queries/helpRequests.queries'
 import { deriveLeaderboard } from '../../../lib/leaderboard'
 import { useLeaderboard } from '../../../api/queries/leaderboard.queries'
@@ -32,7 +30,6 @@ export function CampsScreen() {
   const c = t.org.camps
   const navigate = useNavigate()
   const { openCampMap, openNotifications } = useOrg()
-  const [newCampOpen, setNewCampOpen] = useState(false)
 
   const campsQuery = useOrganizerCamps()
   const summaryQuery = useOrganizerSummary()
@@ -91,7 +88,7 @@ export function CampsScreen() {
           <div className="flex flex-none -translate-y-2.5 items-center gap-2">
             <button
               type="button"
-              onClick={() => setNewCampOpen(true)}
+              onClick={() => navigate('/org/camps/new')}
               className="flex h-[42px] items-center gap-1.5 rounded-input bg-pine px-3.5 text-caption font-bold text-white shadow-[0_3px_12px_rgba(20,40,30,0.05)] active:scale-95"
             >
               <span aria-hidden className="text-body leading-none">
@@ -138,8 +135,6 @@ export function CampsScreen() {
           {otherFeatures.map((f) => renderFeature(f, primary))}
         </div>
       ) : null}
-
-      <NewCampSheet open={newCampOpen} onClose={() => setNewCampOpen(false)} />
     </div>
   )
 }

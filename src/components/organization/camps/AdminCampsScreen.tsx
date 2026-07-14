@@ -1,48 +1,78 @@
+import { Link } from 'react-router-dom'
 import { useTranslation } from '../../../i18n/useTranslation'
-import { interpolate } from '@/utils/interpolate'
 import { Skeleton } from '../../ui'
-import { useAdminCamps } from '../../../api/queries/adminCamps.queries'
-import { AdminCampCard } from './AdminCampCard'
+import { useOrganizerCamps, useOrganizerSummary } from '../../../api/queries/camps.queries'
+import { OrgCampCard } from './OrgCampCard'
 
 /*
-  The camps list at /admin/camps — every camp across every organizer (org-wide read
-  view). Same gradient-header + state pattern as OrganizersScreen. Read-only: no
-  "create camp" button (the org rarely creates camps and there's no backend to do so
-  — a dead button would violate the "hidden button ≠ permission" guardrail).
+  "Camps history" — /admin/camps. Flipped from the mock org-wide read view
+  (useAdminCamps + AdminCampCard) to the REAL organizer camps + summary queries, the
+  same data the organizer's own dashboard reads (camps.queries.ts). Gradient header
+  with 3 stat pills (total / active / participants), a "Create new camp" CTA, then
+  the camp cards. Loading (Skeleton) / empty / error states are preserved.
 */
 export function AdminCampsScreen() {
   const { t } = useTranslation()
-  const { data, isPending, isError } = useAdminCamps()
+  const camps = useOrganizerCamps()
+  const summary = useOrganizerSummary()
+
+  const list = camps.data ?? []
+  const active = list.filter((c) => c.status === 'active').length
 
   return (
     <div className="pb-24 md:pb-8">
       <div className="bg-gradient-to-b from-pine to-deep px-5 pb-6 pt-5 md:px-8">
         <h1 className="text-subhead font-bold text-white">{t.admin.camps.title}</h1>
-        {data ? (
-          <p className="text-caption text-white/80">
-            {interpolate(t.admin.camps.subtitle, { count: data.length })}
-          </p>
-        ) : null}
+        <div className="mt-4 flex gap-2.5">
+          <HeaderStat value={list.length} label={t.admin.camps.total} />
+          <HeaderStat value={active} label={t.admin.camps.active} />
+          <HeaderStat
+            value={summary.data?.totalParticipants ?? 0}
+            label={t.campWizard.statParticipants}
+          />
+        </div>
       </div>
 
-      <div className="px-5 pt-4 md:px-8">
-        {isPending ? (
+      <div className="flex flex-col gap-3.5 px-5 pt-4 md:px-8">
+        <Link
+          to="/admin/camps/new"
+          className="flex items-center gap-3 rounded-card border border-dashed border-line bg-surface px-4 py-3.5 active:scale-[0.99]"
+        >
+          <span className="flex h-10 w-10 flex-none items-center justify-center rounded-input bg-pine text-white">
+            ＋
+          </span>
+          <div>
+            <div className="text-body font-bold text-content">{t.admin.camps.create}</div>
+            <div className="text-caption text-muted">{t.admin.camps.createHint}</div>
+          </div>
+        </Link>
+
+        {camps.isPending ? (
           <Skeleton className="h-40" tone="surface" />
-        ) : isError || !data ? (
+        ) : camps.isError ? (
           <p className="py-8 text-center text-body text-muted">{t.admin.camps.loadError}</p>
-        ) : data.length === 0 ? (
+        ) : list.length === 0 ? (
           <div className="py-10 text-center">
             <p className="text-title font-bold text-content">{t.admin.camps.empty}</p>
             <p className="mt-1 text-caption text-muted">{t.admin.camps.emptyHint}</p>
           </div>
         ) : (
-          <div className="grid gap-3 md:grid-cols-2">
-            {data.map((camp) => (
-              <AdminCampCard key={camp.id} camp={camp} />
+          <div className="grid gap-3.5 md:grid-cols-2">
+            {list.map((camp) => (
+              <OrgCampCard key={camp.id} camp={camp} />
             ))}
           </div>
         )}
       </div>
+    </div>
+  )
+}
+
+function HeaderStat({ value, label }: { value: number; label: string }) {
+  return (
+    <div className="flex-1 rounded-input bg-white/12 px-3 py-2.5">
+      <div className="text-subhead font-bold text-white">{value}</div>
+      <div className="text-meta text-white/75">{label}</div>
     </div>
   )
 }

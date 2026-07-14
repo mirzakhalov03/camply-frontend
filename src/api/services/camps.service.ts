@@ -84,4 +84,14 @@ export const campsService = {
   get: async (campId: string): Promise<OrganizerCamp> => {
     return (await axiosInstance.get<OrganizerCamp>(`/organizer/camps/${campId}`)).data
   },
+
+  /** Edits a draft/published camp (used when the wizard's step 1 is revisited). */
+  update: async (campId: string, body: Partial<CreateCampBody>): Promise<OrganizerCamp> => {
+    return (await axiosInstance.patch<OrganizerCamp>(`/organizer/camps/${campId}`, body)).data
+  },
+
+  /** Flips a draft camp to published (wizard final step). */
+  publish: async (campId: string): Promise<OrganizerCamp> => {
+    return (await axiosInstance.post<OrganizerCamp>(`/organizer/camps/${campId}/publish`)).data
+  },
 }
