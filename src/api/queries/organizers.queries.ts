@@ -40,10 +40,21 @@ export function useResendInvite() {
   })
 }
 
+// Cancel a *pending* organizer's invite. Same DELETE endpoint as useDeleteOrganizer;
+// kept as its own hook so the pending vs active/deactivated intents read distinctly.
 export function useRevokeInvite() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => organizersService.revokeInvite(id),
+    mutationFn: (id: string) => organizersService.remove(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: adminOrganizerKeys.all }),
+  })
+}
+
+// Delete an active/deactivated organizer outright.
+export function useDeleteOrganizer() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => organizersService.remove(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: adminOrganizerKeys.all }),
   })
 }

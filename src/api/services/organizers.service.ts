@@ -48,7 +48,10 @@ export const organizersService = {
     )
     return res.data
   },
-  revokeInvite: async (id: string): Promise<void> => {
+  /** DELETE /organizers/:id — removes the organizer record. For a pending
+   *  organizer this cancels the invite; for an active/deactivated one it deletes
+   *  them outright. Same endpoint, two intents (see the queries layer). */
+  remove: async (id: string): Promise<void> => {
     await axiosInstance.delete(`/organizers/${id}`)
   },
   setActive: async (id: string, active: boolean): Promise<Organizer> => {

@@ -1,9 +1,11 @@
 import { useTranslation } from '../../../i18n/useTranslation'
+import { interpolate } from '@/utils/interpolate'
 import { Badge } from '../../ui'
 import {
   useSetOrganizerActive,
   useResendInvite,
   useRevokeInvite,
+  useDeleteOrganizer,
 } from '../../../api/queries/organizers.queries'
 import type { Organizer } from '../../../api/services/organizers.service'
 
@@ -18,7 +20,8 @@ export function OrganizerRow({ organizer, last }: { organizer: Organizer; last: 
   const setActive = useSetOrganizerActive()
   const resend = useResendInvite()
   const revoke = useRevokeInvite()
-  const busy = setActive.isPending || resend.isPending || revoke.isPending
+  const remove = useDeleteOrganizer()
+  const busy = setActive.isPending || resend.isPending || revoke.isPending || remove.isPending
 
   const toggle = () => {
     if (organizer.status === 'active' && !window.confirm(t.admin.organizers.confirmDeactivate))
@@ -29,6 +32,12 @@ export function OrganizerRow({ organizer, last }: { organizer: Organizer; last: 
   const onRevoke = () => {
     if (!window.confirm(t.admin.organizers.confirmRevoke)) return
     revoke.mutate(organizer.id)
+  }
+
+  const onDelete = () => {
+    const name = `${organizer.name} ${organizer.surname}`.trim()
+    if (!window.confirm(interpolate(t.admin.organizers.confirmDelete, { name }))) return
+    remove.mutate(organizer.id)
   }
 
   const badge =
@@ -72,16 +81,26 @@ export function OrganizerRow({ organizer, last }: { organizer: Organizer; last: 
           </button>
         </div>
       ) : (
-        <button
-          type="button"
-          onClick={toggle}
-          disabled={busy}
-          className="flex-none text-caption font-bold text-pine transition active:scale-95 disabled:opacity-50"
-        >
-          {organizer.status === 'active'
-            ? t.admin.organizers.deactivate
-            : t.admin.organizers.reactivate}
-        </button>
+        <div className="flex flex-none gap-3">
+          <button
+            type="button"
+            onClick={toggle}
+            disabled={busy}
+            className="text-caption font-bold text-pine transition active:scale-95 disabled:opacity-50"
+          >
+            {organizer.status === 'active'
+              ? t.admin.organizers.deactivate
+              : t.admin.organizers.reactivate}
+          </button>
+          <button
+            type="button"
+            onClick={onDelete}
+            disabled={busy}
+            className="text-caption font-bold text-danger transition active:scale-95 disabled:opacity-50"
+          >
+            {t.admin.organizers.delete}
+          </button>
+        </div>
       )}
     </div>
   )

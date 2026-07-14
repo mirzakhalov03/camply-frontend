@@ -473,6 +473,8 @@ type AdminStrings = {
     resend: string
     revoke: string
     confirmRevoke: string
+    delete: string
+    confirmDelete: string // 'Delete {name}? This can't be undone.'
   }
   create: {
     title: string
@@ -604,6 +606,10 @@ type CampWizardStrings = {
   namePlaceholder: string
   capacityPlaceholder: string
   locationPlaceholder: string
+  bannerCta: string
+  bannerHint: string
+  bannerChange: string
+  bannerRemove: string
   commitError: string
   retry: string
   creating: string
@@ -671,6 +677,8 @@ export const translations: Record<
         resend: 'Qayta yuborish',
         revoke: 'Bekor qilish',
         confirmRevoke: 'Bu taklifnoma bekor qilinsinmi?',
+        delete: "O'chirish",
+        confirmDelete: "{name} o'chirilsinmi? Buni ortga qaytarib bo'lmaydi.",
       },
       create: {
         title: 'Yangi tashkilotchi',
@@ -1166,6 +1174,10 @@ export const translations: Record<
       namePlaceholder: 'Summer camp 2026',
       capacityPlaceholder: '40',
       locationPlaceholder: 'Manzilni tanlang',
+      bannerCta: 'Muqova rasmini qoʻshing',
+      bannerHint: 'PNG yoki JPG · lager sahifasida koʻrinadi',
+      bannerChange: 'Oʻzgartirish',
+      bannerRemove: 'Olib tashlash',
       commitError: 'Lagerni yaratib boʻlmadi. Qayta urinib koʻring.',
       retry: 'Qayta urinish',
       creating: 'Yaratilmoqda…',
@@ -1217,6 +1229,8 @@ export const translations: Record<
         resend: 'Отправить снова',
         revoke: 'Отменить',
         confirmRevoke: 'Отменить это приглашение?',
+        delete: 'Удалить',
+        confirmDelete: 'Удалить {name}? Это действие необратимо.',
       },
       create: {
         title: 'Новый организатор',
@@ -1696,6 +1710,10 @@ export const translations: Record<
       namePlaceholder: 'Summer camp 2026',
       capacityPlaceholder: '40',
       locationPlaceholder: 'Выберите локацию',
+      bannerCta: 'Добавьте обложку',
+      bannerHint: 'PNG или JPG · показывается на странице лагеря',
+      bannerChange: 'Заменить',
+      bannerRemove: 'Убрать',
       commitError: 'Не удалось создать лагерь. Попробуйте ещё раз.',
       retry: 'Повторить',
       creating: 'Создание…',
@@ -1747,6 +1765,8 @@ export const translations: Record<
         resend: 'Resend',
         revoke: 'Revoke',
         confirmRevoke: 'Revoke this invitation?',
+        delete: 'Delete',
+        confirmDelete: "Delete {name}? This can't be undone.",
       },
       create: {
         title: 'New organizer',
@@ -2227,6 +2247,10 @@ export const translations: Record<
       namePlaceholder: 'Summer camp 2026',
       capacityPlaceholder: '40',
       locationPlaceholder: 'Select location',
+      bannerCta: 'Add a cover image',
+      bannerHint: 'PNG or JPG · shown on the camp page',
+      bannerChange: 'Change',
+      bannerRemove: 'Remove',
       commitError: 'Could not create the camp. Please try again.',
       retry: 'Try again',
       creating: 'Creating…',
