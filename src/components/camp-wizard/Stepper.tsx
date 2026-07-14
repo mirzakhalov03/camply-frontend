@@ -1,4 +1,5 @@
 import { useTranslation } from '../../i18n/useTranslation'
+import { interpolate } from '@/utils/interpolate'
 import type { WizardStepKey } from './wizardTypes'
 
 const LABEL_KEY: Record<
@@ -22,42 +23,37 @@ export function Stepper({
   onJump: (key: WizardStepKey) => void
 }) {
   const { t } = useTranslation()
+  const w = t.campWizard
   const currentIdx = steps.indexOf(current)
 
   return (
-    <div className="flex items-center gap-1.5 overflow-x-auto px-5 pb-1 pt-3 md:px-8">
-      {steps.map((key, i) => {
-        const done = i < currentIdx
-        const active = i === currentIdx
-        const reachable = i <= currentIdx
-        return (
-          <div key={key} className="flex flex-none items-center gap-1.5">
+    <div className="px-5 pb-1 pt-3 md:px-8">
+      <div className="mb-2 flex items-baseline justify-between gap-3">
+        <span className="truncate text-heading font-bold text-content">
+          {w[LABEL_KEY[current]]}
+        </span>
+        <span className="flex-none text-meta font-semibold text-muted">
+          {interpolate(w.stepProgress, { n: currentIdx + 1, total: steps.length })}
+        </span>
+      </div>
+      <div className="flex gap-1.5">
+        {steps.map((key, i) => {
+          const done = i <= currentIdx
+          const reachable = i <= currentIdx
+          return (
             <button
+              key={key}
               type="button"
               disabled={!reachable}
               onClick={() => reachable && onJump(key)}
-              className="flex items-center gap-1.5 disabled:cursor-default"
-            >
-              <span
-                className={`flex h-6 w-6 flex-none items-center justify-center rounded-full text-meta font-bold ${
-                  active || done ? 'bg-pine text-white' : 'bg-soft text-muted'
-                }`}
-              >
-                {i + 1}
-              </span>
-              <span className={`text-meta font-semibold ${active ? 'text-content' : 'text-muted'}`}>
-                {t.campWizard[LABEL_KEY[key]]}
-              </span>
-            </button>
-            {i < steps.length - 1 ? (
-              <span
-                className={`h-0.5 w-5 flex-none rounded ${done ? 'bg-pine' : 'bg-line'}`}
-                aria-hidden
-              />
-            ) : null}
-          </div>
-        )
-      })}
+              aria-label={w[LABEL_KEY[key]]}
+              className={`h-1.5 flex-1 rounded-full transition-colors disabled:cursor-default ${
+                done ? 'bg-pine' : 'bg-line'
+              }`}
+            />
+          )
+        })}
+      </div>
     </div>
   )
 }
