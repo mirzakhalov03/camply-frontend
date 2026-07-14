@@ -3,13 +3,13 @@ import { persist } from 'zustand/middleware'
 import { CAMP_GROUPS } from '../lib/groups'
 
 /*
-  The uncommitted camp-creation draft. This is CLIENT-OWNED form state (nothing is
-  on the server until the wizard's Finish), so it lives in Zustand, not React Query.
-  `persist` → localStorage makes the whole wizard survive a refresh / PWA relaunch.
+  The uncommitted camp-creation draft — CLIENT-OWNED form state (nothing hits the
+  server until Finish), so it lives in Zustand, not React Query. `persist` →
+  localStorage makes the whole wizard survive a refresh / PWA relaunch.
 
-  `progress` is the COMMIT LEDGER: the real campId once created, a tempId→realId map
-  for groups, and the tempIds of participants already POSTed. useCommitCampDraft
-  consults it so a retry after a mid-way failure skips finished work (no duplicates).
+  `clientRequestId` is a stable idempotency key: the batch endpoint dedupes on it, so
+  re-pressing Finish after a timeout returns the existing camp instead of duplicating.
+  It's persisted (survives refresh) and regenerated on reset() for the next camp.
 */
 export type DraftGroup = { tempId: string; name: string; color: string }
 export type DraftParticipant = { tempId: string; phone: string; groupTempId: string }
@@ -21,45 +21,28 @@ export type CampDraftInfo = {
   capacity: string
 }
 
-type Progress = {
-  campId: string | null
-  groupIdMap: Record<string, string>
-  addedParticipantTempIds: string[]
-  published: boolean
-}
-
 type CampDraftState = {
+  clientRequestId: string
   info: CampDraftInfo
   groups: DraftGroup[]
   participants: DraftParticipant[]
-  progress: Progress
   patchInfo: (patch: Partial<CampDraftInfo>) => void
   addGroup: (name: string) => void
   removeGroup: (tempId: string) => void
   addParticipant: (phone: string, groupTempId: string) => void
   removeParticipant: (tempId: string) => void
-  setCampId: (id: string) => void
-  mapGroupId: (tempId: string, realId: string) => void
-  markParticipantAdded: (tempId: string) => void
-  markPublished: () => void
   reset: () => void
 }
 
 const EMPTY_INFO: CampDraftInfo = { name: '', location: '', starts: '', ends: '', capacity: '' }
-const EMPTY_PROGRESS: Progress = {
-  campId: null,
-  groupIdMap: {},
-  addedParticipantTempIds: [],
-  published: false,
-}
 
 export const useCampDraftStore = create<CampDraftState>()(
   persist(
     (set) => ({
+      clientRequestId: crypto.randomUUID(),
       info: EMPTY_INFO,
       groups: [],
       participants: [],
-      progress: EMPTY_PROGRESS,
       patchInfo: (patch) => set((s) => ({ info: { ...s.info, ...patch } })),
       addGroup: (name) =>
         set((s) => {
@@ -77,21 +60,13 @@ export const useCampDraftStore = create<CampDraftState>()(
         })),
       removeParticipant: (tempId) =>
         set((s) => ({ participants: s.participants.filter((p) => p.tempId !== tempId) })),
-      setCampId: (id) => set((s) => ({ progress: { ...s.progress, campId: id } })),
-      mapGroupId: (tempId, realId) =>
-        set((s) => ({
-          progress: { ...s.progress, groupIdMap: { ...s.progress.groupIdMap, [tempId]: realId } },
-        })),
-      markParticipantAdded: (tempId) =>
-        set((s) => ({
-          progress: {
-            ...s.progress,
-            addedParticipantTempIds: [...s.progress.addedParticipantTempIds, tempId],
-          },
-        })),
-      markPublished: () => set((s) => ({ progress: { ...s.progress, published: true } })),
       reset: () =>
-        set({ info: EMPTY_INFO, groups: [], participants: [], progress: EMPTY_PROGRESS }),
+        set({
+          clientRequestId: crypto.randomUUID(),
+          info: EMPTY_INFO,
+          groups: [],
+          participants: [],
+        }),
     }),
     { name: 'camply-camp-draft' },
   ),
