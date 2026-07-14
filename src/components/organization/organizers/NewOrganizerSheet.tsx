@@ -2,14 +2,17 @@ import { useState } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { interpolate } from '@/utils/interpolate'
 import { Button, Field, Sheet } from '../../ui'
+import { PhoneInput } from '../../auth/PhoneInput'
+import { PHONE_LENGTH } from '@/utils/phone'
 import { ApiError } from '../../../api/axiosInstance'
 import { useCreateOrganizer } from '../../../api/queries/organizers.queries'
 
 /*
-  Invite an organizer by email. On submit → useCreateOrganizer; the backend creates a
-  PENDING organizer and emails a magic link. Success shows a confirmation (and, in
-  dev, a copyable invite link the backend returns so you can test without an inbox).
-  A 409 (email already registered) surfaces inline.
+  Invite an organizer by name, email + phone. On submit → useCreateOrganizer; the
+  backend records the phone and creates a PENDING organizer, then emails a magic
+  link. Success shows a confirmation (and, in dev, a copyable invite link the
+  backend returns so you can test without an inbox). A 409 — email OR phone already
+  registered — surfaces inline with the matching message.
 */
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -20,15 +23,21 @@ export function NewOrganizerSheet({ open, onClose }: { open: boolean; onClose: (
   const [name, setName] = useState('')
   const [surname, setSurname] = useState('')
   const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('') // 9 raw national digits
   const [error, setError] = useState<string | null>(null)
   const [sent, setSent] = useState<{ email: string; inviteUrl?: string } | null>(null)
 
-  const valid = name.trim().length > 0 && surname.trim().length > 0 && EMAIL_RE.test(email.trim())
+  const valid =
+    name.trim().length > 0 &&
+    surname.trim().length > 0 &&
+    EMAIL_RE.test(email.trim()) &&
+    phone.length === PHONE_LENGTH
 
   const reset = () => {
     setName('')
     setSurname('')
     setEmail('')
+    setPhone('')
     setError(null)
     setSent(null)
   }
@@ -42,18 +51,21 @@ export function NewOrganizerSheet({ open, onClose }: { open: boolean; onClose: (
     if (!valid) return
     setError(null)
     create.mutate(
-      { name: name.trim(), surname: surname.trim(), email: email.trim().toLowerCase() },
+      { name: name.trim(), surname: surname.trim(), email: email.trim().toLowerCase(), phone },
       {
         onSuccess: (res) =>
           setSent({ email: email.trim().toLowerCase(), inviteUrl: res.inviteUrl }),
-        onError: (err) =>
-          setError(
-            err instanceof ApiError && err.status === 409
-              ? t.admin.create.duplicate
-              : err instanceof Error
-                ? err.message
-                : t.admin.create.duplicate,
-          ),
+        onError: (err) => {
+          // A 409 is either the email or the phone already being registered —
+          // the backend message distinguishes them, so map to the right copy.
+          if (err instanceof ApiError && err.status === 409) {
+            setError(
+              /phone/i.test(err.message) ? t.admin.create.duplicatePhone : t.admin.create.duplicate,
+            )
+            return
+          }
+          setError(err instanceof Error ? err.message : t.admin.create.duplicate)
+        },
       },
     )
   }
@@ -109,6 +121,16 @@ export function NewOrganizerSheet({ open, onClose }: { open: boolean; onClose: (
               spellCheck={false}
             />
           </div>
+
+          <PhoneInput
+            value={phone}
+            onChange={(digits) => {
+              setPhone(digits)
+              if (error) setError(null)
+            }}
+            label={t.admin.create.phone}
+            error={t.login.phoneError}
+          />
 
           {error ? (
             <p role="alert" className="text-caption font-semibold text-danger">

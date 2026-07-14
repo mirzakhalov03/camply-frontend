@@ -478,6 +478,7 @@ type AdminStrings = {
     copyLink: string
     submit: string
     duplicate: string
+    duplicatePhone: string
     success: string
   }
   dashboard: {
@@ -509,16 +510,15 @@ type AdminStrings = {
   }
 }
 
-// Invite landing (organizer onboarding, step 1): phone confirmation for
-// whoever opens the invite link an organization sent them.
+// Invite landing (organizer onboarding, step 1): a one-tap confirmation for
+// whoever opens the invite link an organization sent them. The phone was set by
+// the org at invite time, so there's nothing to type here — just accept.
 type InviteStrings = {
   greeting: string // 'Welcome, {name}'
   subtitle: string
-  phone: string
   submit: string
   invalid: string
   expired: string
-  phoneTaken: string
 }
 
 // Organizer dashboard → new camp form.
@@ -614,6 +614,7 @@ export const translations: Record<
         copyLink: 'Havoladan nusxa olish',
         submit: 'Tashkilotchi yaratish',
         duplicate: 'Bu email allaqachon roʻyxatdan oʻtgan',
+        duplicatePhone: 'Bu telefon raqami allaqachon roʻyxatdan oʻtgan',
         success: 'Tashkilotchi yaratildi',
       },
       dashboard: {
@@ -1031,13 +1032,11 @@ export const translations: Record<
     },
     invite: {
       greeting: 'Xush kelibsiz, {name}',
-      subtitle: 'Hisobingizni yakunlash uchun telefon raqamingizni kiriting.',
-      phone: 'Telefon raqam',
-      submit: 'Davom etish',
+      subtitle: 'Sizni tashkilotchi sifatida qoʻshdik.',
+      submit: 'Qabul qilish va davom etish',
       invalid: 'Taklif havolasi yaroqsiz.',
       expired:
         'Taklif havolasining muddati tugagan. Tashkilotingizdan yangisini yuborishni soʻrang.',
-      phoneTaken: 'Bu telefon raqami allaqachon roʻyxatdan oʻtgan.',
     },
     createCamp: {
       title: 'Yangi oromgoh',
@@ -1103,6 +1102,7 @@ export const translations: Record<
         copyLink: 'Скопировать ссылку',
         submit: 'Создать организатора',
         duplicate: 'Этот email уже зарегистрирован',
+        duplicatePhone: 'Этот номер телефона уже зарегистрирован',
         success: 'Организатор создан',
       },
       dashboard: {
@@ -1505,12 +1505,10 @@ export const translations: Record<
     },
     invite: {
       greeting: 'Добро пожаловать, {name}',
-      subtitle: 'Введите номер телефона, чтобы завершить настройку аккаунта.',
-      phone: 'Номер телефона',
-      submit: 'Продолжить',
+      subtitle: 'Вас добавили как организатора.',
+      submit: 'Принять и продолжить',
       invalid: 'Ссылка-приглашение недействительна.',
       expired: 'Срок действия ссылки-приглашения истёк. Попросите организацию отправить новую.',
-      phoneTaken: 'Этот номер телефона уже зарегистрирован.',
     },
     createCamp: {
       title: 'Новый лагерь',
@@ -1576,6 +1574,7 @@ export const translations: Record<
         copyLink: 'Copy link',
         submit: 'Create organizer',
         duplicate: 'That email is already registered',
+        duplicatePhone: 'That phone number is already registered',
         success: 'Organizer created',
       },
       dashboard: {
@@ -1979,12 +1978,10 @@ export const translations: Record<
     },
     invite: {
       greeting: 'Welcome, {name}',
-      subtitle: 'Enter your phone number to finish setting up your account.',
-      phone: 'Phone number',
-      submit: 'Continue',
+      subtitle: "You've been added as an organizer.",
+      submit: 'Accept & continue',
       invalid: 'This invite link is invalid.',
       expired: 'This invite link has expired. Ask your organization to send a new one.',
-      phoneTaken: 'That phone number is already registered.',
     },
     createCamp: {
       title: 'New camp',

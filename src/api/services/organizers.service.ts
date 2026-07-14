@@ -18,11 +18,14 @@ export type Organizer = {
   createdAt: string
 }
 
-/** Create-by-email: the organizer completes onboarding via an emailed link. */
+/** Invite an organizer: the org records name + email + phone; the organizer
+ *  completes onboarding via an emailed link. `phone` is 9 raw national digits
+ *  (the backend canonicalizes to +998…). */
 export type CreateOrganizerBody = {
   name: string
   surname: string
   email: string
+  phone: string
 }
 
 export const organizersService = {

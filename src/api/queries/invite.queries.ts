@@ -25,7 +25,7 @@ export function useInvite(token: string) {
 export function useAcceptInvite(token: string) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (phone: string) => inviteService.accept(token, phone),
+    mutationFn: () => inviteService.accept(token),
     onSuccess: (user) => {
       useAuthStore.getState().setUser(user)
       queryClient.setQueryData(authKeys.me, user)
