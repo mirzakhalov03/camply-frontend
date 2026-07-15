@@ -208,22 +208,18 @@ sit as siblings:
   at `/admin/login` (username + password — no link from the participant landing),
   guarded by `RequireAdmin` (exact role `organization`, not `minRole`). `AdminShell`
   mirrors `OrganizerShell` (sidebar + bottom nav, `<Outlet context>` via
-  `adminContext.ts`). Three screens, index → `dashboard`: **`dashboard`** (landing —
-  live stat tiles + recent organizers, all derived from the real `GET /organizers`
-  via `useOrganizers()`, plus a mock camps count; quick action reuses
-  `NewOrganizerSheet`), **`camps`** (org-wide read-only camp list — see below), and
-  **`organizers`** (the invite/list/deactivate dashboard at `/admin/team`, `organizers`
-  service/query pair keyed by `adminOrganizerKeys`), and **managers** at
-  `/admin/managers` — an exact mirror (`managers` service/query pair keyed by
-  `adminManagerKeys`, `ManagersScreen`/`ManagerRow`/`NewManagerSheet`, copy under
-  `t.admin.managers` + `t.admin.createManager`). The org invites **both**: managers
-  (org-only, the guardrail — a manager can't mint a peer manager) and organizers
-  (org + managers). Organizers are onboarded by **emailed magic
-  link**: `NewOrganizerSheet` collects `{name, surname, email, phone}` (phone reuses
-  the auth `PhoneInput`; a 409 maps to `duplicate` vs `duplicatePhone` by the backend
-  message) and `OrganizerRow` is **status-driven** — _pending_ (amber, email + phone,
-  Resend/Revoke), _active_ (pine, phone, Deactivate), _deactivated_ (muted,
-  Reactivate). The invited organizer completes onboarding on a **public** page at
+  `adminContext.ts`). Nav: **`camps`** (org-wide read-only camp list — see below),
+  **`managers`** (`/admin/managers` — the org's people screen: invite/list/deactivate
+  managers, `managers` service/query pair keyed by `adminManagerKeys`,
+  `ManagersScreen`/`ManagerRow`/`NewManagerSheet`, copy under `t.admin.managers` +
+  `t.admin.createManager`), and **`profile`**. **The org has no standalone organizers
+  list** (2026-07-15): organizers belong to a manager's camp, so the org only invites
+  them **inside the camp wizard** (`OrganizersStep` → `POST /organizers`, using the
+  still-live `organizers` service/query pair). The old `/admin/team` organizers
+  dashboard (`OrganizersScreen`/`OrganizerRow`/`NewOrganizerSheet`) and its i18n were
+  deleted; `/admin/team` + `/admin/organizers` now redirect to `/admin/managers`. The
+  manager guardrail is **org-only** (`POST /managers`; a manager can't mint a peer
+  manager). The invited organizer/manager completes onboarding on a **public** page at
   **`/invite/:token`** (`components/organizer/InviteAccept.tsx`, outside all auth
   guards) — **one-tap accept** (phone already on file) → session starts → land on
   `/org/welcome` to finish onboarding. Data:
