@@ -4,12 +4,11 @@ import { Button, Field } from '../../ui'
 import { PhoneInput } from '../../auth/PhoneInput'
 import { PHONE_LENGTH } from '@/utils/phone'
 import { ApiError } from '../../../api/axiosInstance'
-import { useOrganizers, useCreateOrganizer } from '../../../api/queries/organizers.queries'
+import { useCreateOrganizer } from '../../../api/queries/organizers.queries'
 
 export function OrganizersStep() {
   const { t } = useTranslation()
   const w = t.campWizard
-  const organizers = useOrganizers()
   const create = useCreateOrganizer()
 
   const [name, setName] = useState('')
@@ -17,6 +16,11 @@ export function OrganizersStep() {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [error, setError] = useState<string | null>(null)
+  // Organizers invited during THIS wizard session — the step starts empty; we never
+  // show the org-wide roster here (a new camp isn't "pre-filled" with everyone).
+  const [added, setAdded] = useState<
+    { id: string; name: string; surname: string; contact: string }[]
+  >([])
 
   const valid = name.trim() && surname.trim() && email.trim() && phone.length === PHONE_LENGTH
 
@@ -26,7 +30,16 @@ export function OrganizersStep() {
     create.mutate(
       { name: name.trim(), surname: surname.trim(), email: email.trim(), phone },
       {
-        onSuccess: () => {
+        onSuccess: ({ organizer }) => {
+          setAdded((prev) => [
+            {
+              id: organizer.id,
+              name: organizer.name,
+              surname: organizer.surname,
+              contact: organizer.email ?? organizer.phone ?? '',
+            },
+            ...prev,
+          ])
           setName('')
           setSurname('')
           setEmail('')
@@ -46,8 +59,6 @@ export function OrganizersStep() {
       },
     )
   }
-
-  const list = organizers.data ?? []
 
   return (
     <div className="flex flex-col gap-3">
@@ -93,7 +104,7 @@ export function OrganizersStep() {
       </div>
 
       <div className="flex flex-col gap-2">
-        {list.map((o) => (
+        {added.map((o) => (
           <div
             key={o.id}
             className="flex items-center gap-3 rounded-input border border-line bg-surface px-3.5 py-2.5"
@@ -102,7 +113,7 @@ export function OrganizersStep() {
               <div className="truncate text-body font-semibold text-content">
                 {o.name} {o.surname}
               </div>
-              <div className="truncate font-mono text-caption text-muted">{o.email ?? o.phone}</div>
+              <div className="truncate font-mono text-caption text-muted">{o.contact}</div>
             </div>
           </div>
         ))}
