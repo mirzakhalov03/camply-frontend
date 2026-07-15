@@ -31,6 +31,7 @@ import { RequireAdmin } from './components/auth/RequireAdmin'
 import { AdminShell } from './components/organization/AdminShell'
 import { AdminLogin } from './components/organization/AdminLogin'
 import { OrganizersScreen } from './components/organization/organizers/OrganizersScreen'
+import { ManagersScreen } from './components/organization/managers/ManagersScreen'
 import { AdminCampsScreen } from './components/organization/camps/AdminCampsScreen'
 import { AdminNewCampScreen } from './components/organization/camps/AdminNewCampScreen'
 import { AdminCampDetailShell } from './components/organization/camps/AdminCampDetailShell'
@@ -174,6 +175,7 @@ function App() {
               <Route path="announcements" element={<AnnouncementsTab />} />
               <Route path="map" element={<OrgComingSoon />} />
             </Route>
+            <Route path="managers" element={<ManagersScreen />} />
             <Route path="team" element={<OrganizersScreen />} />
             <Route path="profile" element={<AdminProfileScreen />} />
             {/* Redirects so old deep links / pushes still resolve. */}

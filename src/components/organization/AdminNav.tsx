@@ -19,6 +19,7 @@ function useNavItems(): NavItem[] {
   const { t } = useTranslation()
   return [
     { to: '/admin/camps', label: t.admin.nav.camps, icon: <CampsIcon /> },
+    { to: '/admin/managers', label: t.admin.nav.managers, icon: <ManagerIcon /> },
     { to: '/admin/team', label: t.admin.nav.team, icon: <TeamIcon /> },
     { to: '/admin/profile', label: t.admin.nav.profile, icon: <ProfileIcon /> },
   ]
@@ -129,6 +130,25 @@ function CampsIcon() {
       <rect x="14" y="3" width="7" height="7" rx="2" />
       <rect x="3" y="14" width="7" height="7" rx="2" />
       <rect x="14" y="14" width="7" height="7" rx="2" />
+    </svg>
+  )
+}
+function ManagerIcon() {
+  return (
+    <svg
+      width="23"
+      height="23"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="2.1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={icon}
+    >
+      {/* A single lead figure with a star badge — the camp owner (PM). */}
+      <circle cx="10" cy="8" r="3.4" />
+      <path d="M4 20v-1.2a6 6 0 0 1 12 0V20" />
+      <path d="m19 3 1.1 2.2 2.4.35-1.75 1.7.42 2.4L19 8.5l-2.17 1.15.42-2.4-1.75-1.7 2.4-.35z" />
     </svg>
   )
 }
