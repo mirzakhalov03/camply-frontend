@@ -566,6 +566,7 @@ type CreateCampStrings = {
   capacity: string
   submit: string
   dateError: string
+  pastDate: string
   required: string
   success: string
 }
@@ -1142,6 +1143,7 @@ export const translations: Record<
       capacity: 'Sigʻim (ixtiyoriy)',
       submit: 'Oromgoh yaratish',
       dateError: 'Tugash sanasi boshlanish sanasidan keyin boʻlishi kerak.',
+      pastDate: 'Boshlanish sanasi oʻtmishda boʻlishi mumkin emas.',
       required: 'Iltimos, barcha majburiy maydonlarni toʻldiring',
       success: 'Oromgoh yaratildi',
     },
@@ -1683,6 +1685,7 @@ export const translations: Record<
       capacity: 'Вместимость (необязательно)',
       submit: 'Создать лагерь',
       dateError: 'Дата окончания должна быть позже даты начала.',
+      pastDate: 'Дата начала не может быть в прошлом.',
       required: 'Пожалуйста, заполните все обязательные поля',
       success: 'Лагерь создан',
     },
@@ -2225,6 +2228,7 @@ export const translations: Record<
       capacity: 'Capacity (optional)',
       submit: 'Create camp',
       dateError: 'End date must be after the start date.',
+      pastDate: 'Start date cannot be in the past.',
       required: 'Please fill in all required fields',
       success: 'Camp created',
     },

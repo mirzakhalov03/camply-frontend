@@ -30,6 +30,11 @@ export function CampWizard({ steps, onDone, onCancel }: CampWizardProps) {
       setInfoError(c.required)
       return false
     }
+    const today = new Date().toISOString().slice(0, 10)
+    if (starts < today) {
+      setInfoError(c.pastDate)
+      return false
+    }
     if (ends < starts) {
       setInfoError(c.dateError)
       return false

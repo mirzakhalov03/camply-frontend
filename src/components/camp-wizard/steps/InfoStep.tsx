@@ -6,12 +6,20 @@ import { useCampDraftStore } from '../../../store/useCampDraftStore'
 
 const REQ = <span className="text-danger"> *</span>
 
+// Local-timezone "today" as YYYY-MM-DD — the floor for camp duration pickers.
+function todayStr(): string {
+  const now = new Date()
+  const p = (n: number) => String(n).padStart(2, '0')
+  return `${now.getFullYear()}-${p(now.getMonth() + 1)}-${p(now.getDate())}`
+}
+
 export function InfoStep({ error }: { error: string | null }) {
   const { t } = useTranslation()
   const c = t.createCamp
   const w = t.campWizard
   const info = useCampDraftStore((s) => s.info)
   const patchInfo = useCampDraftStore((s) => s.patchInfo)
+  const today = todayStr()
 
   const locationOptions = CAMP_LOCATIONS.map((l) => ({ value: l, label: l }))
 
@@ -41,6 +49,7 @@ export function InfoStep({ error }: { error: string | null }) {
           <Field
             type="date"
             value={info.starts}
+            min={today}
             onChange={(e) => patchInfo({ starts: e.target.value })}
           />
         </div>
@@ -52,7 +61,7 @@ export function InfoStep({ error }: { error: string | null }) {
           <Field
             type="date"
             value={info.ends}
-            min={info.starts}
+            min={info.starts || today}
             onChange={(e) => patchInfo({ ends: e.target.value })}
           />
         </div>
