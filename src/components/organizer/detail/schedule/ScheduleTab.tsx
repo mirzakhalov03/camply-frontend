@@ -63,7 +63,7 @@ export function ScheduleTab() {
         </>
       )}
 
-      <AddActivitySheet open={addOpen} onClose={() => setAddOpen(false)} campId={camp.id} />
+      <AddActivitySheet open={addOpen} onClose={() => setAddOpen(false)} camp={camp} />
     </div>
   )
 }

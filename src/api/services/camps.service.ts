@@ -25,6 +25,9 @@ export type OrganizerCamp = {
   location: string
   /** Human date range, already formatted server-side, e.g. "Jul 6 – Jul 19". */
   dateRange: string
+  /** Machine-readable ISO camp bounds — drives date pickers (e.g. activity scheduling). */
+  startsAt: string
+  endsAt: string
   status: CampStatus
   participantCount: number
   groupCount: number

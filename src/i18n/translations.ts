@@ -384,6 +384,7 @@ type OrgStrings = {
     locationLabel: string
     locationPlaceholder: string
     audience: string
+    activityRequired: string
     schedEmpty: string
     applyPoints: string // 'Apply {n}'
     noChange: string
@@ -894,6 +895,7 @@ export const translations: Record<
         locationLabel: 'Manzil',
         locationPlaceholder: 'Asosiy maydon',
         audience: 'Kim uchun?',
+        activityRequired: 'Iltimos, majburiy maydonlarni toʻldiring',
         schedEmpty: 'Hali mashgʻulot yoʻq',
         applyPoints: '{n} qoʻllash',
         noChange: 'Oʻzgarishsiz',
@@ -1449,6 +1451,7 @@ export const translations: Record<
         locationLabel: 'Место',
         locationPlaceholder: 'Главное поле',
         audience: 'Для кого?',
+        activityRequired: 'Пожалуйста, заполните обязательные поля',
         schedEmpty: 'Пока нет занятий',
         applyPoints: 'Применить {n}',
         noChange: 'Без изменений',
@@ -1989,6 +1992,7 @@ export const translations: Record<
         locationLabel: 'Location',
         locationPlaceholder: 'e.g. Main Field',
         audience: 'Who is it for?',
+        activityRequired: 'Please fill in the required fields',
         schedEmpty: 'No activities yet',
         applyPoints: 'Apply {n}',
         noChange: 'No change',

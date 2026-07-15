@@ -1,60 +1,80 @@
-import { useState } from 'react'
-import { Sheet, Button } from '../../../ui'
+import { useMemo, useState } from 'react'
+import { Sheet, Button, Select } from '../../../ui'
 import { useTranslation } from '../../../../i18n/useTranslation'
 import { useCreateActivity } from '../../../../api/queries/schedule.queries'
 import { AudiencePicker, type AudienceScope } from '../AudiencePicker'
+import { datesInRange } from '@/utils/dateRange'
+import type { OrganizerCamp } from '../../../../api/services/camps.service'
 
 /*
   "Add activity" form (bottom sheet). Builds a NewActivity from date + start/end
   times + audience and fires useCreateActivity — which invalidates the camp schedule,
-  so the new item reaches the organizer list AND the participant's schedule. Local,
-  reversible: closing resets. Real validation would live server-side too.
+  so the new item reaches the organizer list AND the participant's schedule. The date
+  is a dropdown bounded to the camp's duration (datesInRange over camp.startsAt/endsAt),
+  so an activity can't be scheduled outside the camp. Required fields are marked with *
+  and an inline error shows on an invalid submit. Local, reversible: closing resets.
 */
 const inputClass =
   'w-full rounded-input border border-line bg-surface px-3.5 py-2.5 text-body text-content outline-none focus:border-pine placeholder:text-muted'
 
-function todayStr(): string {
-  const d = new Date()
-  const p = (n: number) => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`
-}
+const REQ = <span className="text-danger"> *</span>
 
 export function AddActivitySheet({
   open,
   onClose,
-  campId,
+  camp,
 }: {
   open: boolean
   onClose: () => void
-  campId: string
+  camp: OrganizerCamp
 }) {
   const { t } = useTranslation()
   const d = t.org.detail
-  const create = useCreateActivity(campId)
+  const create = useCreateActivity(camp.id)
+
+  // The camp's days as YYYY-MM-DD; label them for the current locale.
+  const dayOptions = useMemo(() => {
+    const fmt = new Intl.DateTimeFormat(undefined, {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+    })
+    return datesInRange(camp.startsAt, camp.endsAt).map((value) => ({
+      value,
+      label: fmt.format(new Date(`${value}T00:00`)),
+    }))
+  }, [camp.startsAt, camp.endsAt])
+
+  const firstDay = dayOptions[0]?.value ?? ''
 
   const [title, setTitle] = useState('')
   const [location, setLocation] = useState('')
-  const [date, setDate] = useState(todayStr())
+  const [date, setDate] = useState(firstDay)
   const [start, setStart] = useState('09:00')
   const [end, setEnd] = useState('10:00')
   const [scope, setScope] = useState<AudienceScope>({ kind: 'camp' })
+  const [showError, setShowError] = useState(false)
 
-  const valid = title.trim().length > 0 && date && start && end
+  const valid = title.trim().length > 0 && !!date && !!start && !!end
 
   const reset = () => {
     setTitle('')
     setLocation('')
-    setDate(todayStr())
+    setDate(firstDay)
     setStart('09:00')
     setEnd('10:00')
     setScope({ kind: 'camp' })
+    setShowError(false)
   }
 
   const submit = () => {
-    if (!valid) return
+    if (!valid) {
+      setShowError(true)
+      return
+    }
     create.mutate(
       {
-        campId,
+        campId: camp.id,
         title: title.trim(),
         location: location.trim(),
         startsAt: new Date(`${date}T${start}`).toISOString(),
@@ -71,29 +91,32 @@ export function AddActivitySheet({
     )
   }
 
+  const missing = (v: string) => showError && !v.trim()
+
   return (
     <Sheet open={open} onClose={onClose} closeLabel={d.cancel} title={d.newActivity}>
       <div className="flex flex-col gap-3.5">
-        <Field label={d.activityName}>
+        <Field label={d.activityName} required>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder={d.activityNamePlaceholder}
-            className={inputClass}
+            aria-invalid={missing(title)}
+            className={`${inputClass} ${missing(title) ? 'border-danger' : ''}`}
           />
         </Field>
 
-        <Field label={d.dateLabel}>
-          <input
-            type="date"
+        <Field label={d.dateLabel} required>
+          <Select
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className={inputClass}
+            options={dayOptions}
+            placeholder={d.dateLabel}
           />
         </Field>
 
         <div className="flex gap-3">
-          <Field label={d.startLabel} className="flex-1">
+          <Field label={d.startLabel} className="flex-1" required>
             <input
               type="time"
               value={start}
@@ -101,7 +124,7 @@ export function AddActivitySheet({
               className={inputClass}
             />
           </Field>
-          <Field label={d.endLabel} className="flex-1">
+          <Field label={d.endLabel} className="flex-1" required>
             <input
               type="time"
               value={end}
@@ -121,14 +144,16 @@ export function AddActivitySheet({
         </Field>
 
         <Field label={d.audience}>
-          <AudiencePicker
-            value={scope}
-            onChange={setScope}
-            allCampLabel={t.announcements.allCamp}
-          />
+          <AudiencePicker value={scope} onChange={setScope} allCampLabel={t.announcements.allCamp} />
         </Field>
 
-        <Button variant="primary" size="lg" fullWidth disabled={!valid} onClick={submit}>
+        {showError && !valid && (
+          <p role="alert" className="text-caption font-semibold text-danger">
+            {d.activityRequired}
+          </p>
+        )}
+
+        <Button variant="primary" size="lg" fullWidth onClick={submit}>
           {d.create}
         </Button>
       </div>
@@ -139,15 +164,20 @@ export function AddActivitySheet({
 function Field({
   label,
   className = '',
+  required = false,
   children,
 }: {
   label: string
   className?: string
+  required?: boolean
   children: React.ReactNode
 }) {
   return (
     <label className={`flex flex-col gap-1.5 ${className}`}>
-      <span className="text-caption font-semibold text-muted">{label}</span>
+      <span className="text-caption font-semibold text-muted">
+        {label}
+        {required && REQ}
+      </span>
       {children}
     </label>
   )
