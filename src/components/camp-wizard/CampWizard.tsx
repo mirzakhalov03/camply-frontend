@@ -100,9 +100,22 @@ export function CampWizard({ steps, onDone, onCancel }: CampWizardProps) {
           <button
             type="button"
             onClick={goBack}
-            className="flex-none rounded-full border border-line bg-surface px-5 py-3.5 text-body font-semibold text-content active:scale-95"
+            aria-label={isFirst ? t.notfound.back : w.back}
+            className="flex flex-none items-center justify-center rounded-full border border-line bg-surface px-5 py-3.5 text-content active:scale-95"
           >
-            {isFirst ? t.notfound.back : w.back}
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
           </button>
           <button
             type="button"

@@ -13,7 +13,8 @@ import type { Organizer } from '../../../api/services/organizers.service'
   One organizer row, driven by status:
    • pending     → shows email + phone; actions Resend + Revoke (revoke deletes the invite)
    • active      → shows phone; action Deactivate (revokes their sessions server-side)
-   • deactivated → shows phone; action Reactivate
+   • deactivated → shows phone; actions Reactivate + Delete (two-step: only a
+                   deactivated organizer can be hard-deleted)
 */
 export function OrganizerRow({ organizer, last }: { organizer: Organizer; last: boolean }) {
   const { t } = useTranslation()
@@ -92,14 +93,18 @@ export function OrganizerRow({ organizer, last }: { organizer: Organizer; last: 
               ? t.admin.organizers.deactivate
               : t.admin.organizers.reactivate}
           </button>
-          <button
-            type="button"
-            onClick={onDelete}
-            disabled={busy}
-            className="text-caption font-bold text-danger transition active:scale-95 disabled:opacity-50"
-          >
-            {t.admin.organizers.delete}
-          </button>
+          {/* Two-step delete: only a deactivated organizer can be removed outright
+              (an active one must be deactivated first — the server 409s otherwise). */}
+          {organizer.status === 'deactivated' ? (
+            <button
+              type="button"
+              onClick={onDelete}
+              disabled={busy}
+              className="text-caption font-bold text-danger transition active:scale-95 disabled:opacity-50"
+            >
+              {t.admin.organizers.delete}
+            </button>
+          ) : null}
         </div>
       )}
     </div>

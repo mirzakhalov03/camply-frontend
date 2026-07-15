@@ -84,18 +84,22 @@ export function CampsScreen() {
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-display font-bold text-content">{primary?.name ?? c.yourCamps}</h1>
           {/* Actions — the create-camp entry sits beside notifications, both nudged
-              up (-translate-y-2.5) so they sit a touch above the heading baseline. */}
+              up (-translate-y-2.5) so they sit a touch above the heading baseline.
+              Create-camp shows only in the empty state: once the organizer has a
+              camp, their setup is done, so the button disappears. */}
           <div className="flex flex-none -translate-y-2.5 items-center gap-2">
-            <button
-              type="button"
-              onClick={() => navigate('/org/camps/new')}
-              className="flex h-[42px] items-center gap-1.5 rounded-input bg-pine px-3.5 text-caption font-bold text-white shadow-[0_3px_12px_rgba(20,40,30,0.05)] active:scale-95"
-            >
-              <span aria-hidden className="text-body leading-none">
-                +
-              </span>
-              {t.createCamp.title}
-            </button>
+            {camps.length === 0 ? (
+              <button
+                type="button"
+                onClick={() => navigate('/org/camps/new')}
+                className="flex h-[42px] items-center gap-1.5 rounded-input bg-pine px-3.5 text-caption font-bold text-white shadow-[0_3px_12px_rgba(20,40,30,0.05)] active:scale-95"
+              >
+                <span aria-hidden className="text-body leading-none">
+                  +
+                </span>
+                {t.createCamp.title}
+              </button>
+            ) : null}
             <button
               type="button"
               onClick={openNotifications}
