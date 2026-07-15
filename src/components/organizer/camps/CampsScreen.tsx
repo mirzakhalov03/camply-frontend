@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../../../store/useAuthStore'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { interpolate } from '@/utils/interpolate'
 import { useOrganizerCamps, useOrganizerSummary } from '../../../api/queries/camps.queries'
@@ -29,6 +30,10 @@ export function CampsScreen() {
   const { t } = useTranslation()
   const c = t.org.camps
   const navigate = useNavigate()
+  const role = useAuthStore((s) => s.user?.role)
+  // Only managers create/own camps (the org can too). Organizers run an assigned
+  // camp but never create one — the button is hidden AND the server enforces it.
+  const canCreateCamp = role === 'manager' || role === 'organization'
   const { openCampMap, openNotifications } = useOrg()
 
   const campsQuery = useOrganizerCamps()
@@ -85,10 +90,10 @@ export function CampsScreen() {
           <h1 className="text-display font-bold text-content">{primary?.name ?? c.yourCamps}</h1>
           {/* Actions — the create-camp entry sits beside notifications, both nudged
               up (-translate-y-2.5) so they sit a touch above the heading baseline.
-              Create-camp shows only in the empty state: once the organizer has a
-              camp, their setup is done, so the button disappears. */}
+              Create-camp shows only to a manager (or org) in the empty state: once
+              they have their camp, setup is done, so the button disappears. */}
           <div className="flex flex-none -translate-y-2.5 items-center gap-2">
-            {camps.length === 0 ? (
+            {canCreateCamp && camps.length === 0 ? (
               <button
                 type="button"
                 onClick={() => navigate('/org/camps/new')}

@@ -412,6 +412,7 @@ type OrgStrings = {
   profile: {
     title: string
     roleOrganizer: string
+    roleManager: string
     statCamps: string
     helpRequests: string
     resolve: string
@@ -960,6 +961,7 @@ export const translations: Record<
       profile: {
         title: 'Profil',
         roleOrganizer: 'Tashkilotchi',
+        roleManager: 'Menejer',
         statCamps: 'Lager',
         helpRequests: 'Yordam soʻrovlari',
         resolve: 'Hal qilindi',
@@ -1535,6 +1537,7 @@ export const translations: Record<
       profile: {
         title: 'Профиль',
         roleOrganizer: 'Организатор',
+        roleManager: 'Менеджер',
         statCamps: 'Лагеря',
         helpRequests: 'Запросы о помощи',
         resolve: 'Решено',
@@ -2097,6 +2100,7 @@ export const translations: Record<
       profile: {
         title: 'Profile',
         roleOrganizer: 'Organizer',
+        roleManager: 'Manager',
         statCamps: 'Camps',
         helpRequests: 'Help requests',
         resolve: 'Resolve',

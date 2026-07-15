@@ -1,5 +1,5 @@
 /*
-  The seven organizer roles as stable keys, kept separate from the RolePicker
+  The organizer job sub-roles as stable keys, kept separate from the RolePicker
   component so both it and OrganizerInfoForm can import them without tripping the
   fast-refresh rule (a component file should only export components). Visible
   labels are resolved via i18n (t.organizer.roles[key]) so the keys stay

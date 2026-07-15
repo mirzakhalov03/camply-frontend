@@ -25,11 +25,15 @@ export function OrganizerShell() {
   const resetProfile = useProfileStore((s) => s.reset)
   const resetOrganizer = useOrganizerStore((s) => s.reset)
 
-  const isOrganizer = user?.role === 'organizer' || user?.role === 'organization'
+  // The /org surface is shared by managers (full) and organizers (reduced); the org
+  // super-admin can also land here. Capability gating (create camp, invite) is by
+  // account role inside the screens — the server is the real authority.
+  const canUseOrgSurface =
+    user?.role === 'organizer' || user?.role === 'manager' || user?.role === 'organization'
 
   useEffect(() => {
-    if (!isOrganizer) navigate('/', { replace: true })
-  }, [isOrganizer, navigate])
+    if (!canUseOrgSurface) navigate('/', { replace: true })
+  }, [canUseOrgSurface, navigate])
 
   // Every /org screen scrolls inside this one persistent <main> (see below), so its
   // scrollTop carries over across navigation — open a feature after scrolling the
@@ -40,7 +44,7 @@ export function OrganizerShell() {
   }, [location.pathname])
 
   // Avoid a flash of the back-office while the redirect effect runs.
-  if (!isOrganizer) return null
+  if (!canUseOrgSurface) return null
 
   const ctx: OrgContext = {
     openCamp: (campId) => navigate(`/org/camps/${campId}`),

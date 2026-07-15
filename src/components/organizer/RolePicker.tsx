@@ -1,7 +1,7 @@
 import { ORGANIZER_ROLES, ROLE_EMOJI, type OrganizerRole } from './roles'
 
 /*
-  Single-select role chips for the organizer profile. The seven role keys live in
+  Single-select role chips for the organizer profile. The role keys live in
   ./roles; the visible labels come from i18n. Chips wrap onto multiple rows on
   narrow screens. Controlled input — the parent owns `value`.
 */
