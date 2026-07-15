@@ -2,7 +2,7 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { useAuthStore, type AuthRole } from '../../store/useAuthStore'
 
 // Higher rank = more authority (mirrors the backend's role hierarchy).
-const RANK: Record<AuthRole, number> = { participant: 1, organizer: 2, organization: 3 }
+const RANK: Record<AuthRole, number> = { participant: 1, organizer: 2, manager: 3, organization: 4 }
 
 type Props = {
   /** Minimum role required. Defaults to participant (any authenticated user). */
@@ -21,9 +21,10 @@ export function RequireAuth({ minRole = 'participant', requireProfile = false }:
   if (!user) return <Navigate to="/" replace />
   if (RANK[user.role] < RANK[minRole]) return <Navigate to="/" replace />
   if (requireProfile && !user.profileComplete) {
-    // An unfinished organizer resumes at their onboarding step; a participant
-    // resumes at the landing (which drops them back into profile setup).
-    return <Navigate to={user.role === 'organizer' ? '/org/welcome' : '/'} replace />
+    // An unfinished organizer/manager resumes at their onboarding step; a
+    // participant resumes at the landing (which drops them back into profile setup).
+    const onOrgSurface = user.role === 'organizer' || user.role === 'manager'
+    return <Navigate to={onOrgSurface ? '/org/welcome' : '/'} replace />
   }
   return <Outlet />
 }

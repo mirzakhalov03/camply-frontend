@@ -7,10 +7,11 @@ import { useTranslation } from '../../i18n/useTranslation'
     • AdminBottomNav — mobile tab bar
     • AdminSidebar   — a real desktop/tablet rail (md+), a stated deliverable
 
-  Both use NavLink to real `/admin/*` routes, so active state is URL-driven. One
-  destination today (Organizers); the list is structured so Camps/Participants slot
-  in later. Logout lives in the shell (real cookie session) and is passed in, since
-  the nav renders outside the Outlet and can't read the admin context.
+  Both use NavLink to real `/admin/*` routes, so active state is URL-driven. The org
+  manages Camps and Managers; organizers belong to a manager's camp (invited in the
+  camp wizard), so the org has no standalone organizers list. Logout lives in the
+  shell (real cookie session) and is passed in, since the nav renders outside the
+  Outlet and can't read the admin context.
 */
 
 type NavItem = { to: string; label: string; icon: ReactNode }
@@ -19,7 +20,7 @@ function useNavItems(): NavItem[] {
   const { t } = useTranslation()
   return [
     { to: '/admin/camps', label: t.admin.nav.camps, icon: <CampsIcon /> },
-    { to: '/admin/team', label: t.admin.nav.team, icon: <TeamIcon /> },
+    { to: '/admin/managers', label: t.admin.nav.managers, icon: <ManagersIcon /> },
     { to: '/admin/profile', label: t.admin.nav.profile, icon: <ProfileIcon /> },
   ]
 }
@@ -132,7 +133,7 @@ function CampsIcon() {
     </svg>
   )
 }
-function TeamIcon() {
+function ManagersIcon() {
   return (
     <svg
       width="23"

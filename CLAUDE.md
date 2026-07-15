@@ -2,8 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Camply frontend — the React PWA for the "operating system for camps" (three roles:
-organization → organizer → participant). Product context — roles, the design
+Camply frontend — the React PWA for the "operating system for camps" (four account
+tiers: organization → manager → organizer → participant). Product context — roles,
+the design
 system, and the PWA/i18n/SOS guardrails — lives in the monorepo root: `../CLAUDE.md`
 and `../CONTEXT.md`. **Read those guardrails before building UI.** This file covers
 the frontend stack and conventions.
@@ -190,6 +191,15 @@ sit as siblings:
   (`campsService.create` / `rosterService.add` → the "+ New camp" and "+ Add
   participant" sheets). Design/plan:
   `../docs/superpowers/{specs,plans}/2026-07-12-organizer-onboarding-chain*.md`.
+  - **`/org` is shared by manager and organizer** (2026-07-15). `OrganizerShell`
+    admits both (`canUseOrgSurface`); `RequireAuth`'s rank table gained `manager` (3),
+    org 4. Capability is gated **by account role** (`useAuthStore` `user.role`), not by
+    a separate surface: **managers** (and org) see "+ New camp" (`CampsScreen`), reach
+    the camp wizard (`NewCampScreen` redirects non-managers), and see the Team/invite
+    row (`OrgProfileScreen`); **organizers** get the same tree minus those. The server
+    is the authority (a hidden button ≠ a permission). Onboarding: managers skip the
+    sub-role picker (`OrganizerInfoForm withRole={false}` — a manager is a tier, not a
+    job). Design/plan: `../docs/superpowers/{specs,plans}/2026-07-15-manager-role*.md`.
 - `/camp` → `ParticipantDashboard` **layout** rendering `<Outlet>`; children
   `home`/`chat`/`ranks`/`profile` (tabs) and `map`/`schedule`/`announcements`/
   `notifications` (secondary). Every screen is a **real URL** so push notifications
@@ -198,17 +208,18 @@ sit as siblings:
   at `/admin/login` (username + password — no link from the participant landing),
   guarded by `RequireAdmin` (exact role `organization`, not `minRole`). `AdminShell`
   mirrors `OrganizerShell` (sidebar + bottom nav, `<Outlet context>` via
-  `adminContext.ts`). Three screens, index → `dashboard`: **`dashboard`** (landing —
-  live stat tiles + recent organizers, all derived from the real `GET /organizers`
-  via `useOrganizers()`, plus a mock camps count; quick action reuses
-  `NewOrganizerSheet`), **`camps`** (org-wide read-only camp list — see below), and
-  **`organizers`** (the invite/list/deactivate dashboard, `organizers` service/query
-  pair keyed by `adminOrganizerKeys`). Organizers are onboarded by **emailed magic
-  link**: `NewOrganizerSheet` collects `{name, surname, email, phone}` (phone reuses
-  the auth `PhoneInput`; a 409 maps to `duplicate` vs `duplicatePhone` by the backend
-  message) and `OrganizerRow` is **status-driven** — _pending_ (amber, email + phone,
-  Resend/Revoke), _active_ (pine, phone, Deactivate), _deactivated_ (muted,
-  Reactivate). The invited organizer completes onboarding on a **public** page at
+  `adminContext.ts`). Nav: **`camps`** (org-wide read-only camp list — see below),
+  **`managers`** (`/admin/managers` — the org's people screen: invite/list/deactivate
+  managers, `managers` service/query pair keyed by `adminManagerKeys`,
+  `ManagersScreen`/`ManagerRow`/`NewManagerSheet`, copy under `t.admin.managers` +
+  `t.admin.createManager`), and **`profile`**. **The org has no standalone organizers
+  list** (2026-07-15): organizers belong to a manager's camp, so the org only invites
+  them **inside the camp wizard** (`OrganizersStep` → `POST /organizers`, using the
+  still-live `organizers` service/query pair). The old `/admin/team` organizers
+  dashboard (`OrganizersScreen`/`OrganizerRow`/`NewOrganizerSheet`) and its i18n were
+  deleted; `/admin/team` + `/admin/organizers` now redirect to `/admin/managers`. The
+  manager guardrail is **org-only** (`POST /managers`; a manager can't mint a peer
+  manager). The invited organizer/manager completes onboarding on a **public** page at
   **`/invite/:token`** (`components/organizer/InviteAccept.tsx`, outside all auth
   guards) — **one-tap accept** (phone already on file) → session starts → land on
   `/org/welcome` to finish onboarding. Data:

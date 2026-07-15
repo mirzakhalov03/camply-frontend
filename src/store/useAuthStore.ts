@@ -11,7 +11,7 @@ import { persist } from 'zustand/middleware'
   camp data (membership, points) stays in React Query. Keeping them apart is what
   makes each swap to a real endpoint local.
 */
-export type AuthRole = 'participant' | 'organizer' | 'organization'
+export type AuthRole = 'participant' | 'organizer' | 'manager' | 'organization'
 
 export type AuthUser = {
   id: string
