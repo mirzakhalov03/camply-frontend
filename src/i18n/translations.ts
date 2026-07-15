@@ -87,7 +87,6 @@ type OrganizerStrings = {
   subtitle: string
   roleLabel: string
   roles: {
-    projectManager: string
     coordinator: string
     admin: string
     media: string
@@ -452,6 +451,7 @@ type AdminStrings = {
   nav: {
     dashboard: string
     camps: string
+    managers: string
     organizers: string
     team: string
     profile: string
@@ -476,6 +476,26 @@ type AdminStrings = {
     delete: string
     confirmDelete: string // 'Delete {name}? This can't be undone.'
   }
+  // Managers (PM) — mirror of `organizers`; the /admin Managers screen.
+  managers: {
+    title: string
+    subtitle: string // '{count} managers'
+    new: string
+    empty: string
+    emptyHint: string
+    loadError: string
+    active: string
+    deactivated: string
+    deactivate: string
+    reactivate: string
+    confirmDeactivate: string
+    pending: string
+    resend: string
+    revoke: string
+    confirmRevoke: string
+    delete: string
+    confirmDelete: string
+  }
   create: {
     title: string
     name: string
@@ -489,6 +509,12 @@ type AdminStrings = {
     submit: string
     duplicate: string
     duplicatePhone: string
+    success: string
+  }
+  // Manager invite sheet — mirror of `create` with manager-flavored labels.
+  createManager: {
+    title: string
+    submit: string
     success: string
   }
   dashboard: {
@@ -657,6 +683,7 @@ export const translations: Record<
       nav: {
         dashboard: 'Boshqaruv',
         camps: 'Oromgohlar',
+        managers: 'Menejerlar',
         organizers: 'Tashkilotchilar',
         team: 'Jamoa',
         profile: 'Profil',
@@ -681,6 +708,25 @@ export const translations: Record<
         delete: "O'chirish",
         confirmDelete: "{name} o'chirilsinmi? Buni ortga qaytarib bo'lmaydi.",
       },
+      managers: {
+        title: 'Menejerlar',
+        subtitle: '{count} ta menejer',
+        new: 'Yangi menejer',
+        empty: 'Hozircha menejerlar yoʻq',
+        emptyHint: 'Oromgoh yaratib boshqarish uchun menejer taklif qiling.',
+        loadError: 'Menejerlarni yuklab boʻlmadi',
+        active: 'Faol',
+        deactivated: 'Faolsizlantirilgan',
+        deactivate: 'Faolsizlantirish',
+        reactivate: 'Qayta faollashtirish',
+        confirmDeactivate: 'Bu menejer faolsizlantirilsinmi? U darhol tizimdan chiqariladi.',
+        pending: 'Kutilmoqda',
+        resend: 'Qayta yuborish',
+        revoke: 'Bekor qilish',
+        confirmRevoke: 'Bu taklifnoma bekor qilinsinmi?',
+        delete: "O'chirish",
+        confirmDelete: "{name} o'chirilsinmi? Buni ortga qaytarib bo'lmaydi.",
+      },
       create: {
         title: 'Yangi tashkilotchi',
         name: 'Ism',
@@ -695,6 +741,11 @@ export const translations: Record<
         duplicate: 'Bu email allaqachon roʻyxatdan oʻtgan',
         duplicatePhone: 'Bu telefon raqami allaqachon roʻyxatdan oʻtgan',
         success: 'Tashkilotchi yaratildi',
+      },
+      createManager: {
+        title: 'Yangi menejer',
+        submit: 'Menejer yaratish',
+        success: 'Menejer yaratildi',
       },
       dashboard: {
         title: 'Boshqaruv paneli',
@@ -790,7 +841,6 @@ export const translations: Record<
         'Bir necha maʼlumot — jamoa va ishtirokchilar oromgohni kim boshqarayotganini bilishi uchun.',
       roleLabel: 'Rolingiz qanday?',
       roles: {
-        projectManager: 'Loyiha menejeri',
         coordinator: 'Koordinator',
         admin: 'Administrator',
         media: 'Media',
@@ -1210,6 +1260,7 @@ export const translations: Record<
       nav: {
         dashboard: 'Панель',
         camps: 'Лагеря',
+        managers: 'Менеджеры',
         organizers: 'Организаторы',
         team: 'Команда',
         profile: 'Профиль',
@@ -1234,6 +1285,25 @@ export const translations: Record<
         delete: 'Удалить',
         confirmDelete: 'Удалить {name}? Это действие необратимо.',
       },
+      managers: {
+        title: 'Менеджеры',
+        subtitle: '{count} менеджеров',
+        new: 'Новый менеджер',
+        empty: 'Менеджеров пока нет',
+        emptyHint: 'Пригласите менеджера, чтобы создать и вести лагерь.',
+        loadError: 'Не удалось загрузить менеджеров',
+        active: 'Активен',
+        deactivated: 'Деактивирован',
+        deactivate: 'Деактивировать',
+        reactivate: 'Активировать',
+        confirmDeactivate: 'Деактивировать этого менеджера? Он будет немедленно отключён.',
+        pending: 'Ожидает',
+        resend: 'Отправить снова',
+        revoke: 'Отменить',
+        confirmRevoke: 'Отменить это приглашение?',
+        delete: 'Удалить',
+        confirmDelete: 'Удалить {name}? Это действие необратимо.',
+      },
       create: {
         title: 'Новый организатор',
         name: 'Имя',
@@ -1248,6 +1318,11 @@ export const translations: Record<
         duplicate: 'Этот email уже зарегистрирован',
         duplicatePhone: 'Этот номер телефона уже зарегистрирован',
         success: 'Организатор создан',
+      },
+      createManager: {
+        title: 'Новый менеджер',
+        submit: 'Создать менеджера',
+        success: 'Менеджер создан',
       },
       dashboard: {
         title: 'Панель управления',
@@ -1342,7 +1417,6 @@ export const translations: Record<
       subtitle: 'Пара деталей, чтобы команда и участники знали, кто ведёт лагерь.',
       roleLabel: 'Какая у вас роль?',
       roles: {
-        projectManager: 'Проектный менеджер',
         coordinator: 'Координатор',
         admin: 'Администратор',
         media: 'Медиа',
@@ -1747,6 +1821,7 @@ export const translations: Record<
       nav: {
         dashboard: 'Dashboard',
         camps: 'Camps',
+        managers: 'Managers',
         organizers: 'Organizers',
         team: 'Team',
         profile: 'Profile',
@@ -1771,6 +1846,25 @@ export const translations: Record<
         delete: 'Delete',
         confirmDelete: "Delete {name}? This can't be undone.",
       },
+      managers: {
+        title: 'Managers',
+        subtitle: '{count} managers',
+        new: 'New manager',
+        empty: 'No managers yet',
+        emptyHint: 'Invite a manager to create and run a camp.',
+        loadError: 'Could not load managers',
+        active: 'Active',
+        deactivated: 'Deactivated',
+        deactivate: 'Deactivate',
+        reactivate: 'Reactivate',
+        confirmDeactivate: 'Deactivate this manager? They will be signed out immediately.',
+        pending: 'Pending',
+        resend: 'Resend',
+        revoke: 'Revoke',
+        confirmRevoke: 'Revoke this invitation?',
+        delete: 'Delete',
+        confirmDelete: "Delete {name}? This can't be undone.",
+      },
       create: {
         title: 'New organizer',
         name: 'Name',
@@ -1785,6 +1879,11 @@ export const translations: Record<
         duplicate: 'That email is already registered',
         duplicatePhone: 'That phone number is already registered',
         success: 'Organizer created',
+      },
+      createManager: {
+        title: 'New manager',
+        submit: 'Create manager',
+        success: 'Manager created',
       },
       dashboard: {
         title: 'Dashboard',
@@ -1879,7 +1978,6 @@ export const translations: Record<
       subtitle: "A few details so your team and campers know who's running the show.",
       roleLabel: 'What is your role?',
       roles: {
-        projectManager: 'Project Manager',
         coordinator: 'Coordinator',
         admin: 'Admin',
         media: 'Media',

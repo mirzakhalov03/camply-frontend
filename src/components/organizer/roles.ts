@@ -6,7 +6,6 @@
   trilingual. Order is the design's order.
 */
 export const ORGANIZER_ROLES = [
-  'projectManager',
   'coordinator',
   'admin',
   'media',
@@ -20,7 +19,6 @@ export type OrganizerRole = (typeof ORGANIZER_ROLES)[number]
 // One emoji per role, chosen to fit the job. Language-independent, so it lives
 // here with the keys rather than being duplicated across every i18n bundle.
 export const ROLE_EMOJI: Record<OrganizerRole, string> = {
-  projectManager: '📋',
   coordinator: '🧭',
   admin: '🔑',
   media: '🎬',
