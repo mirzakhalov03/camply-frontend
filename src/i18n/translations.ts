@@ -485,6 +485,7 @@ type AdminStrings = {
     email: string
     sent: string // 'Invitation sent to {email}'
     copyLink: string
+    copied: string
     submit: string
     duplicate: string
     duplicatePhone: string
@@ -689,6 +690,7 @@ export const translations: Record<
         email: 'Email',
         sent: '{email} manziliga taklifnoma yuborildi',
         copyLink: 'Havoladan nusxa olish',
+        copied: 'Nusxa olindi!',
         submit: 'Tashkilotchi yaratish',
         duplicate: 'Bu email allaqachon roʻyxatdan oʻtgan',
         duplicatePhone: 'Bu telefon raqami allaqachon roʻyxatdan oʻtgan',
@@ -1241,6 +1243,7 @@ export const translations: Record<
         email: 'Email',
         sent: 'Приглашение отправлено на {email}',
         copyLink: 'Скопировать ссылку',
+        copied: 'Скопировано!',
         submit: 'Создать организатора',
         duplicate: 'Этот email уже зарегистрирован',
         duplicatePhone: 'Этот номер телефона уже зарегистрирован',
@@ -1777,6 +1780,7 @@ export const translations: Record<
         email: 'Email',
         sent: 'Invitation sent to {email}',
         copyLink: 'Copy link',
+        copied: 'Copied!',
         submit: 'Create organizer',
         duplicate: 'That email is already registered',
         duplicatePhone: 'That phone number is already registered',

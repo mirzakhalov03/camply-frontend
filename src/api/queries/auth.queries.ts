@@ -79,16 +79,28 @@ export function useLogout() {
 }
 
 /*
-  GET /auth/me — the boot revalidator. Enabled for a real cookie-backed session
-  (participant or organization), so its 401 clears a stale identity. The mock
-  organizer session (no real cookie) is left alone. When organizer auth is wired
-  later, drop the role condition.
+  GET /auth/me — the boot revalidator AND reconciler. The httpOnly cookie is the
+  only real session; the persisted store is just a cached copy of who we think we
+  are. On boot we ask the server who the cookie *actually* belongs to and commit
+  that answer back into the store — so the store can never outrank the real cookie.
+  Without this, a stale persisted role (e.g. "organization" left over from an
+  earlier login) would let RequireAdmin render the admin UI while the cookie is a
+  participant, and every write would 403 "Insufficient permissions".
+
+  A 401 (dead cookie) is handled by the axios interceptor, which clears the store.
+  Enabled for any cached identity — all roles now have real cookie sessions
+  (organizer auth is wired via the invite-accept flow), so there's no mock session
+  to leave alone anymore.
 */
 export function useCurrentUser() {
   const user = useAuthStore((s) => s.user)
   return useQuery({
     queryKey: authKeys.me,
-    queryFn: authService.me,
-    enabled: user?.role === 'participant' || user?.role === 'organization',
+    queryFn: async () => {
+      const me = await authService.me()
+      commitUser(me) // reconcile: the cookie's identity wins over the stale store
+      return me
+    },
+    enabled: !!user,
   })
 }

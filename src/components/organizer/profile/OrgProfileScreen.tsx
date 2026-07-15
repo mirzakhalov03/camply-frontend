@@ -20,7 +20,12 @@ import { OrgHelpRequestsCard } from './OrgHelpRequestsCard'
   shared summary query. Reuses the participant LanguageSheet + generic profile
   strings; logout runs through the shell's centralized handler.
 */
-function fmtPhone(digits: string): string {
+// `user.phone` is stored as full E.164 (+998941763338), but this formatter works on
+// the 9 national digits. Normalize first: strip non-digits and take the last 9, so a
+// canonical +998… number isn't re-prefixed into "+998 +998…".
+function fmtPhone(raw: string): string {
+  const all = raw.replace(/\D/g, '')
+  const digits = all.length > 9 ? all.slice(-9) : all
   return digits.length === 9
     ? `+998 ${digits.slice(0, 2)} ${digits.slice(2, 5)} ${digits.slice(5, 7)} ${digits.slice(7)}`
     : `+998 ${digits}`

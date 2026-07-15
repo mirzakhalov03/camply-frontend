@@ -19,7 +19,7 @@ function useNavItems(): NavItem[] {
   const { t } = useTranslation()
   return [
     { to: '/admin/camps', label: t.admin.nav.camps, icon: <CampsIcon /> },
-    { to: '/admin/team', label: t.admin.nav.team, icon: <OrganizersIcon /> },
+    { to: '/admin/team', label: t.admin.nav.team, icon: <TeamIcon /> },
     { to: '/admin/profile', label: t.admin.nav.profile, icon: <ProfileIcon /> },
   ]
 }
@@ -124,12 +124,15 @@ function CampsIcon() {
       strokeLinejoin="round"
       className={icon}
     >
-      <path d="M12 4 3 20h18L12 4Z" />
-      <path d="M12 4v16" />
+      {/* 2×2 grid of rounded tiles — the "all camps" overview glyph. */}
+      <rect x="3" y="3" width="7" height="7" rx="2" />
+      <rect x="14" y="3" width="7" height="7" rx="2" />
+      <rect x="3" y="14" width="7" height="7" rx="2" />
+      <rect x="14" y="14" width="7" height="7" rx="2" />
     </svg>
   )
 }
-function OrganizersIcon() {
+function TeamIcon() {
   return (
     <svg
       width="23"
@@ -141,10 +144,13 @@ function OrganizersIcon() {
       strokeLinejoin="round"
       className={icon}
     >
-      <circle cx="9" cy="8" r="3.4" />
-      <path d="M2.5 20a6.5 6.5 0 0 1 13 0" />
-      <path d="M17 4.2a3.4 3.4 0 0 1 0 6.6" />
-      <path d="M18.5 14.3A6.5 6.5 0 0 1 21.5 20" />
+      {/* Group of three — big figure in front, two smaller ones behind. */}
+      <circle cx="12" cy="7" r="3.1" />
+      <path d="M6.8 20v-1.4a5.2 5.2 0 0 1 10.4 0V20" />
+      <circle cx="5" cy="9" r="2.3" />
+      <path d="M1.6 19v-1.1a4 4 0 0 1 3.9-4" />
+      <circle cx="19" cy="9" r="2.3" />
+      <path d="M22.4 19v-1.1a4 4 0 0 0-3.9-4" />
     </svg>
   )
 }

@@ -120,9 +120,11 @@ export const CAMP_FEATURES: CampFeature[] = [
         strokeLinejoin="round"
         className={svg}
       >
-        <circle cx="9" cy="8" r="3.2" />
-        <path d="M3.5 20a5.5 5.5 0 0 1 11 0" />
-        <path d="M16 5.2a3.2 3.2 0 0 1 0 6M17.5 20a5.5 5.5 0 0 0-2.3-4.5" />
+        {/* Magnifying glass over a person — "find participants". */}
+        <circle cx="10" cy="10" r="7" />
+        <path d="m15 15 5.5 5.5" />
+        <circle cx="10" cy="8" r="2" />
+        <path d="M6.8 14.2a3.2 3.2 0 0 1 6.4 0Z" />
       </svg>
     ),
     label: (t) => t.org.detail.tabParticipants,
@@ -135,11 +137,23 @@ export const CAMP_FEATURES: CampFeature[] = [
     to: 'groups',
     tint: 'amber',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" strokeWidth="2.1" className={svg}>
-        <rect x="3" y="3" width="7" height="7" rx="2" />
-        <rect x="14" y="3" width="7" height="7" rx="2" />
-        <rect x="3" y="14" width="7" height="7" rx="2" />
-        <rect x="14" y="14" width="7" height="7" rx="2" />
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        strokeWidth="2.1"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={svg}
+      >
+        {/* Group of three — big figure in front, two smaller ones behind. */}
+        <circle cx="12" cy="7" r="3.1" />
+        <path d="M6.8 20v-1.4a5.2 5.2 0 0 1 10.4 0V20" />
+        <circle cx="5" cy="9" r="2.3" />
+        <path d="M1.6 19v-1.1a4 4 0 0 1 3.9-4" />
+        <circle cx="19" cy="9" r="2.3" />
+        <path d="M22.4 19v-1.1a4 4 0 0 0-3.9-4" />
       </svg>
     ),
     label: (t) => t.org.detail.tabGroups,

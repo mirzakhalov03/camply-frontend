@@ -26,6 +26,31 @@ export function NewOrganizerSheet({ open, onClose }: { open: boolean; onClose: (
   const [phone, setPhone] = useState('') // 9 raw national digits
   const [error, setError] = useState<string | null>(null)
   const [sent, setSent] = useState<{ email: string; inviteUrl?: string } | null>(null)
+  const [copied, setCopied] = useState(false)
+
+  // Copy with a fallback: navigator.clipboard needs a secure context (it exists on
+  // localhost, but not on plain-http LAN testing), so fall back to a hidden textarea
+  // + execCommand. Show a 2s "Copied!" confirmation either way so the click has feedback.
+  const copyLink = async (url: string) => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url)
+      } else {
+        const ta = document.createElement('textarea')
+        ta.value = url
+        ta.style.position = 'fixed'
+        ta.style.opacity = '0'
+        document.body.appendChild(ta)
+        ta.select()
+        document.execCommand('copy')
+        document.body.removeChild(ta)
+      }
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // Clipboard blocked — leave the full link visible so it can be selected by hand.
+    }
+  }
 
   const valid =
     name.trim().length > 0 &&
@@ -40,6 +65,7 @@ export function NewOrganizerSheet({ open, onClose }: { open: boolean; onClose: (
     setPhone('')
     setError(null)
     setSent(null)
+    setCopied(false)
   }
 
   const close = () => {
@@ -80,10 +106,13 @@ export function NewOrganizerSheet({ open, onClose }: { open: boolean; onClose: (
           {sent.inviteUrl ? (
             <button
               type="button"
-              onClick={() => navigator.clipboard?.writeText(sent.inviteUrl!)}
-              className="truncate rounded-input border border-line bg-surface px-3 py-2 text-left font-mono text-caption text-pine"
+              onClick={() => copyLink(sent.inviteUrl!)}
+              className="flex flex-col gap-1 rounded-input border border-line bg-surface px-3 py-2 text-left transition-colors active:bg-soft"
             >
-              {t.admin.create.copyLink}: {sent.inviteUrl}
+              <span className="text-caption font-semibold text-pine">
+                {copied ? `✓ ${t.admin.create.copied}` : t.admin.create.copyLink}
+              </span>
+              <span className="truncate font-mono text-meta text-muted">{sent.inviteUrl}</span>
             </button>
           ) : null}
           <Button variant="primary" size="lg" fullWidth onClick={close}>

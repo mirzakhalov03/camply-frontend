@@ -3,4 +3,4 @@
   call as lib/groups.ts / lib/cities.ts), never routed through i18n. The camp
   wizard's location field is constrained to these.
 */
-export const CAMP_LOCATIONS = ["Bo'stonliq", 'Renesans'] as const
+export const CAMP_LOCATIONS = ["Bo'stonliq Tumani", 'Zomin Tumani'] as const
