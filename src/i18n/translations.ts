@@ -537,7 +537,6 @@ type OrgProfileStrings = {
   role: string
   email: string
   phone: string
-  team: string
   language: string
   logout: string
   statCamps: string
@@ -1200,7 +1199,6 @@ export const translations: Record<
       role: 'Tashkilot',
       email: 'Email',
       phone: 'Telefon',
-      team: 'Jamoa va tashkilotchilar',
       language: 'Til',
       logout: 'Chiqish',
       statCamps: 'Lager',
@@ -1741,7 +1739,6 @@ export const translations: Record<
       role: 'Организация',
       email: 'Email',
       phone: 'Телефон',
-      team: 'Команда и организаторы',
       language: 'Язык',
       logout: 'Выйти',
       statCamps: 'Лагеря',
@@ -2283,7 +2280,6 @@ export const translations: Record<
       role: 'Organization',
       email: 'Email',
       phone: 'Phone',
-      team: 'Team & organizers',
       language: 'Language',
       logout: 'Log out',
       statCamps: 'Camps',

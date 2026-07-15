@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { useAuthStore } from '../../../store/useAuthStore'
 import { useOrganizerCamps, useOrganizerSummary } from '../../../api/queries/camps.queries'
@@ -71,7 +70,6 @@ export function AdminProfileScreen() {
 
         {/* Settings */}
         <div className="rounded-card border border-line bg-surface px-4 shadow-[0_4px_14px_rgba(20,40,30,0.05)]">
-          <SettingsLinkRow icon="👥" label={p.team} to="/admin/team" />
           <SettingsRow
             icon="🌐"
             label={p.language}
@@ -163,18 +161,6 @@ function SettingsRow({
       {hint ? <span className="text-caption font-semibold text-muted">{hint}</span> : null}
       <ChevronIcon />
     </button>
-  )
-}
-
-// /admin/team doesn't exist yet (a later task adds it) — the row still links there,
-// same as the rest of the admin surface's forward-looking nav.
-function SettingsLinkRow({ icon, label, to }: { icon: string; label: string; to: string }) {
-  return (
-    <Link to={to} className="flex w-full items-center gap-3 border-b border-line py-3.5 text-left">
-      <span className="w-5 flex-none text-center text-base">{icon}</span>
-      <span className="flex-1 text-body font-semibold text-content">{label}</span>
-      <ChevronIcon />
-    </Link>
   )
 }
 
