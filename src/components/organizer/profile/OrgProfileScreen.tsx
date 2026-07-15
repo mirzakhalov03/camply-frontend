@@ -46,6 +46,8 @@ export function OrgProfileScreen() {
   const [langOpen, setLangOpen] = useState(false)
 
   const name = user ? `${user.name} ${user.surname}`.trim() : 'Organizer'
+  // Managers own camps and invite organizers; organizers do neither (server-enforced).
+  const isManager = user?.role === 'manager' || user?.role === 'organization'
 
   return (
     <div className="pb-6 md:pb-8">
@@ -69,7 +71,7 @@ export function OrgProfileScreen() {
           <div className="mt-3 text-subhead font-bold text-content">{name}</div>
           <div className="mt-2 flex flex-wrap justify-center gap-1.5">
             <span className="rounded-full bg-amber-tint px-3 py-1 text-meta font-bold text-amber">
-              ★ {p.roleOrganizer}
+              ★ {isManager ? p.roleManager : p.roleOrganizer}
             </span>
             {subRole ? (
               <span className="rounded-full bg-green-tint px-3 py-1 text-meta font-bold text-pine">
@@ -104,7 +106,7 @@ export function OrgProfileScreen() {
 
         {/* Settings */}
         <div className="rounded-card border border-line bg-surface px-4 shadow-[0_4px_14px_rgba(20,40,30,0.05)]">
-          <SettingsRow icon="👥" label={p.team} onClick={openTeam} />
+          {isManager ? <SettingsRow icon="👥" label={p.team} onClick={openTeam} /> : null}
           <SettingsRow
             icon="🌐"
             label={t.profile.language}

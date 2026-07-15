@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { OrganizerInfoForm } from './OrganizerInfoForm'
 import { useProfileStore } from '../../store/useProfileStore'
+import { useAuthStore } from '../../store/useAuthStore'
 import { useCompleteProfile } from '../../api/queries/auth.queries'
 
 /*
@@ -19,10 +20,14 @@ import { useCompleteProfile } from '../../api/queries/auth.queries'
 export function OrganizerOnboarding() {
   const navigate = useNavigate()
   const completeProfile = useCompleteProfile()
+  // A manager is an account tier, not a job — skip the sub-role picker. Organizers
+  // still pick one (stored, not enforced). The server ignores subRole for managers.
+  const isManager = useAuthStore((s) => s.user?.role) === 'manager'
 
   return (
     <OrganizerInfoForm
       withGroup={false}
+      withRole={!isManager}
       onSubmit={(role) => {
         const p = useProfileStore.getState()
         if (!p.city) return
@@ -32,7 +37,7 @@ export function OrganizerOnboarding() {
           cityId: p.city.name,
           age: p.age,
           photo: p.photo,
-          subRole: role,
+          ...(role ? { subRole: role } : {}),
         })
       }}
       onEnterDashboard={() => navigate('/org/camps')}

@@ -30,7 +30,7 @@ import { RequireAuth } from './components/auth/RequireAuth'
 import { RequireAdmin } from './components/auth/RequireAdmin'
 import { AdminShell } from './components/organization/AdminShell'
 import { AdminLogin } from './components/organization/AdminLogin'
-import { OrganizersScreen } from './components/organization/organizers/OrganizersScreen'
+import { ManagersScreen } from './components/organization/managers/ManagersScreen'
 import { AdminCampsScreen } from './components/organization/camps/AdminCampsScreen'
 import { AdminNewCampScreen } from './components/organization/camps/AdminNewCampScreen'
 import { AdminCampDetailShell } from './components/organization/camps/AdminCampDetailShell'
@@ -174,11 +174,14 @@ function App() {
               <Route path="announcements" element={<AnnouncementsTab />} />
               <Route path="map" element={<OrgComingSoon />} />
             </Route>
-            <Route path="team" element={<OrganizersScreen />} />
+            <Route path="managers" element={<ManagersScreen />} />
             <Route path="profile" element={<AdminProfileScreen />} />
-            {/* Redirects so old deep links / pushes still resolve. */}
+            {/* Redirects so old deep links / pushes still resolve. Organizers are no
+                longer an org-level list (they belong to a manager's camp), so the old
+                organizers/team routes fold into managers. */}
             <Route path="dashboard" element={<Navigate to="camps" replace />} />
-            <Route path="organizers" element={<Navigate to="team" replace />} />
+            <Route path="organizers" element={<Navigate to="managers" replace />} />
+            <Route path="team" element={<Navigate to="managers" replace />} />
           </Route>
         </Route>
 

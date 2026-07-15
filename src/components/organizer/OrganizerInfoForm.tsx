@@ -18,9 +18,13 @@ type Props = {
   /** Show the coordinator group picker. False during first-run onboarding — a
       fresh organizer has no camp yet, so groups are assigned later per camp. */
   withGroup?: boolean
+  /** Show the job sub-role picker. False for a manager — a manager is an account
+      tier, not a job, so it has no sub-role (the picker is skipped entirely). */
+  withRole?: boolean
   /** Fired when the profile+role commit (right after useProfileStore is written),
-      with the picked role — the caller's hook to persist via PATCH /auth/me. */
-  onSubmit?: (role: OrganizerRole) => void
+      with the picked role (null for a manager) — the caller's hook to persist via
+      PATCH /auth/me. */
+  onSubmit?: (role: OrganizerRole | null) => void
 }
 
 /*
@@ -36,6 +40,7 @@ export function OrganizerInfoForm({
   onEnterDashboard,
   active = true,
   withGroup = true,
+  withRole = true,
   onSubmit,
 }: Props) {
   const { t } = useTranslation()
@@ -43,8 +48,9 @@ export function OrganizerInfoForm({
   const [group, setGroup] = useState<CampGroup | null>(null)
   const setIdentity = useOrganizerStore((s) => s.setIdentity)
 
-  // The group step only exists when enabled AND a coordinator is picked.
-  const showGroup = withGroup && role === 'coordinator'
+  // The group step only exists when the role picker is shown, enabled, AND a
+  // coordinator is picked (managers have no role picker, so never a group step).
+  const showGroup = withRole && withGroup && role === 'coordinator'
 
   // Picking a non-coordinator role clears any group chosen earlier, so a stale
   // group never gets committed.
@@ -53,9 +59,9 @@ export function OrganizerInfoForm({
     if (next !== 'coordinator') setGroup(null)
   }
 
-  // Role required; coordinators also need a group before they can enter (only
-  // when the group step is shown).
-  const extraValid = Boolean(role) && (!showGroup || Boolean(group))
+  // Role required (unless this is a manager, who has none); coordinators also need
+  // a group before they can enter (only when the group step is shown).
+  const extraValid = (!withRole || Boolean(role)) && (!showGroup || Boolean(group))
 
   return (
     <ProfileForm
@@ -68,18 +74,22 @@ export function OrganizerInfoForm({
       active={active}
       extraValid={extraValid}
       onCommit={() => {
-        if (!role) return
-        setIdentity(role, showGroup ? group : null)
+        if (withRole && !role) return
+        if (role) setIdentity(role, showGroup ? group : null)
         onSubmit?.(role)
       }}
       extraFields={
         <>
-          <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#9aa79f]">
-            {t.organizer.roleLabel}
-          </p>
-          <div className="mt-2.5">
-            <RolePicker value={role} onChange={handleRole} labels={t.organizer.roles} />
-          </div>
+          {withRole && (
+            <>
+              <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#9aa79f]">
+                {t.organizer.roleLabel}
+              </p>
+              <div className="mt-2.5">
+                <RolePicker value={role} onChange={handleRole} labels={t.organizer.roles} />
+              </div>
+            </>
+          )}
 
           {showGroup && (
             <div className="animate-drop">

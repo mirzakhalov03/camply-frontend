@@ -5,20 +5,21 @@ import { Button, Field, Sheet } from '../../ui'
 import { PhoneInput } from '../../auth/PhoneInput'
 import { PHONE_LENGTH } from '@/utils/phone'
 import { ApiError } from '../../../api/axiosInstance'
-import { useCreateOrganizer } from '../../../api/queries/organizers.queries'
+import { useCreateManager } from '../../../api/queries/managers.queries'
 
 /*
-  Invite an organizer by name, email + phone. On submit → useCreateOrganizer; the
-  backend records the phone and creates a PENDING organizer, then emails a magic
-  link. Success shows a confirmation (and, in dev, a copyable invite link the
-  backend returns so you can test without an inbox). A 409 — email OR phone already
-  registered — surfaces inline with the matching message.
+  Invite a manager by name, email + phone (mirror of NewOrganizerSheet). On submit →
+  useCreateManager; the backend records the phone, creates a PENDING manager, and
+  emails a magic link. Success shows a confirmation (and, in dev, a copyable invite
+  link). A 409 — email OR phone already registered — surfaces inline. The generic
+  field/sent copy is shared with the organizer sheet (t.admin.create); only the
+  title + submit label are manager-flavored (t.admin.createManager).
 */
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-export function NewOrganizerSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function NewManagerSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useTranslation()
-  const create = useCreateOrganizer()
+  const create = useCreateManager()
 
   const [name, setName] = useState('')
   const [surname, setSurname] = useState('')
@@ -28,9 +29,8 @@ export function NewOrganizerSheet({ open, onClose }: { open: boolean; onClose: (
   const [sent, setSent] = useState<{ email: string; inviteUrl?: string } | null>(null)
   const [copied, setCopied] = useState(false)
 
-  // Copy with a fallback: navigator.clipboard needs a secure context (it exists on
-  // localhost, but not on plain-http LAN testing), so fall back to a hidden textarea
-  // + execCommand. Show a 2s "Copied!" confirmation either way so the click has feedback.
+  // Copy with a fallback: navigator.clipboard needs a secure context (localhost is
+  // fine, plain-http LAN is not), so fall back to a hidden textarea + execCommand.
   const copyLink = async (url: string) => {
     try {
       if (navigator.clipboard?.writeText) {
@@ -82,8 +82,6 @@ export function NewOrganizerSheet({ open, onClose }: { open: boolean; onClose: (
         onSuccess: (res) =>
           setSent({ email: email.trim().toLowerCase(), inviteUrl: res.inviteUrl }),
         onError: (err) => {
-          // A 409 is either the email or the phone already being registered —
-          // the backend message distinguishes them, so map to the right copy.
           if (err instanceof ApiError && err.status === 409) {
             setError(
               /phone/i.test(err.message) ? t.admin.create.duplicatePhone : t.admin.create.duplicate,
@@ -97,7 +95,12 @@ export function NewOrganizerSheet({ open, onClose }: { open: boolean; onClose: (
   }
 
   return (
-    <Sheet open={open} onClose={close} closeLabel={t.notfound.back} title={t.admin.create.title}>
+    <Sheet
+      open={open}
+      onClose={close}
+      closeLabel={t.notfound.back}
+      title={t.admin.createManager.title}
+    >
       {sent ? (
         <div className="flex flex-col gap-4 px-1 pb-2">
           <p className="text-body text-content">
@@ -174,7 +177,7 @@ export function NewOrganizerSheet({ open, onClose }: { open: boolean; onClose: (
             disabled={!valid || create.isPending}
             onClick={submit}
           >
-            {t.admin.create.submit}
+            {t.admin.createManager.submit}
           </Button>
         </div>
       )}

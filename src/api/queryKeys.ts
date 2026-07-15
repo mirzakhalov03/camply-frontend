@@ -58,6 +58,15 @@ export const adminOrganizerKeys = {
 }
 
 /*
+  The org admin's MANAGERS list — the super-admin's list of the managers it invites
+  and deactivates (a manager owns and runs one camp). Mirror of adminOrganizerKeys.
+*/
+export const adminManagerKeys = {
+  all: ['adminManagers'] as const,
+  list: () => [...adminManagerKeys.all, 'list'] as const,
+}
+
+/*
   The org admin's CAMPS list — every camp across every organizer (a different
   projection than organizerKeys, which is one organizer's own camps). Mock-backed
   today via adminCamps.service.ts; the key is ready for the real /camps endpoint.

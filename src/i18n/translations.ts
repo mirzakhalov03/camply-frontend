@@ -87,7 +87,6 @@ type OrganizerStrings = {
   subtitle: string
   roleLabel: string
   roles: {
-    projectManager: string
     coordinator: string
     admin: string
     media: string
@@ -413,6 +412,7 @@ type OrgStrings = {
   profile: {
     title: string
     roleOrganizer: string
+    roleManager: string
     statCamps: string
     helpRequests: string
     resolve: string
@@ -452,14 +452,15 @@ type AdminStrings = {
   nav: {
     dashboard: string
     camps: string
-    organizers: string
-    team: string
+    managers: string
     profile: string
     logout: string
   }
-  organizers: {
+  // Managers (PM) — the org's people list. Organizers belong to a manager's camp
+  // (invited via the camp wizard), so the org has no standalone organizers list.
+  managers: {
     title: string
-    subtitle: string // '{count} organizers'
+    subtitle: string // '{count} managers'
     new: string
     empty: string
     emptyHint: string
@@ -474,7 +475,7 @@ type AdminStrings = {
     revoke: string
     confirmRevoke: string
     delete: string
-    confirmDelete: string // 'Delete {name}? This can't be undone.'
+    confirmDelete: string
   }
   create: {
     title: string
@@ -489,6 +490,12 @@ type AdminStrings = {
     submit: string
     duplicate: string
     duplicatePhone: string
+    success: string
+  }
+  // Manager invite sheet — mirror of `create` with manager-flavored labels.
+  createManager: {
+    title: string
+    submit: string
     success: string
   }
   dashboard: {
@@ -530,7 +537,6 @@ type OrgProfileStrings = {
   role: string
   email: string
   phone: string
-  team: string
   language: string
   logout: string
   statCamps: string
@@ -657,23 +663,22 @@ export const translations: Record<
       nav: {
         dashboard: 'Boshqaruv',
         camps: 'Oromgohlar',
-        organizers: 'Tashkilotchilar',
-        team: 'Jamoa',
+        managers: 'Menejerlar',
         profile: 'Profil',
         logout: 'Chiqish',
       },
-      organizers: {
-        title: 'Tashkilotchilar',
-        subtitle: '{count} ta tashkilotchi',
-        new: 'Yangi tashkilotchi',
-        empty: 'Hozircha tashkilotchilar yoʻq',
-        emptyHint: 'Oromgohlarni boshqarish uchun birinchi tashkilotchini yarating.',
-        loadError: 'Tashkilotchilarni yuklab boʻlmadi',
+      managers: {
+        title: 'Menejerlar',
+        subtitle: '{count} ta menejer',
+        new: 'Yangi menejer',
+        empty: 'Hozircha menejerlar yoʻq',
+        emptyHint: 'Oromgoh yaratib boshqarish uchun menejer taklif qiling.',
+        loadError: 'Menejerlarni yuklab boʻlmadi',
         active: 'Faol',
         deactivated: 'Faolsizlantirilgan',
         deactivate: 'Faolsizlantirish',
         reactivate: 'Qayta faollashtirish',
-        confirmDeactivate: 'Bu tashkilotchi faolsizlantirilsinmi? U darhol tizimdan chiqariladi.',
+        confirmDeactivate: 'Bu menejer faolsizlantirilsinmi? U darhol tizimdan chiqariladi.',
         pending: 'Kutilmoqda',
         resend: 'Qayta yuborish',
         revoke: 'Bekor qilish',
@@ -695,6 +700,11 @@ export const translations: Record<
         duplicate: 'Bu email allaqachon roʻyxatdan oʻtgan',
         duplicatePhone: 'Bu telefon raqami allaqachon roʻyxatdan oʻtgan',
         success: 'Tashkilotchi yaratildi',
+      },
+      createManager: {
+        title: 'Yangi menejer',
+        submit: 'Menejer yaratish',
+        success: 'Menejer yaratildi',
       },
       dashboard: {
         title: 'Boshqaruv paneli',
@@ -790,7 +800,6 @@ export const translations: Record<
         'Bir necha maʼlumot — jamoa va ishtirokchilar oromgohni kim boshqarayotganini bilishi uchun.',
       roleLabel: 'Rolingiz qanday?',
       roles: {
-        projectManager: 'Loyiha menejeri',
         coordinator: 'Koordinator',
         admin: 'Administrator',
         media: 'Media',
@@ -910,6 +919,7 @@ export const translations: Record<
       profile: {
         title: 'Profil',
         roleOrganizer: 'Tashkilotchi',
+        roleManager: 'Menejer',
         statCamps: 'Lager',
         helpRequests: 'Yordam soʻrovlari',
         resolve: 'Hal qilindi',
@@ -1189,7 +1199,6 @@ export const translations: Record<
       role: 'Tashkilot',
       email: 'Email',
       phone: 'Telefon',
-      team: 'Jamoa va tashkilotchilar',
       language: 'Til',
       logout: 'Chiqish',
       statCamps: 'Lager',
@@ -1210,23 +1219,22 @@ export const translations: Record<
       nav: {
         dashboard: 'Панель',
         camps: 'Лагеря',
-        organizers: 'Организаторы',
-        team: 'Команда',
+        managers: 'Менеджеры',
         profile: 'Профиль',
         logout: 'Выйти',
       },
-      organizers: {
-        title: 'Организаторы',
-        subtitle: '{count} организаторов',
-        new: 'Новый организатор',
-        empty: 'Организаторов пока нет',
-        emptyHint: 'Создайте первого организатора для проведения лагерей.',
-        loadError: 'Не удалось загрузить организаторов',
+      managers: {
+        title: 'Менеджеры',
+        subtitle: '{count} менеджеров',
+        new: 'Новый менеджер',
+        empty: 'Менеджеров пока нет',
+        emptyHint: 'Пригласите менеджера, чтобы создать и вести лагерь.',
+        loadError: 'Не удалось загрузить менеджеров',
         active: 'Активен',
         deactivated: 'Деактивирован',
         deactivate: 'Деактивировать',
         reactivate: 'Активировать',
-        confirmDeactivate: 'Деактивировать этого организатора? Он будет немедленно отключён.',
+        confirmDeactivate: 'Деактивировать этого менеджера? Он будет немедленно отключён.',
         pending: 'Ожидает',
         resend: 'Отправить снова',
         revoke: 'Отменить',
@@ -1248,6 +1256,11 @@ export const translations: Record<
         duplicate: 'Этот email уже зарегистрирован',
         duplicatePhone: 'Этот номер телефона уже зарегистрирован',
         success: 'Организатор создан',
+      },
+      createManager: {
+        title: 'Новый менеджер',
+        submit: 'Создать менеджера',
+        success: 'Менеджер создан',
       },
       dashboard: {
         title: 'Панель управления',
@@ -1342,7 +1355,6 @@ export const translations: Record<
       subtitle: 'Пара деталей, чтобы команда и участники знали, кто ведёт лагерь.',
       roleLabel: 'Какая у вас роль?',
       roles: {
-        projectManager: 'Проектный менеджер',
         coordinator: 'Координатор',
         admin: 'Администратор',
         media: 'Медиа',
@@ -1461,6 +1473,7 @@ export const translations: Record<
       profile: {
         title: 'Профиль',
         roleOrganizer: 'Организатор',
+        roleManager: 'Менеджер',
         statCamps: 'Лагеря',
         helpRequests: 'Запросы о помощи',
         resolve: 'Решено',
@@ -1726,7 +1739,6 @@ export const translations: Record<
       role: 'Организация',
       email: 'Email',
       phone: 'Телефон',
-      team: 'Команда и организаторы',
       language: 'Язык',
       logout: 'Выйти',
       statCamps: 'Лагеря',
@@ -1747,23 +1759,22 @@ export const translations: Record<
       nav: {
         dashboard: 'Dashboard',
         camps: 'Camps',
-        organizers: 'Organizers',
-        team: 'Team',
+        managers: 'Managers',
         profile: 'Profile',
         logout: 'Log out',
       },
-      organizers: {
-        title: 'Organizers',
-        subtitle: '{count} organizers',
-        new: 'New organizer',
-        empty: 'No organizers yet',
-        emptyHint: 'Create the first organizer to run camps.',
-        loadError: 'Could not load organizers',
+      managers: {
+        title: 'Managers',
+        subtitle: '{count} managers',
+        new: 'New manager',
+        empty: 'No managers yet',
+        emptyHint: 'Invite a manager to create and run a camp.',
+        loadError: 'Could not load managers',
         active: 'Active',
         deactivated: 'Deactivated',
         deactivate: 'Deactivate',
         reactivate: 'Reactivate',
-        confirmDeactivate: 'Deactivate this organizer? They will be signed out immediately.',
+        confirmDeactivate: 'Deactivate this manager? They will be signed out immediately.',
         pending: 'Pending',
         resend: 'Resend',
         revoke: 'Revoke',
@@ -1785,6 +1796,11 @@ export const translations: Record<
         duplicate: 'That email is already registered',
         duplicatePhone: 'That phone number is already registered',
         success: 'Organizer created',
+      },
+      createManager: {
+        title: 'New manager',
+        submit: 'Create manager',
+        success: 'Manager created',
       },
       dashboard: {
         title: 'Dashboard',
@@ -1879,7 +1895,6 @@ export const translations: Record<
       subtitle: "A few details so your team and campers know who's running the show.",
       roleLabel: 'What is your role?',
       roles: {
-        projectManager: 'Project Manager',
         coordinator: 'Coordinator',
         admin: 'Admin',
         media: 'Media',
@@ -1999,6 +2014,7 @@ export const translations: Record<
       profile: {
         title: 'Profile',
         roleOrganizer: 'Organizer',
+        roleManager: 'Manager',
         statCamps: 'Camps',
         helpRequests: 'Help requests',
         resolve: 'Resolve',
@@ -2264,7 +2280,6 @@ export const translations: Record<
       role: 'Organization',
       email: 'Email',
       phone: 'Phone',
-      team: 'Team & organizers',
       language: 'Language',
       logout: 'Log out',
       statCamps: 'Camps',
