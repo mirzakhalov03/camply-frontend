@@ -7,7 +7,7 @@ import { useAuthStore } from '../../../store/useAuthStore'
   (the org can too) — organizers have no create path, so they're redirected out (the
   server also 403s POST /organizer/camps). The manager fills the full wizard,
   including the Organizers step: a manager may invite organizers onto their camp.
-  Landing on Participants after "Create" lets them immediately see who they added.
+  After "Create" they return to the camps list — the org surface's main view.
 */
 export function NewCampScreen() {
   const navigate = useNavigate()
@@ -18,7 +18,7 @@ export function NewCampScreen() {
   return (
     <CampWizard
       steps={['info', 'groups', 'organizers', 'participants', 'review']}
-      onDone={(campId) => navigate(`/org/camps/${campId}/participants`)}
+      onDone={() => navigate('/org/camps')}
       onCancel={() => navigate('/org/camps')}
     />
   )
