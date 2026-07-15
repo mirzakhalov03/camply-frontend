@@ -7,10 +7,11 @@ import { useTranslation } from '../../i18n/useTranslation'
     • AdminBottomNav — mobile tab bar
     • AdminSidebar   — a real desktop/tablet rail (md+), a stated deliverable
 
-  Both use NavLink to real `/admin/*` routes, so active state is URL-driven. One
-  destination today (Organizers); the list is structured so Camps/Participants slot
-  in later. Logout lives in the shell (real cookie session) and is passed in, since
-  the nav renders outside the Outlet and can't read the admin context.
+  Both use NavLink to real `/admin/*` routes, so active state is URL-driven. The org
+  manages Camps and Managers; organizers belong to a manager's camp (invited in the
+  camp wizard), so the org has no standalone organizers list. Logout lives in the
+  shell (real cookie session) and is passed in, since the nav renders outside the
+  Outlet and can't read the admin context.
 */
 
 type NavItem = { to: string; label: string; icon: ReactNode }
@@ -19,8 +20,7 @@ function useNavItems(): NavItem[] {
   const { t } = useTranslation()
   return [
     { to: '/admin/camps', label: t.admin.nav.camps, icon: <CampsIcon /> },
-    { to: '/admin/managers', label: t.admin.nav.managers, icon: <ManagerIcon /> },
-    { to: '/admin/team', label: t.admin.nav.team, icon: <TeamIcon /> },
+    { to: '/admin/managers', label: t.admin.nav.managers, icon: <ManagersIcon /> },
     { to: '/admin/profile', label: t.admin.nav.profile, icon: <ProfileIcon /> },
   ]
 }
@@ -133,26 +133,7 @@ function CampsIcon() {
     </svg>
   )
 }
-function ManagerIcon() {
-  return (
-    <svg
-      width="23"
-      height="23"
-      viewBox="0 0 24 24"
-      fill="none"
-      strokeWidth="2.1"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={icon}
-    >
-      {/* A single lead figure with a star badge — the camp owner (PM). */}
-      <circle cx="10" cy="8" r="3.4" />
-      <path d="M4 20v-1.2a6 6 0 0 1 12 0V20" />
-      <path d="m19 3 1.1 2.2 2.4.35-1.75 1.7.42 2.4L19 8.5l-2.17 1.15.42-2.4-1.75-1.7 2.4-.35z" />
-    </svg>
-  )
-}
-function TeamIcon() {
+function ManagersIcon() {
   return (
     <svg
       width="23"

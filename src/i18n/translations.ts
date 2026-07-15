@@ -453,31 +453,11 @@ type AdminStrings = {
     dashboard: string
     camps: string
     managers: string
-    organizers: string
-    team: string
     profile: string
     logout: string
   }
-  organizers: {
-    title: string
-    subtitle: string // '{count} organizers'
-    new: string
-    empty: string
-    emptyHint: string
-    loadError: string
-    active: string
-    deactivated: string
-    deactivate: string
-    reactivate: string
-    confirmDeactivate: string
-    pending: string
-    resend: string
-    revoke: string
-    confirmRevoke: string
-    delete: string
-    confirmDelete: string // 'Delete {name}? This can't be undone.'
-  }
-  // Managers (PM) — mirror of `organizers`; the /admin Managers screen.
+  // Managers (PM) — the org's people list. Organizers belong to a manager's camp
+  // (invited via the camp wizard), so the org has no standalone organizers list.
   managers: {
     title: string
     subtitle: string // '{count} managers'
@@ -685,29 +665,8 @@ export const translations: Record<
         dashboard: 'Boshqaruv',
         camps: 'Oromgohlar',
         managers: 'Menejerlar',
-        organizers: 'Tashkilotchilar',
-        team: 'Jamoa',
         profile: 'Profil',
         logout: 'Chiqish',
-      },
-      organizers: {
-        title: 'Tashkilotchilar',
-        subtitle: '{count} ta tashkilotchi',
-        new: 'Yangi tashkilotchi',
-        empty: 'Hozircha tashkilotchilar yoʻq',
-        emptyHint: 'Oromgohlarni boshqarish uchun birinchi tashkilotchini yarating.',
-        loadError: 'Tashkilotchilarni yuklab boʻlmadi',
-        active: 'Faol',
-        deactivated: 'Faolsizlantirilgan',
-        deactivate: 'Faolsizlantirish',
-        reactivate: 'Qayta faollashtirish',
-        confirmDeactivate: 'Bu tashkilotchi faolsizlantirilsinmi? U darhol tizimdan chiqariladi.',
-        pending: 'Kutilmoqda',
-        resend: 'Qayta yuborish',
-        revoke: 'Bekor qilish',
-        confirmRevoke: 'Bu taklifnoma bekor qilinsinmi?',
-        delete: "O'chirish",
-        confirmDelete: "{name} o'chirilsinmi? Buni ortga qaytarib bo'lmaydi.",
       },
       managers: {
         title: 'Menejerlar',
@@ -1263,29 +1222,8 @@ export const translations: Record<
         dashboard: 'Панель',
         camps: 'Лагеря',
         managers: 'Менеджеры',
-        organizers: 'Организаторы',
-        team: 'Команда',
         profile: 'Профиль',
         logout: 'Выйти',
-      },
-      organizers: {
-        title: 'Организаторы',
-        subtitle: '{count} организаторов',
-        new: 'Новый организатор',
-        empty: 'Организаторов пока нет',
-        emptyHint: 'Создайте первого организатора для проведения лагерей.',
-        loadError: 'Не удалось загрузить организаторов',
-        active: 'Активен',
-        deactivated: 'Деактивирован',
-        deactivate: 'Деактивировать',
-        reactivate: 'Активировать',
-        confirmDeactivate: 'Деактивировать этого организатора? Он будет немедленно отключён.',
-        pending: 'Ожидает',
-        resend: 'Отправить снова',
-        revoke: 'Отменить',
-        confirmRevoke: 'Отменить это приглашение?',
-        delete: 'Удалить',
-        confirmDelete: 'Удалить {name}? Это действие необратимо.',
       },
       managers: {
         title: 'Менеджеры',
@@ -1825,29 +1763,8 @@ export const translations: Record<
         dashboard: 'Dashboard',
         camps: 'Camps',
         managers: 'Managers',
-        organizers: 'Organizers',
-        team: 'Team',
         profile: 'Profile',
         logout: 'Log out',
-      },
-      organizers: {
-        title: 'Organizers',
-        subtitle: '{count} organizers',
-        new: 'New organizer',
-        empty: 'No organizers yet',
-        emptyHint: 'Create the first organizer to run camps.',
-        loadError: 'Could not load organizers',
-        active: 'Active',
-        deactivated: 'Deactivated',
-        deactivate: 'Deactivate',
-        reactivate: 'Reactivate',
-        confirmDeactivate: 'Deactivate this organizer? They will be signed out immediately.',
-        pending: 'Pending',
-        resend: 'Resend',
-        revoke: 'Revoke',
-        confirmRevoke: 'Revoke this invitation?',
-        delete: 'Delete',
-        confirmDelete: "Delete {name}? This can't be undone.",
       },
       managers: {
         title: 'Managers',
