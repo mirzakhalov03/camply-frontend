@@ -16,6 +16,27 @@ type Props = {
 export function MyGroupCard({ group, onOpen }: Props) {
   const { t } = useTranslation()
 
+  /*
+    Unassigned is a normal state — an organizer can roster a participant before
+    sorting groups. Show a calm placeholder (not a hidden card) so the participant
+    knows grouping is still coming. Not a button: there's no group chat to open.
+  */
+  if (!group) {
+    return (
+      <div className="flex items-center gap-3.5 rounded-[20px] border border-line bg-surface p-4 text-left shadow-[0_4px_16px_rgba(20,40,30,0.06)]">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-soft text-[15px] font-bold text-muted">
+          ?
+        </div>
+        <div className="flex-1">
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-muted">
+            {t.home.myGroup}
+          </div>
+          <div className="text-base font-bold text-content">{t.home.noGroupYet}</div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <button
       type="button"

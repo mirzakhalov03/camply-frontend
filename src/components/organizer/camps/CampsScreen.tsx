@@ -39,7 +39,14 @@ export function CampsScreen() {
   const campsQuery = useOrganizerCamps()
   const summaryQuery = useOrganizerSummary()
   const { data: help } = useActiveHelpRequests()
-  const { data: leaderboard } = useLeaderboard()
+  /*
+    The standings block below shows the PRIMARY camp's leaderboard. Derive its id
+    here rather than from `primary` further down: that's computed after the early
+    returns, and a hook can't sit behind a conditional.
+  */
+  const primaryId =
+    (campsQuery.data?.find((x) => x.status === 'active') ?? campsQuery.data?.[0])?.id ?? ''
+  const { data: leaderboard } = useLeaderboard(primaryId)
 
   if (campsQuery.isPending || summaryQuery.isPending) return <CampsSkeleton />
 

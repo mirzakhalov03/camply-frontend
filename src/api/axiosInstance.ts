@@ -1,5 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import { useAuthStore } from '../store/useAuthStore'
+import { queryClient } from './queryClient'
+import { participantKeys } from './queryKeys'
 
 /*
   The single HTTP boundary for the whole app. Every backend call goes through this
@@ -38,14 +40,22 @@ export class ApiError extends Error {
 
 /*
   Successes pass through untouched (services read `res.data`). On failure we
-  normalize to an ApiError carrying the backend message + status. A 401 means the
-  session is dead — clear it so guards bounce back to login.
+  normalize to an ApiError carrying the backend message + status.
+
+  Two statuses get side effects:
+    401 — the session is dead; clear it so guards bounce back to login.
+    403 on a camp route — membership changed underneath us (removed from the camp,
+         or it was archived). Re-resolving the participant's camps lands them on
+         the no-camp screen instead of stranding them on a permanent error.
 */
 axiosInstance.interceptors.response.use(
   (res) => res,
   (error: AxiosError<ApiErrorBody>) => {
     const status = error.response?.status
     if (status === 401) useAuthStore.getState().clear()
+    if (status === 403 && (error.config?.url ?? '').startsWith('/camps/')) {
+      queryClient.invalidateQueries({ queryKey: participantKeys.camps })
+    }
     const message =
       error.response?.data?.message ??
       error.response?.data?.error ??

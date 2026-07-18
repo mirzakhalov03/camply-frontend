@@ -21,9 +21,9 @@ const HERO_TEXTURE =
 */
 export function ProfileScreen() {
   const { t } = useTranslation()
-  const { sos, goAnnouncements, logout } = useCamp()
+  const { campId, sos, goAnnouncements, logout } = useCamp()
   const { data: membership } = useMembership()
-  const { data: announcements } = useAnnouncements()
+  const { data: announcements } = useAnnouncements(campId)
   const unread = useUnreadCount((announcements ?? []).map((a) => a.id))
 
   return (

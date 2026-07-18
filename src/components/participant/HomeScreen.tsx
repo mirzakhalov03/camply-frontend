@@ -20,10 +20,10 @@ import { useCamp } from './campContext'
   degrade gracefully. Navigation comes from the shell context (routes), not props.
 */
 export function HomeScreen() {
-  const { goSchedule, goAnnouncements, goChat } = useCamp()
-  const { data, isPending, isError } = useCampHome()
-  const { data: schedule, isPending: schedulePending } = useSchedule()
-  const { data: announcements } = useAnnouncements()
+  const { campId, goSchedule, goAnnouncements, goChat } = useCamp()
+  const { data, isPending, isError } = useCampHome(campId)
+  const { data: schedule, isPending: schedulePending } = useSchedule(campId)
+  const { data: announcements } = useAnnouncements(campId)
   const latest = announcements?.[0]
   const unread = useUnreadCount((announcements ?? []).map((a) => a.id))
 

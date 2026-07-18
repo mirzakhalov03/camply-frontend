@@ -127,6 +127,7 @@ type HomeStrings = {
   all: string
   myGroup: string
   membersCount: string // '{count} members'
+  noGroupYet: string
 }
 
 // SOS flow — reason picker → press-and-hold → sending → active tracking.
@@ -259,6 +260,14 @@ type CommonStrings = {
   comingSoonBody: string
 }
 
+// Shown to a logged-in participant with no live camp — rostered before the camp
+// is published, not yet added, or their camp already finished.
+type NoCampStrings = {
+  title: string
+  body: string
+  hint: string
+}
+
 // Relative-time wording — {count} is filled per language (see lib/relativeTime).
 type TimeStrings = {
   justNow: string
@@ -365,6 +374,9 @@ type OrgStrings = {
     statusOut: string
     seeOnMap: string
     unassigned: string
+    group: string
+    changeGroup: string
+    groupUpdated: string
     members: string // '{count} members'
     noMembers: string
     leader: string
@@ -642,6 +654,7 @@ export const translations: Record<
     chat: ChatStrings
     ranks: RanksStrings
     common: CommonStrings
+    noCamp: NoCampStrings
     time: TimeStrings
     announcements: AnnouncementsStrings
     schedule: ScheduleStrings
@@ -879,6 +892,9 @@ export const translations: Record<
         statusOut: 'Tashqarida',
         seeOnMap: 'Xaritada koʻrish',
         unassigned: 'Guruhsiz',
+        group: 'Guruh',
+        changeGroup: 'Guruhni oʻzgartirish',
+        groupUpdated: 'Guruh yangilandi',
         members: '{count} aʼzo',
         noMembers: 'Hali aʼzo yoʻq',
         leader: 'Rahbar',
@@ -968,6 +984,7 @@ export const translations: Record<
       all: 'Hammasi',
       myGroup: 'Mening guruhim',
       membersCount: '{count} ta aʼzo',
+      noGroupYet: 'Guruh hali tayinlanmagan',
     },
     sos: {
       title: 'Favqulodda yordam',
@@ -1077,6 +1094,11 @@ export const translations: Record<
     common: {
       comingSoon: 'Tez kunda',
       comingSoonBody: 'Oromgohning bu qismi tayyorlanmoqda. Tez orada qayting!',
+    },
+    noCamp: {
+      title: 'Hozircha oromgoh yoʻq',
+      body: 'Siz hali birorta faol oromgohga qoʻshilmagansiz. Tashkilotchi sizni qoʻshgach, hammasi shu yerda paydo boʻladi.',
+      hint: 'Oromgoh boshlanishiga yaqin qayta tekshiring.',
     },
     time: {
       justNow: 'hozirgina',
@@ -1436,6 +1458,9 @@ export const translations: Record<
         statusOut: 'Снаружи',
         seeOnMap: 'Показать на карте',
         unassigned: 'Без группы',
+        group: 'Группа',
+        changeGroup: 'Изменить группу',
+        groupUpdated: 'Группа обновлена',
         members: '{count} участн.',
         noMembers: 'Пока нет участников',
         leader: 'Лидер',
@@ -1524,6 +1549,7 @@ export const translations: Record<
       all: 'Все',
       myGroup: 'Моя группа',
       membersCount: '{count} участников',
+      noGroupYet: 'Группа ещё не назначена',
     },
     sos: {
       title: 'Экстренная помощь',
@@ -1633,6 +1659,11 @@ export const translations: Record<
     common: {
       comingSoon: 'Скоро',
       comingSoonBody: 'Эта часть лагеря ещё в разработке. Загляните позже!',
+    },
+    noCamp: {
+      title: 'Пока нет лагеря',
+      body: 'Вы ещё не добавлены ни в один активный лагерь. Как только организатор добавит вас, всё появится здесь.',
+      hint: 'Загляните снова ближе к началу лагеря.',
     },
     time: {
       justNow: 'только что',
@@ -1978,6 +2009,9 @@ export const translations: Record<
         statusOut: 'Out',
         seeOnMap: 'See on map',
         unassigned: 'Unassigned',
+        group: 'Group',
+        changeGroup: 'Change group',
+        groupUpdated: 'Group updated',
         members: '{count} members',
         noMembers: 'No members yet',
         leader: 'Leader',
@@ -2067,6 +2101,7 @@ export const translations: Record<
       all: 'All',
       myGroup: 'My group',
       membersCount: '{count} members',
+      noGroupYet: 'Not assigned to a group yet',
     },
     sos: {
       title: 'Emergency help',
@@ -2176,6 +2211,11 @@ export const translations: Record<
     common: {
       comingSoon: 'Coming soon',
       comingSoonBody: 'This part of camp is being built. Check back soon!',
+    },
+    noCamp: {
+      title: 'No camp yet',
+      body: "You haven't been added to an active camp yet. Once an organizer adds you, everything will show up here.",
+      hint: 'Check back closer to your camp start date.',
     },
     time: {
       justNow: 'just now',

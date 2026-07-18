@@ -1,12 +1,18 @@
 import { useTranslation } from '../../../../i18n/useTranslation'
 import { interpolate } from '@/utils/interpolate'
+import { formatStoredPhone } from '@/utils/phone'
 import { Avatar, Button, Sheet } from '../../../ui'
 import type { RosterParticipant } from '../../../../api/services/roster.service'
+import { useCampGroups } from '../../../../api/queries/campGroups.queries'
+import { useUpdateRoster } from '../../../../api/queries/roster.queries'
+import { GroupPicker } from './GroupPicker'
 
 type Props = {
   participant: RosterParticipant | null
   onClose: () => void
   onSeeOnMap: (participant: RosterParticipant) => void
+  /** Needed to load this camp's groups and to reassign within it. */
+  campId: string
 }
 
 const SOCIAL_LABELS: Record<string, string> = {
@@ -23,9 +29,11 @@ const SOCIAL_LABELS: Record<string, string> = {
   button so the organizer can jump to that person on the live map. Presentational —
   the parent owns selection state and the actual map navigation.
 */
-export function ParticipantPeekSheet({ participant, onClose, onSeeOnMap }: Props) {
+export function ParticipantPeekSheet({ participant, onClose, onSeeOnMap, campId }: Props) {
   const { t } = useTranslation()
   const d = t.org.detail
+  const { data: groups } = useCampGroups(campId)
+  const updateRoster = useUpdateRoster(campId)
 
   const socials = participant?.socials
     ? Object.entries(participant.socials).filter(([, v]) => v)
@@ -47,6 +55,13 @@ export function ParticipantPeekSheet({ participant, onClose, onSeeOnMap }: Props
             <div className="mt-0.5 text-body text-muted">
               {participant.city} · {interpolate(t.chat.ageYears, { age: participant.age })}
             </div>
+            {/* The number itself, not just a Call button — organizers need to read
+                it out, save it, or paste it somewhere the tel: link can't reach. */}
+            {participant.phone && (
+              <div className="mt-1 text-body tabular-nums font-semibold text-content">
+                {formatStoredPhone(participant.phone)}
+              </div>
+            )}
 
             <div className="mt-5 flex w-full flex-col gap-2">
               {/* Call — a real tel: link, only when we have a number. */}
@@ -92,6 +107,22 @@ export function ParticipantPeekSheet({ participant, onClose, onSeeOnMap }: Props
               </Button>
             </div>
           </div>
+
+          {/* Reassign group — camps are built before people are sorted, so this
+              has to stay editable for the whole life of the camp. */}
+          {groups && groups.length > 0 && (
+            <div className="mt-6">
+              <GroupPicker
+                groups={groups}
+                value={participant.groupId}
+                onChange={(groupId) => {
+                  if (groupId === participant.groupId) return
+                  updateRoster.mutate({ membershipId: participant.id, groupId })
+                }}
+                disabled={updateRoster.isPending}
+              />
+            </div>
+          )}
 
           <div className="mt-6">
             <div className="mb-2 text-meta font-bold uppercase tracking-wide text-muted">

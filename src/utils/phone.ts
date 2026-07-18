@@ -19,3 +19,18 @@ export function formatUzPhone(digits: string): string {
 export function toPhoneDigits(raw: string): string {
   return raw.replace(/\D/g, '').slice(0, PHONE_LENGTH)
 }
+
+/*
+  Display a STORED number (canonical E.164, e.g. +998940002007) as '+998 94 000-20-07'.
+
+  Distinct from toPhoneDigits, which is for INPUT: that one takes the first 9 digits,
+  so handed a stored number it would return the country code ('998940002') instead of
+  the subscriber number. This mirrors the backend's canonicalizePhone by dropping a
+  leading 998, and falls back to the raw string if the shape is unexpected — a weird
+  number should render visibly odd, not silently mangled.
+*/
+export function formatStoredPhone(e164: string): string {
+  const digits = e164.replace(/\D/g, '')
+  const national = digits.startsWith('998') ? digits.slice(3) : digits
+  return national.length === PHONE_LENGTH ? `+998 ${formatUzPhone(national)}` : e164
+}

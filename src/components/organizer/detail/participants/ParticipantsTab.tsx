@@ -73,6 +73,7 @@ export function ParticipantsTab() {
 
       <ParticipantPeekSheet
         participant={selected}
+        campId={camp.id}
         onClose={() => setSelected(null)}
         onSeeOnMap={(p) => {
           setSelected(null)

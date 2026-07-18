@@ -51,4 +51,22 @@ export const rosterService = {
     return (await axiosInstance.post<RosterParticipant>(`/organizer/camps/${campId}/roster`, body))
       .data
   },
+
+  /*
+    Reassigns an existing roster member's group (null = unassign). Camps are built
+    before people are sorted, so group membership has to stay editable for the whole
+    life of the camp — not just at the moment a participant is added.
+  */
+  update: async (
+    campId: string,
+    membershipId: string,
+    patch: { groupId: string | null },
+  ): Promise<RosterParticipant> => {
+    return (
+      await axiosInstance.patch<RosterParticipant>(
+        `/organizer/camps/${campId}/roster/${membershipId}`,
+        patch,
+      )
+    ).data
+  },
 }

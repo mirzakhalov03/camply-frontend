@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from '../../../i18n/useTranslation'
+import { useCamp } from '../campContext'
 import { useAnnouncements } from '../../../api/queries/announcements.queries'
 import { useAnnouncementReads } from '../../../store/useAnnouncementReads'
 import { dayBucketLabel, type TimeStrings } from '@/utils/relativeTime'
@@ -19,7 +20,8 @@ import type { Announcement } from '../../../api/services/announcements.service'
 export function AnnouncementsScreen() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { data, isPending, isError, refetch } = useAnnouncements()
+  const { campId } = useCamp()
+  const { data, isPending, isError, refetch } = useAnnouncements(campId)
   const readIds = useAnnouncementReads((s) => s.readIds)
   const read = new Set(readIds)
 

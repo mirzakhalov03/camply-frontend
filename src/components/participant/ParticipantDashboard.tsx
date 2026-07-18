@@ -1,6 +1,9 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useCampHome } from '../../lib/campHome'
+import { useMyCamps } from '../../api/queries/me.queries'
 import { useLogout } from '../../api/queries/auth.queries'
+import { NoCampScreen } from './NoCampScreen'
+import { HomeSkeleton } from './HomeSkeleton'
 import { BottomNav } from './BottomNav'
 import { SosButton } from './sos/SosButton'
 import { SosSheet } from './sos/SosSheet'
@@ -19,8 +22,18 @@ export function ParticipantDashboard() {
   const location = useLocation()
   const sos = useSos()
   const logout = useLogout()
+
+  /*
+    Resolve the camp ONCE, here — the single component wrapping every /camp/* route.
+    Screens then read a guaranteed campId from context instead of each handling its
+    absence. One active camp for now; the payload is list-shaped (server orders it
+    running-now first, then soonest upcoming) so a switcher is later UI-only work.
+  */
+  const { data: camps, isPending } = useMyCamps()
+  const camp = camps?.[0]
+
   // Same cached query HomeScreen uses — here just for the Chat tab's unread badge.
-  const { data: home } = useCampHome()
+  const { data: home } = useCampHome(camp?.id ?? '')
 
   const onHome = location.pathname === '/camp/home'
   const onChat = location.pathname === '/camp/chat'
@@ -29,7 +42,19 @@ export function ParticipantDashboard() {
   // owned; this is the client stand-in until then.
   const chatBadge = onChat ? undefined : home?.unreadChat
 
+  // Gate on resolution so every screen below can treat campId as non-null.
+  if (isPending || !camp) {
+    return (
+      <div className="relative mx-auto flex h-dvh w-full max-w-2xl flex-col overflow-hidden bg-canvas shadow-sm">
+        {/* No bottom nav, no SOS in the no-camp state: nothing to navigate
+            within, and no camp organizer to signal. */}
+        {isPending ? <HomeSkeleton /> : <NoCampScreen />}
+      </div>
+    )
+  }
+
   const ctx: CampContext = {
+    campId: camp.id,
     sos,
     goSchedule: () => navigate('/camp/schedule'),
     goAnnouncements: () => navigate('/camp/announcements'),

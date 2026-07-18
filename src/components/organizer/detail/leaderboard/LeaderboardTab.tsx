@@ -3,6 +3,7 @@ import { Skeleton } from '../../../ui'
 import { useTranslation } from '../../../../i18n/useTranslation'
 import { deriveLeaderboard, type RankedGroup } from '../../../../lib/leaderboard'
 import { useLeaderboard, useAdjustGroupPoints } from '../../../../api/queries/leaderboard.queries'
+import { useCampDetail } from '../campDetailContext'
 import { OrgLeaderboardRow } from './OrgLeaderboardRow'
 import { PointsWheelSheet } from './PointsWheelSheet'
 
@@ -14,8 +15,9 @@ import { PointsWheelSheet } from './PointsWheelSheet'
 export function LeaderboardTab() {
   const { t } = useTranslation()
   const d = t.org.detail
-  const { data, isPending, isError } = useLeaderboard()
-  const adjust = useAdjustGroupPoints()
+  const { camp } = useCampDetail()
+  const { data, isPending, isError } = useLeaderboard(camp.id)
+  const adjust = useAdjustGroupPoints(camp.id)
   const [target, setTarget] = useState<RankedGroup | null>(null)
 
   if (isPending) {

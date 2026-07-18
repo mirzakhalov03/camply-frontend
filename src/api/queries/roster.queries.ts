@@ -27,3 +27,22 @@ export function useAddRoster(campId: string) {
     },
   })
 }
+
+/*
+  PATCH /organizer/camps/:id/roster/:mid → move a participant between groups.
+
+  Invalidates the whole camp, not just the roster: group member counts, the
+  leaderboard's per-group standings, and the participant's own "my group" card all
+  read from this same assignment, so refreshing the roster alone would leave those
+  stale until the next reload.
+*/
+export function useUpdateRoster(campId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ membershipId, groupId }: { membershipId: string; groupId: string | null }) =>
+      rosterService.update(campId, membershipId, { groupId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: campKeys.all(campId) })
+    },
+  })
+}

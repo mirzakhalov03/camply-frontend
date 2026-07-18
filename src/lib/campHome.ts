@@ -1,16 +1,19 @@
-import { useQuery } from '@tanstack/react-query'
-import { campHomeMock } from '@/lib/mocks/mockCamp'
-// import { api } from './api' // ← enable when the backend endpoint exists
+import { useMyCamps } from '@/api/queries/me.queries'
+import { useMyGroup } from '@/api/queries/myGroup.queries'
+import { paletteColor } from '@/utils/paletteColor'
 
 /*
   The DATA CONTRACT for the participant home. These types describe the shape the
-  ORGANIZER's data will fill in — the camp name/dates, the schedule they build,
-  the announcements they post, the group they assign. Components depend on these
-  shapes, never on where the data actually comes from.
+  ORGANIZER's data fills in — the camp name/dates they set, the group they assign.
+  Components depend on these shapes, never on where the data actually comes from.
+
+  NOTE: this module is no longer a mock seam — it's a COMPOSER over two live
+  api/queries hooks. It stays in lib/ only because 8 modules import these types;
+  migrating it to @/hooks is a follow-up, not part of this change.
 */
 export type GroupMember = {
   initials: string
-  /** Avatar background — runtime data, so consumers apply it as an inline style. */
+  /** Resolved CSS color (a var(--color-*) reference or a hex) — used inline. */
   color: string
 }
 
@@ -21,36 +24,65 @@ export type CampHome = {
     dateRange: string
     dayCurrent: number
     dayTotal: number
-    /** Cover photo URL (mock now; organizer-uploaded later). */
+    /** Cover photo URL — organizer-uploaded, falling back to the bundled default. */
     coverImage: string
   }
+  /** null when the organizer hasn't assigned this participant to a group yet. */
   group: {
     name: string
     memberCount: number
     members: GroupMember[]
-  }
+  } | null
   /** Unread group-chat messages — drives the Chat tab badge. */
   unreadChat: number
 }
 
 /*
-  The single data boundary for the participant home. Today it returns the mock
-  payload the prototype illustrated. Once the organizer dashboard + backend exist,
-  the organizer's camp/schedule/announcements are served from here — swap the body
-  for the commented `api.get` line and NOTHING in the UI changes. This is why no
-  component imports mock data directly: they all flow through this one function.
-*/
-export async function fetchCampHome(): Promise<CampHome> {
-  // return api.get<CampHome>('/camps/current/home')
-  return campHomeMock
-}
+  Home is COMPOSED, not served by a bespoke endpoint.
 
-/*
-  React Query hook for the home payload. React Query caches by `queryKey`, so
-  several components can each call useCampHome() and still share ONE network
-  request and ONE cache — no prop-drilling, no double fetch. That's exactly how
-  HomeScreen (content) and the bottom-nav badge (unread count) both read it.
+  The camp comes from the SAME useMyCamps() cache the shell already resolved —
+  React Query dedupes by queryKey, so this costs no extra request. That also keeps
+  the participant off GET /camps/:id, whose shared projection still carries
+  organizer roster counts (participantCount, checkinPct, …) they shouldn't receive.
+
+  The group is its own query because it invalidates on a different cadence: an
+  organizer reshuffling groups shouldn't force a refetch of camp metadata.
+
+  unreadChat stays client-side — chat has no server-owned read state yet, so
+  faking it into this payload would invent a contract the backend doesn't honor.
 */
-export function useCampHome() {
-  return useQuery({ queryKey: ['campHome'], queryFn: fetchCampHome })
+export function useCampHome(campId: string) {
+  const camps = useMyCamps()
+  const group = useMyGroup(campId)
+
+  const camp = camps.data?.find((c) => c.id === campId)
+  const isPending = camps.isPending || group.isPending
+  const isError = camps.isError || group.isError
+
+  const data: CampHome | undefined =
+    camp && !isPending
+      ? {
+          camp: {
+            name: camp.name,
+            location: camp.location,
+            dateRange: camp.dateRange,
+            dayCurrent: camp.dayCurrent,
+            dayTotal: camp.dayTotal,
+            coverImage: camp.coverImage ?? '/camp-cover.jpg',
+          },
+          group: group.data
+            ? {
+                name: group.data.name,
+                memberCount: group.data.memberCount,
+                members: group.data.members.map((m) => ({
+                  initials: m.initials,
+                  color: paletteColor(m.color),
+                })),
+              }
+            : null,
+          unreadChat: 0,
+        }
+      : undefined
+
+  return { data, isPending, isError }
 }

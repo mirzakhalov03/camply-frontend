@@ -82,12 +82,25 @@ export const inviteKeys = {
   detail: (token: string) => [...inviteKeys.all, token] as const,
 }
 
+/*
+  The PARTICIPANT's own cross-camp reads. Root-level, NOT under campKeys: this is
+  the query that determines WHICH camp you are in, so nesting it under a campId
+  would be circular.
+*/
+export const participantKeys = {
+  all: ['participant'] as const,
+  /** The camps this participant belongs to — resolves the active campId. */
+  camps: ['participant', 'camps'] as const,
+}
+
 /** Everything owned by / read within a single camp. */
 export const campKeys = {
   all: (campId: string) => ['camp', campId] as const,
   home: (campId: string) => [...campKeys.all(campId), 'home'] as const,
   roster: (campId: string) => [...campKeys.all(campId), 'roster'] as const,
   groups: (campId: string) => [...campKeys.all(campId), 'groups'] as const,
+  /** The caller's OWN group in this camp (participant projection, not the roster). */
+  myGroup: (campId: string) => [...campKeys.all(campId), 'myGroup'] as const,
   schedule: (campId: string) => [...campKeys.all(campId), 'schedule'] as const,
   leaderboard: (campId: string) => [...campKeys.all(campId), 'leaderboard'] as const,
   /** Live location pins — high-frequency; updated via setQueryData, not refetch. */

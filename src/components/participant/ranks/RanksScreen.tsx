@@ -1,4 +1,5 @@
 import { useTranslation } from '../../../i18n/useTranslation'
+import { useCamp } from '../campContext'
 import { deriveLeaderboard } from '../../../lib/leaderboard'
 import { useLeaderboard } from '../../../api/queries/leaderboard.queries'
 import { useGroupStore } from '../../../store/useGroupStore'
@@ -16,7 +17,8 @@ import { RanksSkeleton } from './RanksSkeleton'
 */
 export function RanksScreen() {
   const { t } = useTranslation()
-  const { data, isPending, isError } = useLeaderboard()
+  const { campId } = useCamp()
+  const { data, isPending, isError } = useLeaderboard(campId)
   // My group's locally uploaded photo — the SAME photo shown in the chat header.
   // Shared via useGroupStore so Ranks doesn't reach into the chat feature.
   const myGroupPhoto = useGroupStore((s) => s.photo)

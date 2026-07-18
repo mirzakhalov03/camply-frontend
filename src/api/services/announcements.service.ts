@@ -36,13 +36,6 @@ export type Announcement = {
   updatedAt?: string
 }
 
-/*
-  No camp-switching plumbing exists yet (useCampHome() takes no id either), so a
-  single current-camp id stands in. When camps become switchable this comes from
-  camp context — the queries already key by campId, so nothing else changes.
-*/
-export const CURRENT_CAMP_ID = 'current'
-
 /** Server returns the list pinned-first, then newest. Mirror that here. */
 function sortForFeed(list: Announcement[]): Announcement[] {
   return [...list].sort((a, b) => {

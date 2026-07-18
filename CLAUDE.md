@@ -86,6 +86,12 @@ data feature should follow:
 
 `src/api/queryClient.ts` holds the shared `QueryClient` (wired in `main.tsx`).
 
+> **`campHome.ts` is no longer a mock seam** (2026-07-18) — it's a COMPOSER over
+> two live hooks (`useMyCamps` + `useMyGroup`) that assembles the `CampHome` type.
+> It stays in `lib/` only because 8 modules import those types; migrating it to
+> `@/hooks` is outstanding. `campHomeMock` is gone; `lib/mocks/mockCamp.ts` now
+> holds only the SOS reason config, which is fixed app config, not a placeholder.
+
 > `src/lib/` is now the shrunken **mock-era transitional zone** — only what hasn't
 > migrated yet: the data-contract modules (`campHome`, `chat`, `leaderboard`,
 > `membership`, `groups`), the old fetch wrapper `api.ts` (kept only because those
@@ -244,6 +250,20 @@ sit as siblings:
   > the same payload. The one exception: the org-only Organizers step invites org-global
   > organizers **immediately** (they're independent of the camp). The wizard is
   > surface-shared — org passes all 5 step keys, organizer 4.
+
+**Camp resolution lives in the shell** (2026-07-18). `ParticipantDashboard` calls
+`useMyCamps()` once and puts the resolved `campId` into `CampContext`; it doesn't
+render `<Outlet>` until that succeeds, so every `/camp/*` screen can treat
+`campId` as a guaranteed non-empty ObjectId and needs no no-camp branch. Pending →
+skeleton, empty → `NoCampScreen` (no bottom nav, no SOS — nothing to navigate
+within, no organizer to signal). The old `CURRENT_CAMP_ID = 'current'` placeholder
+is **deleted** and `campId` is now a **required** parameter on every camp-scoped
+hook — a screen that forgets to thread it fails `tsc`, instead of 400ing at
+runtime. A 403 on a `/camps/*` route re-resolves `participantKeys.camps` (see
+`axiosInstance`), landing a removed participant on `NoCampScreen` rather than a
+stuck error. Group/avatar colors from the server are palette **tokens** resolved
+via `@/utils/paletteColor` → `var(--color-*)`; it passes non-tokens (raw hex)
+through untouched rather than forcing them into the palette.
 
 The shell shares state with routed screens via **Outlet context** (`useCamp()` in
 `src/components/participant/campContext.ts`) — this is how the single `useSos()`

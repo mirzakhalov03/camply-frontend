@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { scheduleService, type NewActivity } from '../services/schedule.service'
-import { CURRENT_CAMP_ID } from '../services/announcements.service'
 import { campKeys } from '../queryKeys'
 
 /*
@@ -9,10 +8,12 @@ import { campKeys } from '../queryKeys'
   so a future realtime "schedule:changed" event can invalidate it and every
   subscribed screen (home widget + full screen) refetches for free.
 */
-export function useSchedule(campId: string = CURRENT_CAMP_ID) {
+export function useSchedule(campId: string) {
   return useQuery({
     queryKey: campKeys.schedule(campId),
     queryFn: () => scheduleService.list(campId),
+    // An unresolved camp would request /camps//schedule — hold until it's known.
+    enabled: Boolean(campId),
   })
 }
 
@@ -21,7 +22,7 @@ export function useSchedule(campId: string = CURRENT_CAMP_ID) {
   camp's schedule key, so the organizer's Schedule tab AND the participant's home
   widget + schedule screen (all keyed campKeys.schedule) refetch and show it.
 */
-export function useCreateActivity(campId: string = CURRENT_CAMP_ID) {
+export function useCreateActivity(campId: string) {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (activity: NewActivity) => scheduleService.create(activity),

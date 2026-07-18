@@ -1,11 +1,18 @@
 import { Avatar } from '../../../ui'
 import { useTranslation } from '../../../../i18n/useTranslation'
+import { formatStoredPhone } from '@/utils/phone'
 import type { RosterParticipant } from '../../../../api/services/roster.service'
 
 /*
-  One participant in the roster: avatar, name, group · city, and a small check-in
-  dot (pine = on-site, muted = out-of-bounds — no words, per design). The whole row
-  is a button that opens the participant peek sheet; the chevron signals that.
+  One participant in the roster: avatar, name, group · city, phone, and a small
+  check-in dot (pine = on-site, muted = out-of-bounds — no words, per design). The
+  whole row is a button that opens the participant peek sheet; the chevron signals that.
+
+  The phone gets its own line in tabular numerals so digits align down the column —
+  organizers scan this list looking for a specific number, and ragged proportional
+  digits make that materially harder. It's display-only here: the row is already a
+  <button>, so a nested tel: link would be invalid markup. Calling lives in the peek
+  sheet, one tap away.
 */
 export function RosterRow({
   p,
@@ -29,6 +36,11 @@ export function RosterRow({
         <div className="truncate text-caption text-muted">
           {(p.groupName ?? t.org.detail.unassigned) + ' · ' + p.city}
         </div>
+        {p.phone && (
+          <div className="truncate text-meta tabular-nums text-muted">
+            {formatStoredPhone(p.phone)}
+          </div>
+        )}
       </div>
       {/* Check-in status as a dot — the glance without the "In"/"Out" words. */}
       <span

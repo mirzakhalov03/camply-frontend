@@ -1,9 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import {
-  announcementsService,
-  CURRENT_CAMP_ID,
-  type NewAnnouncement,
-} from '../services/announcements.service'
+import { announcementsService, type NewAnnouncement } from '../services/announcements.service'
 import { campKeys } from '../queryKeys'
 
 /*
@@ -15,15 +11,17 @@ import { campKeys } from '../queryKeys'
 */
 
 /** The whole feed for a camp (pinned-first, then newest — the server's order). */
-export function useAnnouncements(campId: string = CURRENT_CAMP_ID) {
+export function useAnnouncements(campId: string) {
   return useQuery({
     queryKey: campKeys.announcements(campId),
     queryFn: () => announcementsService.list(campId),
+    // An unresolved camp would request /camps//announcements — hold until known.
+    enabled: Boolean(campId),
   })
 }
 
 /** One announcement — powers the detail screen and push deep-links. */
-export function useAnnouncement(id: string, campId: string = CURRENT_CAMP_ID) {
+export function useAnnouncement(id: string, campId: string) {
   return useQuery({
     queryKey: campKeys.announcement(campId, id),
     queryFn: () => announcementsService.getById(campId, id),
@@ -35,7 +33,7 @@ export function useAnnouncement(id: string, campId: string = CURRENT_CAMP_ID) {
   the camp's announcements key, so the organizer's Announcements tab AND the
   participant's feed (both keyed campKeys.announcements) refetch and show it.
 */
-export function useCreateAnnouncement(campId: string = CURRENT_CAMP_ID) {
+export function useCreateAnnouncement(campId: string) {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (input: NewAnnouncement) => announcementsService.create(input),

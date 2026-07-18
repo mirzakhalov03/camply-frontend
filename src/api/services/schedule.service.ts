@@ -1,4 +1,3 @@
-import { CURRENT_CAMP_ID } from './announcements.service'
 import { axiosInstance } from '../axiosInstance'
 
 /*
@@ -144,7 +143,7 @@ function sortByStart(list: Activity[]): Activity[] {
 export type NewActivity = Omit<Activity, 'id'>
 
 export const scheduleService = {
-  list: async (campId: string = CURRENT_CAMP_ID): Promise<Activity[]> => {
+  list: async (campId: string): Promise<Activity[]> => {
     return sortByStart((await axiosInstance.get<Activity[]>(`/camps/${campId}/schedule`)).data)
   },
 

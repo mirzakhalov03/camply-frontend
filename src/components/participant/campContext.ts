@@ -13,6 +13,11 @@ import type { useSos } from './sos/useSos'
   exports a component — otherwise React Fast Refresh breaks.
 */
 export type CampContext = {
+  /*
+    The active camp's real ObjectId. Guaranteed non-empty: the shell doesn't render
+    <Outlet> until resolution succeeds, so no screen needs a no-camp branch.
+  */
+  campId: string
   sos: ReturnType<typeof useSos>
   goSchedule: () => void
   goAnnouncements: () => void

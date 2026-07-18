@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from '../../../i18n/useTranslation'
+import { useCamp } from '../campContext'
 import { useAnnouncement } from '../../../api/queries/announcements.queries'
 import { useAnnouncementReads } from '../../../store/useAnnouncementReads'
 import { absoluteDateTime } from '@/utils/relativeTime'
@@ -17,7 +18,8 @@ export function AnnouncementDetailScreen() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { id = '' } = useParams()
-  const { data: a, isPending, isError } = useAnnouncement(id)
+  const { campId } = useCamp()
+  const { data: a, isPending, isError } = useAnnouncement(id, campId)
   const markRead = useAnnouncementReads((s) => s.markRead)
 
   // Opening it = reading it. Runs once the item resolves.

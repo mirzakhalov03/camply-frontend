@@ -5,6 +5,8 @@ import { PhoneInput } from '../../../auth/PhoneInput'
 import { PHONE_LENGTH } from '@/utils/phone'
 import { ApiError } from '../../../../api/axiosInstance'
 import { useAddRoster } from '../../../../api/queries/roster.queries'
+import { useCampGroups } from '../../../../api/queries/campGroups.queries'
+import { GroupPicker } from './GroupPicker'
 
 /*
   Add a participant to a camp — phone only (they name themselves when they claim
@@ -26,14 +28,17 @@ export function AddParticipantSheet({
   const { t } = useTranslation()
   const a = t.addParticipant
   const add = useAddRoster(campId)
+  const { data: groups } = useCampGroups(campId)
 
   const [phone, setPhone] = useState('')
+  const [groupId, setGroupId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const valid = phone.length === PHONE_LENGTH
 
   const reset = () => {
     setPhone('')
+    setGroupId(null)
     setError(null)
   }
 
@@ -46,7 +51,7 @@ export function AddParticipantSheet({
     if (!valid) return
     setError(null)
     add.mutate(
-      { phone },
+      { phone, groupId },
       {
         onSuccess: () => {
           reset()
@@ -76,6 +81,16 @@ export function AddParticipantSheet({
           label={a.phone}
           error={t.login.phoneError}
         />
+
+        {/* Assign at add time — optional, since groups are often sorted later. */}
+        {groups && groups.length > 0 && (
+          <GroupPicker
+            groups={groups}
+            value={groupId}
+            onChange={setGroupId}
+            disabled={add.isPending}
+          />
+        )}
 
         {error ? (
           <p role="alert" className="text-caption font-semibold text-danger">

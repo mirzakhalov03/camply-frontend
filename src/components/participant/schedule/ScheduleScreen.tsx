@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from '../../../i18n/useTranslation'
+import { useCamp } from '../campContext'
 import { useSchedule } from '../../../api/queries/schedule.queries'
 import { groupIntoDays } from '../../../api/services/schedule.service'
 import { ActivityRow } from './ActivityRow'
@@ -18,7 +19,8 @@ import { ScheduleSkeleton } from './ScheduleSkeleton'
 export function ScheduleScreen() {
   const { t, lang } = useTranslation()
   const navigate = useNavigate()
-  const { data, isPending, isError } = useSchedule()
+  const { campId } = useCamp()
+  const { data, isPending, isError } = useSchedule(campId)
 
   const days = useMemo(() => groupIntoDays(data ?? []), [data])
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
