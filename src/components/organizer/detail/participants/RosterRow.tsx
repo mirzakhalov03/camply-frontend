@@ -4,9 +4,8 @@ import { formatStoredPhone } from '@/utils/phone'
 import type { RosterParticipant } from '../../../../api/services/roster.service'
 
 /*
-  One participant in the roster: avatar, name, group · city, phone, and a small
-  check-in dot (pine = on-site, muted = out-of-bounds — no words, per design). The
-  whole row is a button that opens the participant peek sheet; the chevron signals that.
+  One participant in the roster: avatar, name, group · city, and phone. The whole
+  row is a button that opens the participant peek sheet; the chevron signals that.
 
   The phone gets its own line in tabular numerals so digits align down the column —
   organizers scan this list looking for a specific number, and ragged proportional
@@ -22,7 +21,6 @@ export function RosterRow({
   onSelect: (p: RosterParticipant) => void
 }) {
   const { t } = useTranslation()
-  const isIn = p.status === 'in'
 
   return (
     <button
@@ -42,11 +40,6 @@ export function RosterRow({
           </div>
         )}
       </div>
-      {/* Check-in status as a dot — the glance without the "In"/"Out" words. */}
-      <span
-        className={`h-2 w-2 flex-none rounded-full ${isIn ? 'bg-pine' : 'bg-muted/40'}`}
-        aria-hidden
-      />
       <svg
         width="18"
         height="18"

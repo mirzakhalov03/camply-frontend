@@ -327,7 +327,7 @@ type OrgStrings = {
     view: string
     // Quick links
     liveMap: string
-    liveMapMeta: string // '{onsite} on-site · {alerts} alert'
+    liveMapMeta: string // '{alerts} alert'
     leaderboard: string
     leaderboardMeta: string // '{group} lead'
     // Standings widget
@@ -850,7 +850,7 @@ export const translations: Record<
         tapToLocate: 'joylashuvni koʻrish uchun bosing',
         view: 'Koʻrish',
         liveMap: 'Jonli xarita',
-        liveMapMeta: '{onsite} hududda · {alerts} signal',
+        liveMapMeta: '{alerts} signal',
         leaderboard: 'Reyting',
         leaderboardMeta: '{group} yetakchi',
         topGroups: 'Eng yaxshi guruhlar',
@@ -1416,7 +1416,7 @@ export const translations: Record<
         tapToLocate: 'нажмите, чтобы найти',
         view: 'Открыть',
         liveMap: 'Живая карта',
-        liveMapMeta: '{onsite} на месте · {alerts} сигнал',
+        liveMapMeta: '{alerts} сигнал',
         leaderboard: 'Рейтинг',
         leaderboardMeta: '{group} лидирует',
         topGroups: 'Лучшие группы',
@@ -1967,7 +1967,7 @@ export const translations: Record<
         tapToLocate: 'tap to locate',
         view: 'View',
         liveMap: 'Live map',
-        liveMapMeta: '{onsite} on-site · {alerts} alert',
+        liveMapMeta: '{alerts} alert',
         leaderboard: 'Leaderboard',
         leaderboardMeta: '{group} lead',
         topGroups: 'Top groups',

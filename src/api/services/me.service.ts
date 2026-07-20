@@ -8,7 +8,7 @@ import { axiosInstance } from '../axiosInstance'
 
 /*
   A camp as the PARTICIPANT sees it. Same entity as the organizer's OrganizerCamp
-  but WITHOUT the roster counts (participantCount, groupCount, checkinPct) — those
+  but WITHOUT the roster counts (participantCount, groupCount) — those
   are back-office totals, not participant-facing.
 */
 export type ParticipantCamp = {

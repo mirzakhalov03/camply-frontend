@@ -65,11 +65,10 @@ export const CAMP_FEATURES: CampFeature[] = [
       </svg>
     ),
     label: (t) => t.org.detail.tabMap,
-    stat: ({ t, summary, alertCount }) => ({
-      text: interpolate(t.org.camps.liveMapMeta, {
-        onsite: summary?.onSite ?? 0,
-        alerts: alertCount,
-      }),
+    stat: ({ t, alertCount }) => ({
+      // On-site counts died with attendance check-in (2026-07-20) — nothing could
+      // truthfully populate them. Real presence returns with live location data.
+      text: interpolate(t.org.camps.liveMapMeta, { alerts: alertCount }),
       alert: alertCount > 0,
     }),
   },

@@ -43,7 +43,7 @@ export type CampHome = {
   The camp comes from the SAME useMyCamps() cache the shell already resolved —
   React Query dedupes by queryKey, so this costs no extra request. That also keeps
   the participant off GET /camps/:id, whose shared projection still carries
-  organizer roster counts (participantCount, checkinPct, …) they shouldn't receive.
+  organizer roster counts (participantCount, groupCount, …) they shouldn't receive.
 
   The group is its own query because it invalidates on a different cadence: an
   organizer reshuffling groups shouldn't force a refetch of camp metadata.

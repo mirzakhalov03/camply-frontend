@@ -33,7 +33,6 @@ export type OrganizerCamp = {
   groupCount: number
   organizerCount: number
   /** Percentage of participants currently checked in on-site (0–100). */
-  checkinPct: number
   /** Day N of M — 0 until the camp starts. Drives the "Day 6 of 14" line. */
   dayCurrent: number
   dayTotal: number
@@ -51,7 +50,6 @@ export type OrganizerSummary = {
   /** Unread organizer-team chat count (Chat tab badge). */
   unreadChat: number
   /** Participants currently on-site across active camps (Live map quick link). */
-  onSite: number
 }
 
 /** Body for creating a new camp (organizer onboarding + camp-create flow). */

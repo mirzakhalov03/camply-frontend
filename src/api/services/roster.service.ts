@@ -10,7 +10,6 @@ import { axiosInstance } from '../axiosInstance'
 */
 
 /** On-site vs out-of-bounds — the organizer's check-in glance (prototype In/Out). */
-export type CheckinStatus = 'in' | 'out'
 
 export type RosterParticipant = {
   id: string
@@ -23,7 +22,6 @@ export type RosterParticipant = {
   groupName: string | null
   city: string
   age: number
-  status: CheckinStatus
   /** E.164 phone for the organizer's call button, e.g. '+998901234567'. */
   phone?: string
   socials?: {
