@@ -51,7 +51,6 @@ export function OrganizerShell() {
     openCampMap: (campId) => navigate(`/org/camps/${campId}/map`),
     openChat: () => navigate('/org/chat'),
     openNotifications: () => navigate('/org/notifications'),
-    openTeam: () => navigate('/org/team'),
     logout: () => {
       clearAuth()
       resetProfile()

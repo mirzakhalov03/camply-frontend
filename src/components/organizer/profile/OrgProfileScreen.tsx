@@ -10,6 +10,7 @@ import { useOrganizerSummary } from '../../../api/queries/camps.queries'
 import { ROLE_EMOJI } from '../roles'
 import { Avatar } from '../../ui'
 import { LanguageSheet } from '../../participant/profile/LanguageSheet'
+import { SocialLinks } from '../../participant/profile/SocialLinks'
 import { useOrg } from '../orgContext'
 import { OrgHelpRequestsCard } from './OrgHelpRequestsCard'
 
@@ -34,7 +35,7 @@ function fmtPhone(raw: string): string {
 export function OrgProfileScreen() {
   const { t, selectedLang, setLanguage } = useTranslation()
   const p = t.org.profile
-  const { openTeam, logout } = useOrg()
+  const { logout } = useOrg()
 
   const user = useAuthStore((s) => s.user)
   const photo = useProfileStore((s) => s.photo)
@@ -94,8 +95,16 @@ export function OrgProfileScreen() {
 
         {/* Contact */}
         <div className="rounded-card border border-line bg-surface px-4 shadow-[0_4px_14px_rgba(20,40,30,0.05)]">
-          <InfoRow icon="✉️" label={t.profile.email} value={email || t.profile.notSet} />
-          <InfoRow icon="🏢" label={p.organization} value={summary?.organizationName ?? '—'} />
+          {/*
+            An organizer is created FROM an email invite, so the session carries the
+            real address; useProfileStore.email is only ever filled by the participant
+            profile screen. Session first, local edit as the fallback.
+          */}
+          <InfoRow
+            icon="✉️"
+            label={t.profile.email}
+            value={user?.email || email || t.profile.notSet}
+          />
           <InfoRow
             icon="📞"
             label={t.profile.phone}
@@ -104,9 +113,10 @@ export function OrgProfileScreen() {
           />
         </div>
 
+        <SocialLinks />
+
         {/* Settings */}
         <div className="rounded-card border border-line bg-surface px-4 shadow-[0_4px_14px_rgba(20,40,30,0.05)]">
-          {isManager ? <SettingsRow icon="👥" label={p.team} onClick={openTeam} /> : null}
           <SettingsRow
             icon="🌐"
             label={t.profile.language}

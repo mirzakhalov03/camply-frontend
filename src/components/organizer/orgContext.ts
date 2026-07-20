@@ -15,8 +15,6 @@ export type OrgContext = {
   openChat: () => void
   /** Open notifications (currently a "coming soon" placeholder). */
   openNotifications: () => void
-  /** Open the Team & co-organizers screen. */
-  openTeam: () => void
   /** Clear the session + onboarding stores and return to onboarding. */
   logout: () => void
 }

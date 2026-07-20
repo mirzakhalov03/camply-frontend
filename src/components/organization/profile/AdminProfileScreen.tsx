@@ -9,9 +9,9 @@ import { LanguageSheet } from '../../participant/profile/LanguageSheet'
 
 /*
   Organization profile — /admin/profile. Identity is the org's own auth session
-  (useAuthStore), NOT fabricated: AuthUser has no `email` field for the org, so
-  there is no email row here (the organizer twin, OrgProfileScreen, has one because
-  its identity source — useProfileStore — does carry one). Phone exists on AuthUser
+  (useAuthStore), NOT fabricated. There is no email row here: the org signs in by
+  username and `user.email` is null in practice (the field is populated for
+  organizers/managers, who ARE invited by email — see OrgProfileScreen). Phone exists on AuthUser
   but the org signs in by username and has none in practice, so that row only shows
   up if the backend ever puts one on the session. Address isn't in the model at all
   — no row, ever. Stats reuse the same organizer-facing queries the Camps screen

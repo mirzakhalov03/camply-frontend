@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router-dom'
 import { useTranslation } from '../../../i18n/useTranslation'
+import { useAuthStore } from '../../../store/useAuthStore'
 import { interpolate } from '@/utils/interpolate'
 import { relativeTime } from '@/utils/relativeTime'
 import { Avatar, Skeleton } from '../../ui'
@@ -15,31 +15,22 @@ import { InviteForm } from './InviteForm'
   mutations so the list + header count refetch from one invalidation.
 */
 export function OrgTeamScreen() {
-  const navigate = useNavigate()
   const { t } = useTranslation()
   const tm = t.org.team
   const { data, isPending, isError } = useTeam()
+  const role = useAuthStore((s) => s.user?.role)
+  const isManager = role === 'manager' || role === 'organization'
 
   return (
     <div className="pb-6 md:pb-8">
       <div className="bg-gradient-to-b from-pine to-deep px-5 pb-6 pt-5 md:px-8">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => navigate('/org/profile')}
-            aria-label={t.org.detail.back}
-            className="flex h-9 w-9 flex-none items-center justify-center rounded-input bg-white/20 text-white active:scale-95"
-          >
-            <BackIcon />
-          </button>
-          <div className="min-w-0">
-            <h1 className="text-subhead font-bold text-white">{tm.title}</h1>
-            {data ? (
-              <p className="text-caption text-white/80">
-                {data.organizationName} · {interpolate(tm.people, { count: data.members.length })}
-              </p>
-            ) : null}
-          </div>
+        <div className="min-w-0">
+          <h1 className="text-subhead font-bold text-white">{tm.title}</h1>
+          {data ? (
+            <p className="text-caption text-white/80">
+              {data.organizationName} · {interpolate(tm.people, { count: data.members.length })}
+            </p>
+          ) : null}
         </div>
       </div>
 
@@ -53,7 +44,9 @@ export function OrgTeamScreen() {
           <p className="py-8 text-center text-body text-muted">{t.org.detail.loadError}</p>
         ) : (
           <>
-            <InviteForm />
+            {/* Only managers (and the org) mint organizers — an organizer sees the
+                roster but no invite CTA. The server is the authority. */}
+            {isManager ? <InviteForm /> : null}
 
             <SectionLabel>{tm.members}</SectionLabel>
             <div className="rounded-card border border-line bg-surface px-4 shadow-[0_4px_14px_rgba(20,40,30,0.05)]">
@@ -72,7 +65,7 @@ export function OrgTeamScreen() {
                 <SectionLabel>{tm.pending}</SectionLabel>
                 <div className="flex flex-col gap-2">
                   {data.pending.map((inv) => (
-                    <PendingRow key={inv.id} invite={inv} />
+                    <PendingRow key={inv.id} invite={inv} canCancel={isManager} />
                   ))}
                 </div>
               </>
@@ -124,7 +117,7 @@ function MemberRow({
   )
 }
 
-function PendingRow({ invite }: { invite: PendingInvite }) {
+function PendingRow({ invite, canCancel }: { invite: PendingInvite; canCancel: boolean }) {
   const { t } = useTranslation()
   const tm = t.org.team
   const cancel = useCancelInvite()
@@ -142,35 +135,20 @@ function PendingRow({ invite }: { invite: PendingInvite }) {
           {interpolate(tm.invitedAgo, { time: relativeTime(invite.sentAt, t.time) })}
         </div>
       </div>
-      <button
-        type="button"
-        onClick={() => cancel.mutate(invite.id)}
-        disabled={cancel.isPending}
-        className="flex-none text-caption font-bold text-danger-deep active:scale-95 disabled:opacity-50"
-      >
-        {t.org.detail.cancel}
-      </button>
+      {canCancel ? (
+        <button
+          type="button"
+          onClick={() => cancel.mutate(invite.id)}
+          disabled={cancel.isPending}
+          className="flex-none text-caption font-bold text-danger-deep active:scale-95 disabled:opacity-50"
+        >
+          {t.org.detail.cancel}
+        </button>
+      ) : null}
     </div>
   )
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return <h2 className="text-meta font-bold uppercase tracking-wider text-muted">{children}</h2>
-}
-
-function BackIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M15 18l-6-6 6-6" />
-    </svg>
-  )
 }

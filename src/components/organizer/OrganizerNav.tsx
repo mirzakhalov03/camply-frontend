@@ -20,6 +20,9 @@ function useNavItems(): NavItem[] {
   const { data: summary } = useOrganizerSummary()
   return [
     { to: '/org/camps', label: t.org.nav.main, icon: <CampsIcon /> },
+    // Team is the camp's ORGANIZER-tier roster (participants live inside a camp's
+    // detail screen) — a destination in its own right, not a profile setting.
+    { to: '/org/team', label: t.org.nav.team, icon: <TeamIcon /> },
     { to: '/org/chat', label: t.org.nav.chat, icon: <ChatIcon />, badge: summary?.unreadChat },
     { to: '/org/profile', label: t.org.nav.profile, icon: <ProfileIcon /> },
   ]
@@ -109,6 +112,24 @@ function CampsIcon() {
       <rect x="14" y="3" width="7" height="7" rx="2" />
       <rect x="3" y="14" width="7" height="7" rx="2" />
       <rect x="14" y="14" width="7" height="7" rx="2" />
+    </svg>
+  )
+}
+function TeamIcon() {
+  return (
+    <svg
+      width="23"
+      height="23"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="2.1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={icon}
+    >
+      <circle cx="9" cy="8" r="3.3" />
+      <path d="M2.5 20a6.5 6.5 0 0 1 13 0" />
+      <path d="M16.5 5.2a3.3 3.3 0 0 1 0 5.6M18 14.4a6.5 6.5 0 0 1 3.5 5.6" />
     </svg>
   )
 }

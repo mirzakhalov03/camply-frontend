@@ -307,7 +307,7 @@ type ScheduleStrings = {
 // dashboard (slice 1). Distinct from OrganizerStrings, which is the ONBOARDING
 // flow. {tokens} are filled per-language so grammar can place them freely.
 type OrgStrings = {
-  nav: { main: string; chat: string; profile: string }
+  nav: { main: string; team: string; chat: string; profile: string }
   camps: {
     welcome: string // 'Welcome back, {name}'
     yourCamps: string
@@ -438,7 +438,6 @@ type OrgStrings = {
     helpRequests: string
     resolve: string
     allSafe: string
-    organization: string
     team: string
     campSettings: string
   }
@@ -869,7 +868,7 @@ export const translations: Record<
       editDetails: 'Maʼlumotlarni tahrirlash',
     },
     org: {
-      nav: { main: 'Asosiy', chat: 'Chat', profile: 'Profil' },
+      nav: { main: 'Asosiy', team: 'Jamoa', chat: 'Chat', profile: 'Profil' },
       camps: {
         welcome: 'Xush kelibsiz, {name}',
         yourCamps: 'Lagerlaringiz',
@@ -988,7 +987,6 @@ export const translations: Record<
         helpRequests: 'Yordam soʻrovlari',
         resolve: 'Hal qilindi',
         allSafe: 'Faol soʻrov yoʻq — barcha ishtirokchilar xavfsiz.',
-        organization: 'Tashkilot',
         team: 'Jamoa va hamkorlar',
         campSettings: 'Lager sozlamalari',
       },
@@ -1454,7 +1452,7 @@ export const translations: Record<
       editDetails: 'Изменить данные',
     },
     org: {
-      nav: { main: 'Главная', chat: 'Чат', profile: 'Профиль' },
+      nav: { main: 'Главная', team: 'Команда', chat: 'Чат', profile: 'Профиль' },
       camps: {
         welcome: 'С возвращением, {name}',
         yourCamps: 'Ваши лагеря',
@@ -1572,7 +1570,6 @@ export const translations: Record<
         helpRequests: 'Запросы о помощи',
         resolve: 'Решено',
         allSafe: 'Нет активных запросов — все участники в безопасности.',
-        organization: 'Организация',
         team: 'Команда и соорганизаторы',
         campSettings: 'Настройки лагеря',
       },
@@ -2024,7 +2021,7 @@ export const translations: Record<
       editDetails: 'Edit my details',
     },
     org: {
-      nav: { main: 'Main', chat: 'Chat', profile: 'Profile' },
+      nav: { main: 'Main', team: 'Team', chat: 'Chat', profile: 'Profile' },
       camps: {
         welcome: 'Welcome back, {name}',
         yourCamps: 'Your camps',
@@ -2143,7 +2140,6 @@ export const translations: Record<
         helpRequests: 'Help requests',
         resolve: 'Resolve',
         allSafe: 'No active requests — all participants safe.',
-        organization: 'Organization',
         team: 'Team & co-organizers',
         campSettings: 'Camp settings',
       },

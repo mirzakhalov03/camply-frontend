@@ -17,6 +17,8 @@ export type AuthUser = {
   id: string
   // Null for the organization super-admin, which logs in by username, not phone.
   phone: string | null
+  // Set for organizers/managers (invited by email); participants sign up by phone.
+  email: string | null
   name: string
   surname: string
   role: AuthRole
