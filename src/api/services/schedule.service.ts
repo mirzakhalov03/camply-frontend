@@ -5,9 +5,7 @@ import { axiosInstance } from '../axiosInstance'
   types here are the DATA CONTRACT the organizer dashboard + backend will fill; the
   UI depends on these shapes, never on where data comes from. No React here.
 
-  Today list() returns mock data with the real axios call commented out — the same
-  mock→real seam as announcements.service.ts. Flipping to the real API touches ONLY
-  list(). Status is DERIVED from timestamps (activityStatus), never stored, because
+  Status is DERIVED from timestamps (activityStatus), never stored, because
   done/now/upcoming is relative to the current moment.
 */
 
@@ -142,6 +140,13 @@ function sortByStart(list: Activity[]): Activity[] {
 /** What the organizer submits to create an activity — everything but the id. */
 export type NewActivity = Omit<Activity, 'id'>
 
+/*
+  A partial edit. Mirrors the server's `updateActivitySchema`, which is
+  `createActivitySchema.partial()` — so every creatable field is individually
+  patchable and nothing else is accepted.
+*/
+export type ActivityPatch = Partial<NewActivity>
+
 export const scheduleService = {
   list: async (campId: string): Promise<Activity[]> => {
     return sortByStart((await axiosInstance.get<Activity[]>(`/camps/${campId}/schedule`)).data)
@@ -150,5 +155,16 @@ export const scheduleService = {
   /** Organizer creates an activity. Returns the created record. */
   create: async (activity: NewActivity): Promise<Activity> => {
     return (await axiosInstance.post<Activity>(`/camps/${activity.campId}/schedule`, activity)).data
+  },
+
+  /** Organizer edits an activity. Returns the updated record. */
+  update: async (campId: string, activityId: string, patch: ActivityPatch): Promise<Activity> => {
+    return (await axiosInstance.patch<Activity>(`/camps/${campId}/schedule/${activityId}`, patch))
+      .data
+  },
+
+  /** Organizer removes an activity. Destructive and not undoable — confirm first. */
+  remove: async (campId: string, activityId: string): Promise<void> => {
+    await axiosInstance.delete(`/camps/${campId}/schedule/${activityId}`)
   },
 }

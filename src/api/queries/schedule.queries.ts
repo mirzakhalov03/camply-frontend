@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { scheduleService, type NewActivity } from '../services/schedule.service'
+import { scheduleService, type NewActivity, type ActivityPatch } from '../services/schedule.service'
 import { campKeys } from '../queryKeys'
 
 /*
@@ -26,6 +26,25 @@ export function useCreateActivity(campId: string) {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (activity: NewActivity) => scheduleService.create(activity),
+    onSuccess: () => qc.invalidateQueries({ queryKey: campKeys.schedule(campId) }),
+  })
+}
+
+/** Edit an existing activity. Same cache invalidation as create. */
+export function useUpdateActivity(campId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ activityId, patch }: { activityId: string; patch: ActivityPatch }) =>
+      scheduleService.update(campId, activityId, patch),
+    onSuccess: () => qc.invalidateQueries({ queryKey: campKeys.schedule(campId) }),
+  })
+}
+
+/** Remove an activity. Destructive — the caller must confirm before firing. */
+export function useDeleteActivity(campId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (activityId: string) => scheduleService.remove(campId, activityId),
     onSuccess: () => qc.invalidateQueries({ queryKey: campKeys.schedule(campId) }),
   })
 }

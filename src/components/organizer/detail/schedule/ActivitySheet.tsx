@@ -1,17 +1,24 @@
-import { useMemo, useState } from 'react'
-import { Sheet, Button, Select } from '../../../ui'
-import { useTranslation } from '../../../../i18n/useTranslation'
-import { useCreateActivity } from '../../../../api/queries/schedule.queries'
+import { useEffect, useMemo, useState } from 'react'
+import { Sheet, Button, Select } from '@/components/ui'
+import { useTranslation } from '@/i18n/useTranslation'
+import { useCreateActivity, useUpdateActivity } from '@/api/queries/schedule.queries'
 import { AudiencePicker, type AudienceScope } from '../AudiencePicker'
 import { datesInRange } from '@/utils/dateRange'
-import type { OrganizerCamp } from '../../../../api/services/camps.service'
+import type { OrganizerCamp } from '@/api/services/camps.service'
+import type { Activity } from '@/api/services/schedule.service'
 
 /*
-  "Add activity" form (bottom sheet). Builds a NewActivity from date + start/end
-  times + audience and fires useCreateActivity — which invalidates the camp schedule,
-  so the new item reaches the organizer list AND the participant's schedule. The date
-  is a dropdown bounded to the camp's duration (datesInRange over camp.startsAt/endsAt),
-  so an activity can't be scheduled outside the camp. Required fields are marked with *
+  The activity form (bottom sheet), used for BOTH create and edit — passing an
+  `activity` switches it to edit mode. One component on purpose: a second
+  near-identical form is how the two drift, and every field here (the camp-bounded
+  date dropdown, the required-field rules, the audience picker) has to behave
+  identically whichever mode you're in.
+
+  Builds a NewActivity / ActivityPatch from date + start/end times + audience and
+  fires the matching mutation — both invalidate the camp schedule, so a change
+  reaches the organizer list AND the participant's schedule. The date is a dropdown
+  bounded to the camp's duration (datesInRange over camp.startsAt/endsAt), so an
+  activity can't be scheduled outside the camp. Required fields are marked with *
   and an inline error shows on an invalid submit. Local, reversible: closing resets.
 */
 const inputClass =
@@ -19,18 +26,38 @@ const inputClass =
 
 const REQ = <span className="text-danger"> *</span>
 
-export function AddActivitySheet({
+const pad = (n: number) => String(n).padStart(2, '0')
+
+/*
+  Split a stored UTC timestamp into the LOCAL date + time the form edits. Must
+  mirror how submit() recombines them (`new Date('YYYY-MM-DDTHH:mm')` parses as
+  local), or reopening an activity would shift its time by the UTC offset.
+*/
+function localParts(iso: string): { date: string; time: string } {
+  const d = new Date(iso)
+  return {
+    date: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
+    time: `${pad(d.getHours())}:${pad(d.getMinutes())}`,
+  }
+}
+
+export function ActivitySheet({
   open,
   onClose,
   camp,
+  activity = null,
 }: {
   open: boolean
   onClose: () => void
   camp: OrganizerCamp
+  /** Provided ⇒ edit mode. Absent/null ⇒ create mode. */
+  activity?: Activity | null
 }) {
   const { t } = useTranslation()
   const d = t.org.detail
   const create = useCreateActivity(camp.id)
+  const update = useUpdateActivity(camp.id)
+  const isEdit = activity !== null
 
   // The camp's days as YYYY-MM-DD; label them for the current locale.
   const dayOptions = useMemo(() => {
@@ -55,46 +82,69 @@ export function AddActivitySheet({
   const [scope, setScope] = useState<AudienceScope>({ kind: 'camp' })
   const [showError, setShowError] = useState(false)
 
-  const valid = title.trim().length > 0 && !!date && !!start && !!end
-
-  const reset = () => {
-    setTitle('')
-    setLocation('')
-    setDate(firstDay)
-    setStart('09:00')
-    setEnd('10:00')
-    setScope({ kind: 'camp' })
+  /*
+    Sync the form when the sheet OPENS, not on every render. Editing a different
+    activity while the sheet is already open isn't reachable (you close to pick
+    another), and syncing on open keeps the closing animation from flashing
+    reset values.
+  */
+  useEffect(() => {
+    if (!open) return
     setShowError(false)
-  }
+    if (activity) {
+      const from = localParts(activity.startsAt)
+      const to = localParts(activity.endsAt)
+      setTitle(activity.title)
+      setLocation(activity.location)
+      setDate(from.date)
+      setStart(from.time)
+      setEnd(to.time)
+      setScope(activity.scope)
+    } else {
+      setTitle('')
+      setLocation('')
+      setDate(firstDay)
+      setStart('09:00')
+      setEnd('10:00')
+      setScope({ kind: 'camp' })
+    }
+  }, [open, activity, firstDay])
+
+  const valid = title.trim().length > 0 && !!date && !!start && !!end
+  const pending = create.isPending || update.isPending
 
   const submit = () => {
     if (!valid) {
       setShowError(true)
       return
     }
-    create.mutate(
-      {
-        campId: camp.id,
-        title: title.trim(),
-        location: location.trim(),
-        startsAt: new Date(`${date}T${start}`).toISOString(),
-        endsAt: new Date(`${date}T${end}`).toISOString(),
-        scope,
-        description: null,
-      },
-      {
-        onSuccess: () => {
-          reset()
-          onClose()
-        },
-      },
-    )
+    const fields = {
+      campId: camp.id,
+      title: title.trim(),
+      location: location.trim(),
+      startsAt: new Date(`${date}T${start}`).toISOString(),
+      endsAt: new Date(`${date}T${end}`).toISOString(),
+      scope,
+      description: activity?.description ?? null,
+    }
+    const done = { onSuccess: () => onClose() }
+
+    if (activity) {
+      update.mutate({ activityId: activity.id, patch: fields }, done)
+    } else {
+      create.mutate(fields, done)
+    }
   }
 
   const missing = (v: string) => showError && !v.trim()
 
   return (
-    <Sheet open={open} onClose={onClose} closeLabel={d.cancel} title={d.newActivity}>
+    <Sheet
+      open={open}
+      onClose={onClose}
+      closeLabel={d.cancel}
+      title={isEdit ? d.editActivity : d.newActivity}
+    >
       <div className="flex flex-col gap-3.5">
         <Field label={d.activityName} required>
           <input
@@ -144,7 +194,11 @@ export function AddActivitySheet({
         </Field>
 
         <Field label={d.audience}>
-          <AudiencePicker value={scope} onChange={setScope} allCampLabel={t.announcements.allCamp} />
+          <AudiencePicker
+            value={scope}
+            onChange={setScope}
+            allCampLabel={t.announcements.allCamp}
+          />
         </Field>
 
         {showError && !valid && (
@@ -153,8 +207,8 @@ export function AddActivitySheet({
           </p>
         )}
 
-        <Button variant="primary" size="lg" fullWidth onClick={submit}>
-          {d.create}
+        <Button variant="primary" size="lg" fullWidth onClick={submit} disabled={pending}>
+          {isEdit ? d.saveActivity : d.create}
         </Button>
       </div>
     </Sheet>

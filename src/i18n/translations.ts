@@ -388,6 +388,11 @@ type OrgStrings = {
     // Schedule tab
     addActivity: string
     newActivity: string
+    editActivity: string
+    saveActivity: string
+    deleteActivity: string
+    deleteActivityBody: string
+    delete: string
     activityName: string
     activityNamePlaceholder: string
     dateLabel: string
@@ -904,6 +909,11 @@ export const translations: Record<
         lbSubtitle: 'Ball berish yoki tuzatish uchun +/− bosing',
         addActivity: 'Mashgʻulot qoʻshish',
         newActivity: 'Yangi mashgʻulot',
+        editActivity: 'Mashgʻulotni tahrirlash',
+        saveActivity: 'Saqlash',
+        deleteActivity: 'Mashgʻulot oʻchirilsinmi?',
+        deleteActivityBody: 'Bu amalni bekor qilib boʻlmaydi.',
+        delete: 'Oʻchirish',
         activityName: 'Mashgʻulot nomi',
         activityNamePlaceholder: 'Ertalabki yugurish',
         dateLabel: 'Sana',
@@ -1470,6 +1480,11 @@ export const translations: Record<
         lbSubtitle: 'Нажмите +/−, чтобы начислить или изменить баллы',
         addActivity: 'Добавить занятие',
         newActivity: 'Новое занятие',
+        editActivity: 'Редактировать занятие',
+        saveActivity: 'Сохранить',
+        deleteActivity: 'Удалить занятие?',
+        deleteActivityBody: 'Это действие нельзя отменить.',
+        delete: 'Удалить',
         activityName: 'Название занятия',
         activityNamePlaceholder: 'Утренняя пробежка',
         dateLabel: 'Дата',
@@ -2021,6 +2036,11 @@ export const translations: Record<
         lbSubtitle: 'Tap +/− to award or adjust points',
         addActivity: 'Add activity',
         newActivity: 'New activity',
+        editActivity: 'Edit activity',
+        saveActivity: 'Save',
+        deleteActivity: 'Delete this activity?',
+        deleteActivityBody: 'This cannot be undone.',
+        delete: 'Delete',
         activityName: 'Activity name',
         activityNamePlaceholder: 'e.g. Morning Run',
         dateLabel: 'Date',
