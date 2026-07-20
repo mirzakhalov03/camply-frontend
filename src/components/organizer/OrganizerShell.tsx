@@ -5,6 +5,7 @@ import { useProfileStore } from '../../store/useProfileStore'
 import { useOrganizerStore } from '../../store/useOrganizerStore'
 import { OrganizerSidebar, OrganizerBottomNav } from './OrganizerNav'
 import type { OrgContext } from './orgContext'
+import { usesOrgSurface } from '@/utils/roles'
 
 /*
   The organizer app shell — the layout for every `/org/*` route, a sibling surface
@@ -28,8 +29,7 @@ export function OrganizerShell() {
   // The /org surface is shared by managers (full) and organizers (reduced); the org
   // super-admin can also land here. Capability gating (create camp, invite) is by
   // account role inside the screens — the server is the real authority.
-  const canUseOrgSurface =
-    user?.role === 'organizer' || user?.role === 'manager' || user?.role === 'organization'
+  const canUseOrgSurface = usesOrgSurface(user?.role)
 
   useEffect(() => {
     if (!canUseOrgSurface) navigate('/', { replace: true })
