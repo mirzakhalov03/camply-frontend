@@ -644,6 +644,23 @@ type CampWizardStrings = {
   creating: string
 }
 
+/*
+  Image-upload copy, shared by every upload surface. The four error keys match
+  UploadFailure in api/queries/upload.queries.ts — a failure resolves straight to
+  `t.upload[errorKey]`, so no component hand-rolls an upload message.
+*/
+type UploadStrings = {
+  cta: string
+  hint: string
+  change: string
+  remove: string
+  uploading: string
+  tooLarge: string
+  wrongType: string
+  unavailable: string
+  failed: string
+}
+
 export const translations: Record<
   Lang,
   {
@@ -671,9 +688,21 @@ export const translations: Record<
     addParticipant: AddParticipantStrings
     campWizard: CampWizardStrings
     orgProfile: OrgProfileStrings
+    upload: UploadStrings
   }
 > = {
   uz: {
+    upload: {
+      cta: 'Rasm tanlang',
+      hint: 'JPG, PNG yoki WebP · 5 MB gacha',
+      change: 'Almashtirish',
+      remove: 'Oʻchirish',
+      uploading: 'Yuklanmoqda…',
+      tooLarge: 'Rasm 5 MB dan kichik boʻlishi kerak',
+      wrongType: 'JPG, PNG yoki WebP rasm tanlang',
+      unavailable: 'Rasm yuklash vaqtincha ishlamayapti',
+      failed: 'Yuklab boʻlmadi. Qayta urinib koʻring',
+    },
     admin: {
       login: {
         title: 'Tashkilot uchun kirish',
@@ -1249,6 +1278,17 @@ export const translations: Record<
     },
   },
   ru: {
+    upload: {
+      cta: 'Выберите изображение',
+      hint: 'JPG, PNG или WebP · до 5 МБ',
+      change: 'Заменить',
+      remove: 'Удалить',
+      uploading: 'Загрузка…',
+      tooLarge: 'Изображение должно быть меньше 5 МБ',
+      wrongType: 'Выберите изображение JPG, PNG или WebP',
+      unavailable: 'Загрузка изображений временно недоступна',
+      failed: 'Не удалось загрузить. Попробуйте ещё раз',
+    },
     admin: {
       login: {
         title: 'Вход для организации',
@@ -1808,6 +1848,17 @@ export const translations: Record<
     },
   },
   en: {
+    upload: {
+      cta: 'Choose an image',
+      hint: 'JPG, PNG or WebP · up to 5 MB',
+      change: 'Replace',
+      remove: 'Remove',
+      uploading: 'Uploading…',
+      tooLarge: 'Images must be under 5 MB',
+      wrongType: 'Use a JPG, PNG or WebP image',
+      unavailable: 'Image uploads are temporarily unavailable',
+      failed: "Couldn't upload. Please try again",
+    },
     admin: {
       login: {
         title: 'Organization sign in',
