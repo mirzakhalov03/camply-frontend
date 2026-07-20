@@ -234,12 +234,14 @@ sit as siblings:
   (the org has a genuine cookie session that `useCurrentUser` revalidates on boot — a
   local-only clear would sign it back in).
 
-  > **Camps is on the mock→real seam.** The backend has **no camps API yet** (no Camp
-  > model, no `/camps` route). `adminCamps.service.ts` returns `mockAdminCamps` with
-  > the real `GET /camps` call commented out, keyed by `adminCampKeys` (kept separate
-  > from the organizer's own `organizerKeys`). It's read-only by design — no "create
-  > camp" button (the org rarely creates camps, and a dead button violates the "hidden
-  > button ≠ permission" guardrail). Flip the one commented line when the endpoint lands.
+  > **Camps is LIVE** (2026-07-20). `adminCamps.service.ts` calls the real
+  > **`GET /api/camps`**, keyed by `adminCampKeys` (kept separate from the organizer's
+  > own `organizerKeys`); `mockAdminCamps` is deleted. The endpoint is
+  > **organization-only** (`requireRole('organization')` — a manager gets 403 and uses
+  > `/organizer/camps`) and is scoped to the caller's own `organizationId`, ordered
+  > active → upcoming → draft → archived server-side. It's read-only by design — no
+  > "create camp" button (the org rarely creates camps, and a dead button violates the
+  > "hidden button ≠ permission" guardrail).
 
   > **The camp-creation wizard (`components/camp-wizard/`) is collect-then-commit, not
   > draft-first.** Every step writes only to `useCampDraftStore` (persisted, refresh-safe);

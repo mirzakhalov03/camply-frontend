@@ -1,25 +1,23 @@
-import { adminCampsMock } from '@/lib/mocks/mockAdminCamps'
-// import { axiosInstance } from '../axiosInstance' // ← enable when GET /camps exists
+import { axiosInstance } from '../axiosInstance'
 
 /*
   The admin CAMPS service — the backend boundary for the organization's org-wide
-  camps list. The types here are the DATA CONTRACT the backend will fill; the UI
-  depends on these shapes, never on where the data comes from.
+  camps list. The types here are the DATA CONTRACT; the UI depends on these shapes,
+  never on where the data comes from.
 
-  BACKEND STATUS: there is no /camps endpoint yet (no Camp model server-side). Today
-  list() returns mock data with the real axios call commented out — the same
-  mock→real seam as camps.service.ts / announcements.service.ts. When the endpoint
-  lands, this ONE function body changes; the UI does not.
+  Live against GET /api/camps since 2026-07-20. The endpoint is organization-only
+  (a manager gets 403 and uses /organizer/camps instead) and returns camps scoped to
+  the caller's own organization, ordered active → upcoming → draft → archived.
 */
 
 /** Camp lifecycle (Context.md §6). `archived` is a past camp kept for history. */
 export type AdminCampStatus = 'active' | 'upcoming' | 'draft' | 'archived'
 
-/** One camp as the ORGANIZATION admin lists it (across all organizers). */
+/** One camp as the ORGANIZATION admin lists it (across all its managers). */
 export type AdminCamp = {
   id: string
   name: string
-  /** The organizer who created/runs it — the org-view attribution. */
+  /** The manager who created/runs it — the org-view attribution. '—' if deleted. */
   organizerName: string
   location: string
   /** Human date range, already formatted server-side, e.g. "Jul 6 – Jul 19". */
@@ -29,9 +27,7 @@ export type AdminCamp = {
 }
 
 export const adminCampsService = {
-  /** Every camp across every organizer, newest/active first (server-ordered later). */
-  list: async (): Promise<AdminCamp[]> => {
-    // return (await axiosInstance.get<{ camps: AdminCamp[] }>('/camps')).data.camps
-    return adminCampsMock
-  },
+  /** Every camp in the organization, active first. Ordering is server-owned. */
+  list: async (): Promise<AdminCamp[]> =>
+    (await axiosInstance.get<{ camps: AdminCamp[] }>('/camps')).data.camps,
 }
