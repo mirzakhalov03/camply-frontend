@@ -388,6 +388,9 @@ type OrgStrings = {
     // Schedule tab
     addActivity: string
     newActivity: string
+    editCamp: string
+    saveCamp: string
+    savingCamp: string
     editActivity: string
     saveActivity: string
     deleteActivity: string
@@ -909,6 +912,9 @@ export const translations: Record<
         lbSubtitle: 'Ball berish yoki tuzatish uchun +/− bosing',
         addActivity: 'Mashgʻulot qoʻshish',
         newActivity: 'Yangi mashgʻulot',
+        editCamp: 'Lagerni tahrirlash',
+        saveCamp: 'Saqlash',
+        savingCamp: 'Saqlanmoqda…',
         editActivity: 'Mashgʻulotni tahrirlash',
         saveActivity: 'Saqlash',
         deleteActivity: 'Mashgʻulot oʻchirilsinmi?',
@@ -1480,6 +1486,9 @@ export const translations: Record<
         lbSubtitle: 'Нажмите +/−, чтобы начислить или изменить баллы',
         addActivity: 'Добавить занятие',
         newActivity: 'Новое занятие',
+        editCamp: 'Редактировать лагерь',
+        saveCamp: 'Сохранить',
+        savingCamp: 'Сохранение…',
         editActivity: 'Редактировать занятие',
         saveActivity: 'Сохранить',
         deleteActivity: 'Удалить занятие?',
@@ -2036,6 +2045,9 @@ export const translations: Record<
         lbSubtitle: 'Tap +/− to award or adjust points',
         addActivity: 'Add activity',
         newActivity: 'New activity',
+        editCamp: 'Edit camp',
+        saveCamp: 'Save',
+        savingCamp: 'Saving…',
         editActivity: 'Edit activity',
         saveActivity: 'Save',
         deleteActivity: 'Delete this activity?',

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../../store/useAuthStore'
 import { useTranslation } from '../../../i18n/useTranslation'
@@ -11,6 +12,7 @@ import { StatStrip } from './StatStrip'
 import { HelpBanner } from './HelpBanner'
 import { StandingsWidget } from './StandingsWidget'
 import { CampsSkeleton } from './CampsSkeleton'
+import { EditCampSheet } from './EditCampSheet'
 import { CAMP_FEATURES, type CampFeature } from '../detail/campFeatures'
 import { FeatureCard } from '../detail/FeatureCard'
 import type { OrganizerCamp } from '../../../api/services/camps.service'
@@ -34,7 +36,11 @@ export function CampsScreen() {
   // Only managers create/own camps (the org can too). Organizers run an assigned
   // camp but never create one — the button is hidden AND the server enforces it.
   const canCreateCamp = role === 'manager' || role === 'organization'
+  // Editing a camp is the same authority as owning one. The server re-checks via
+  // requireCampManager regardless — this only keeps a dead button off the screen.
+  const canEditCamp = canCreateCamp
   const { openCampMap, openNotifications } = useOrg()
+  const [editOpen, setEditOpen] = useState(false)
 
   const campsQuery = useOrganizerCamps()
   const summaryQuery = useOrganizerSummary()
@@ -112,6 +118,16 @@ export function CampsScreen() {
                 {t.createCamp.title}
               </button>
             ) : null}
+            {canEditCamp && primary ? (
+              <button
+                type="button"
+                onClick={() => setEditOpen(true)}
+                aria-label={t.org.detail.editCamp}
+                className="flex h-[42px] w-[42px] items-center justify-center rounded-input border border-line bg-surface text-pine shadow-[0_3px_12px_rgba(20,40,30,0.05)] active:scale-95"
+              >
+                <PencilIcon />
+              </button>
+            ) : null}
             <button
               type="button"
               onClick={openNotifications}
@@ -151,7 +167,29 @@ export function CampsScreen() {
           {otherFeatures.map((f) => renderFeature(f, primary))}
         </div>
       ) : null}
+
+      {primary ? (
+        <EditCampSheet camp={primary} open={editOpen} onClose={() => setEditOpen(false)} />
+      ) : null}
     </div>
+  )
+}
+
+function PencilIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
+    </svg>
   )
 }
 
