@@ -21,6 +21,20 @@ import { getCurrentPosition } from '@/utils/geolocation'
 /** Coarse sky state — drives the tile's glyph, not a forecast. */
 export type WeatherCondition = 'clear' | 'clouds' | 'rain' | 'snow' | 'storm' | 'fog'
 
+/*
+  Coarse condition → glyph. A status hint, not a forecast. Exported so the organizer
+  WeatherTile and the participant cover chip share one map instead of each keeping a copy.
+  Plain data (no React), so it belongs with the condition enum it maps from.
+*/
+export const CONDITION_GLYPH: Record<WeatherCondition, string> = {
+  clear: '☀️',
+  clouds: '☁️',
+  rain: '🌧️',
+  snow: '❄️',
+  storm: '⛈️',
+  fog: '🌫️',
+}
+
 /** Current weather at the user's location. */
 export type CurrentWeather = {
   /** Current temperature in Celsius (Uzbekistan standard). */

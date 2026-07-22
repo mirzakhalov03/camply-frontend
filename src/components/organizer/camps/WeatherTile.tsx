@@ -1,5 +1,5 @@
 import { useCurrentWeather } from '../../../api/queries/weather.queries'
-import type { WeatherCondition } from '../../../api/services/weather.service'
+import { CONDITION_GLYPH } from '../../../api/services/weather.service'
 import { Skeleton } from '../../ui'
 
 /*
@@ -12,16 +12,6 @@ import { Skeleton } from '../../ui'
 
   Styled to match StatStrip's surface tiles, with the temperature in amber.
 */
-
-/** Coarse condition → glyph. Kept tiny on purpose; this is a status hint, not a forecast. */
-const CONDITION_GLYPH: Record<WeatherCondition, string> = {
-  clear: '☀️',
-  clouds: '☁️',
-  rain: '🌧️',
-  snow: '❄️',
-  storm: '⛈️',
-  fog: '🌫️',
-}
 
 export function WeatherTile({ label }: { label: string }) {
   const { data, isPending } = useCurrentWeather()

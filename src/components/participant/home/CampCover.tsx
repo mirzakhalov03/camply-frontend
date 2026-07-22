@@ -2,6 +2,7 @@ import { useTranslation } from '../../../i18n/useTranslation'
 import { useThemeStore } from '../../../store/useThemeStore'
 import { interpolate } from '@/utils/interpolate'
 import type { CampHome } from '../../../lib/campHome'
+import { WeatherChip } from './WeatherChip'
 
 type Props = {
   /** Camp identity — supplied by the organizer's data (via useCampHome). */
@@ -34,6 +35,12 @@ export function CampCover({ camp, onOpenNotifications, unreadCount = 0 }: Props)
       />
       {/* Bottom scrim so white text stays legible over any photo. */}
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,40,28,0.15)_0%,rgba(8,40,28,0.85)_100%)]" />
+
+      {/* Weather chip — top-left, mirroring the bell + theme controls top-right.
+          Owns its own data so this component stays presentational. */}
+      <div className="absolute left-4 top-4 z-10">
+        <WeatherChip />
+      </div>
 
       {/* Floating controls: bell + theme toggle. */}
       <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
