@@ -51,6 +51,9 @@ export default defineConfig({
     proxy: {
       // Proxy API calls to the Express backend during development
       '/api': 'http://localhost:4000',
+      // Socket.IO handshake UPGRADES the connection — ws:true is required or it
+      // connects over HTTP polling only in dev and never upgrades in the browser.
+      '/socket.io': { target: 'http://localhost:4000', ws: true },
     },
   },
   // Allow the production `preview` server to be reached through a Cloudflare quick
