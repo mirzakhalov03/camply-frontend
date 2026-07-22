@@ -14,13 +14,12 @@ type Props = {
 }
 
 /*
-  The scrollable thread. The rendered list = server history + this-session sends
-  (from useChatStore), server first. Reactions merge the same way: a message's
-  displayed reactions are the session overlay if present, else what the server
-  sent. Auto-scrolls to the newest message on mount and whenever the count changes.
+  The scrollable thread. The rendered list is the room's cached history — sends and
+  incoming messages both arrive as `chat:message` echoes appended to that cache (see
+  realtimeBridge), so there's one source of truth. Reactions merge as a session
+  overlay if present, else what the server sent. Auto-scrolls to the newest message.
 */
 export function MessageList({ members, serverMessages, onMemberTap, onReply, emptyLabel }: Props) {
-  const sent = useChatStore((s) => s.sent)
   const reactionOverrides = useChatStore((s) => s.reactionOverrides)
   const toggleReaction = useChatStore((s) => s.toggleReaction)
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -31,7 +30,7 @@ export function MessageList({ members, serverMessages, onMemberTap, onReply, emp
     return map
   }, [members])
 
-  const all = useMemo(() => [...serverMessages, ...sent], [serverMessages, sent])
+  const all = serverMessages
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ block: 'end' })

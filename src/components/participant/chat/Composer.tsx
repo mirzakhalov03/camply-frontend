@@ -1,36 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { interpolate } from '@/utils/interpolate'
-import { AttachmentMenu } from './AttachmentMenu'
 
 type Props = {
   groupName: string
   onSendText: (text: string) => void
-  onPickFile: (file: File) => void
   /** When replying, the quoted message shown above the input; null otherwise. */
   replyPreview: { authorName: string; text: string } | null
   onCancelReply: () => void
 }
 
 /*
-  Bottom input bar. Left paperclip opens the attachment menu (Photo/File) → a hidden
-  file input → onPickFile. The text field + send button push a text message.
-  Enter sends; empty messages are ignored (guarded in the store too). When a reply
-  is active, a quoted preview sits above the input and the field auto-focuses.
+  Bottom input bar. The text field + send button push a text message; Enter sends,
+  empty messages are ignored (guarded in the store too). When a reply is active a
+  quoted preview sits above the input and the field auto-focuses. Attachments are
+  hidden for v1 (no upload pipeline) — the old paperclip menu was removed rather
+  than left wired to a no-op against the real backend.
 */
-export function Composer({
-  groupName,
-  onSendText,
-  onPickFile,
-  replyPreview,
-  onCancelReply,
-}: Props) {
+export function Composer({ groupName, onSendText, replyPreview, onCancelReply }: Props) {
   const { t } = useTranslation()
   const [text, setText] = useState('')
-  const [menuOpen, setMenuOpen] = useState(false)
-  const photoInput = useRef<HTMLInputElement>(null)
-  const fileInput = useRef<HTMLInputElement>(null)
-  const cameraInput = useRef<HTMLInputElement>(null)
   const textInput = useRef<HTMLInputElement>(null)
 
   // Focus the field the moment a reply starts, so you can type right away.
@@ -47,43 +36,8 @@ export function Composer({
     setText('')
   }
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) onPickFile(file)
-    e.target.value = '' // allow re-picking the same file
-    setMenuOpen(false)
-  }
-
   return (
     <div className="relative flex-none border-t border-line bg-surface-2 px-3 pb-6 pt-2.5">
-      <AttachmentMenu
-        open={menuOpen}
-        onClose={() => setMenuOpen(false)}
-        onPickPhoto={() => photoInput.current?.click()}
-        onPickFile={() => fileInput.current?.click()}
-        onPickCamera={() => cameraInput.current?.click()}
-      />
-
-      <input
-        ref={photoInput}
-        type="file"
-        accept="image/*"
-        onChange={handleFile}
-        className="hidden"
-        aria-hidden
-      />
-      <input ref={fileInput} type="file" onChange={handleFile} className="hidden" aria-hidden />
-      {/* `capture` opens the device camera directly instead of the gallery. */}
-      <input
-        ref={cameraInput}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        onChange={handleFile}
-        className="hidden"
-        aria-hidden
-      />
-
       {replyPreview && (
         <div className="mb-2 flex items-center gap-2 rounded-xl border-l-2 border-pine bg-soft px-3 py-2">
           <div className="min-w-0 flex-1">
@@ -112,26 +66,6 @@ export function Composer({
       )}
 
       <div className="flex items-center gap-2.5">
-        <button
-          type="button"
-          onClick={() => setMenuOpen((v) => !v)}
-          aria-label={t.chat.attach}
-          className="flex h-[42px] w-[42px] flex-none items-center justify-center rounded-full bg-soft text-pine transition active:scale-95"
-        >
-          <svg
-            width="21"
-            height="21"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M21.4 11.05 12.25 20.2a5.5 5.5 0 0 1-7.78-7.78l9.19-9.19a3.67 3.67 0 0 1 5.19 5.19l-9.2 9.19a1.83 1.83 0 0 1-2.59-2.59l8.49-8.48" />
-          </svg>
-        </button>
-
         <input
           ref={textInput}
           value={text}

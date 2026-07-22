@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useCampHome } from '../../lib/campHome'
+import { connectRealtime, disconnectRealtime } from '../../api/realtime/realtimeBridge'
 import { useMyCamps } from '../../api/queries/me.queries'
 import { useLogout } from '../../api/queries/auth.queries'
 import { NoCampScreen } from './NoCampScreen'
@@ -34,6 +36,14 @@ export function ParticipantDashboard() {
 
   // Same cached query HomeScreen uses — here just for the Chat tab's unread badge.
   const { data: home } = useCampHome(camp?.id ?? '')
+
+  // Open the single realtime socket once the camp resolves; close on leave. Chat
+  // messages route from here into the query cache (see realtimeBridge).
+  useEffect(() => {
+    if (!camp?.id) return
+    connectRealtime(camp.id)
+    return () => disconnectRealtime()
+  }, [camp?.id])
 
   const onHome = location.pathname === '/camp/home'
   const onChat = location.pathname === '/camp/chat'
