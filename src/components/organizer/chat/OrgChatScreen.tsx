@@ -1,17 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { interpolate } from '@/utils/interpolate'
-import { useOrgChat } from '../../../api/queries/orgChat.queries'
-import type { OrgChatChannelId } from '../../../api/services/orgChat.service'
+import { useOrganizerCamps } from '../../../api/queries/camps.queries'
+import { useMyRole, useOrgChat, useChat } from '../../../api/queries/chat.queries'
+import { connectRealtime, disconnectRealtime } from '../../../api/realtime/realtimeBridge'
 import {
   withMyProfile,
   type ChatMember,
   type ChatMessage,
   type MessageReaction,
 } from '../../../lib/chat'
-import { useOrgChatStore } from '../../../store/useOrgChatStore'
-import { useOrganizerStore } from '../../../store/useOrganizerStore'
+import { useOrgChatStore, type OrgChatChannelId } from '../../../store/useOrgChatStore'
 import { useGroupStore } from '../../../store/useGroupStore'
+import { useAuthStore } from '../../../store/useAuthStore'
 import { useMe } from '@/hooks/useMe'
 import { Avatar, GroupPhotoButton } from '../../ui'
 import { Composer } from '../../participant/chat/Composer'
@@ -20,16 +21,27 @@ import { MemberSheet } from '../../participant/chat/MemberSheet'
 import { OrgChatMembersSheet } from './OrgChatMembersSheet'
 
 /*
-  The organizer Chat tab. Two channels — the Organizers team (always on) and the
-  coordinator's own group (gated: only a 'coordinator' sees it, else a lock panel).
-  Reuses the participant Composer + the ChatMember/ChatMessage contracts; sends flow
-  through the per-channel useOrgChatStore so the two threads never mix.
+  The organizer Chat tab. Two channels — the Organizers team (always on, from
+  useOrgChat) and the coordinator's own group (from the SAME useChat the participant
+  screen uses — same room, same cache). Coordinator gating is server-known
+  (useMyRole), not an unpersisted client value. Sends flow over the socket through
+  useOrgChatStore and echo back into the query cache.
 */
 export function OrgChatScreen() {
   const { t } = useTranslation()
-  const { data, isPending, isError } = useOrgChat()
   const me = useMe()
-  const role = useOrganizerStore((s) => s.role)
+  const myId = useAuthStore((s) => s.user?.id) ?? ''
+
+  // The organizer/manager runs one camp for now — resolve it, then its chat.
+  const { data: camps } = useOrganizerCamps()
+  const campId = camps?.[0]?.id ?? ''
+  const { data: myRole } = useMyRole(campId)
+  const isCoordinator = myRole?.role === 'coordinator'
+  const coordinatorGroupId = myRole?.groupId ?? ''
+
+  const { data: orgData, isPending: orgPending, isError } = useOrgChat(campId)
+  const { data: groupData } = useChat(campId, coordinatorGroupId)
+
   const [channel, setChannel] = useState<OrgChatChannelId>('organizers')
   const [membersOpen, setMembersOpen] = useState(false)
   // The message being replied to (per the active channel; cleared on switch/send).
@@ -37,10 +49,8 @@ export function OrgChatScreen() {
   // Whose profile peek is open (tapped author avatar / members-list row).
   const [selected, setSelected] = useState<ChatMember | null>(null)
 
-  const sent = useOrgChatStore((s) => s.sent[channel])
   const reactionOverrides = useOrgChatStore((s) => s.reactionOverrides[channel])
   const sendText = useOrgChatStore((s) => s.sendText)
-  const sendAttachment = useOrgChatStore((s) => s.sendAttachment)
   const toggleReaction = useOrgChatStore((s) => s.toggleReaction)
   // The Organizers team's own photo (org-chat-local, not the participant group photo).
   const teamPhoto = useOrgChatStore((s) => s.teamPhoto)
@@ -50,6 +60,13 @@ export function OrgChatScreen() {
   const groupPhoto = useGroupStore((s) => s.photo)
   const setGroupPhoto = useGroupStore((s) => s.setPhoto)
 
+  // Open the single realtime socket for this camp; messages route into the cache.
+  useEffect(() => {
+    if (!campId) return
+    connectRealtime(campId)
+    return () => disconnectRealtime()
+  }, [campId])
+
   // Switching channels drops any in-progress reply and closes the members sheet
   // (both belonged to the old thread; the new one may be locked).
   const switchChannel = (next: OrgChatChannelId) => {
@@ -58,14 +75,14 @@ export function OrgChatScreen() {
     setMembersOpen(false)
   }
 
-  if (isPending) {
+  if (!campId || orgPending) {
     return (
       <div className="flex h-full items-center justify-center bg-canvas text-body text-muted">
         …
       </div>
     )
   }
-  if (isError || !data) {
+  if (isError) {
     return (
       <div className="flex h-full items-center justify-center bg-canvas px-8 text-center text-body text-muted">
         {t.org.detail.loadError}
@@ -73,12 +90,20 @@ export function OrgChatScreen() {
     )
   }
 
-  const active = channel === 'organizers' ? data.organizers : data.group
-  const isCoordinator = role === 'coordinator'
   const locked = channel === 'group' && !isCoordinator
 
-  const title = channel === 'organizers' ? t.org.chat.channelOrganizers : active.title
-  const members = withMyProfile(active.members, me)
+  // Each channel's data comes from its own hook. Messages carry authorId, not
+  // sentByMe — derive it from my server identity.
+  const rawMembers =
+    channel === 'organizers' ? (orgData?.members ?? []) : (groupData?.members ?? [])
+  const rawMessages =
+    channel === 'organizers' ? (orgData?.messages ?? []) : (groupData?.messages ?? [])
+  const messages = rawMessages.map((m) => ({ ...m, sentByMe: m.authorId === myId }))
+  const members = withMyProfile(rawMembers, me)
+
+  const title = channel === 'organizers' ? t.org.chat.channelOrganizers : t.org.chat.channelGroup
+  const emoji = channel === 'organizers' ? '📋' : '💬'
+  const onlineCount = 0 // presence is a later polish
 
   // Each channel owns its photo: the Organizers team photo lives in the org-chat store
   // (any organizer can set it); the "My group" photo is the shared group identity, and
@@ -101,7 +126,7 @@ export function OrgChatScreen() {
     : null
 
   const handleSendText = (text: string) => {
-    sendText(channel, text, replyPreview ?? undefined)
+    sendText(campId, channel, text)
     setReplyingTo(null)
   }
 
@@ -115,7 +140,7 @@ export function OrgChatScreen() {
               a static emoji tile. */}
           <GroupPhotoButton
             photo={channelPhoto}
-            emoji={active.emoji}
+            emoji={emoji}
             label={t.chat.changePhoto}
             onPick={onPickPhoto}
           />
@@ -123,7 +148,7 @@ export function OrgChatScreen() {
             <div className="truncate text-subhead font-bold text-content">{title}</div>
             <div className="flex items-center gap-1.5 text-caption font-semibold text-pine">
               <span className="h-1.5 w-1.5 rounded-full bg-pine" />
-              {interpolate(t.org.chat.online, { count: active.onlineCount })}
+              {interpolate(t.org.chat.online, { count: onlineCount })}
             </div>
           </div>
           {/* Members button — hidden on a locked group: a non-coordinator shouldn't
@@ -183,8 +208,7 @@ export function OrgChatScreen() {
       ) : (
         <>
           <MessageThread
-            messages={active.messages}
-            sent={sent}
+            messages={messages}
             members={members}
             reactionOverrides={reactionOverrides}
             onToggleReaction={(id, emoji, current) => toggleReaction(channel, id, emoji, current)}
@@ -194,7 +218,6 @@ export function OrgChatScreen() {
           <Composer
             groupName={title}
             onSendText={handleSendText}
-            onPickFile={(file) => sendAttachment(channel, file)}
             replyPreview={replyPreview}
             onCancelReply={() => setReplyingTo(null)}
           />
@@ -218,7 +241,6 @@ export function OrgChatScreen() {
 
 function MessageThread({
   messages,
-  sent,
   members,
   reactionOverrides,
   onToggleReaction,
@@ -226,7 +248,6 @@ function MessageThread({
   onMemberTap,
 }: {
   messages: ChatMessage[]
-  sent: ChatMessage[]
   members: ChatMember[]
   reactionOverrides: Record<string, MessageReaction[]>
   onToggleReaction: (messageId: string, emoji: string, current: MessageReaction[]) => void
@@ -235,15 +256,14 @@ function MessageThread({
 }) {
   const bottomRef = useRef<HTMLDivElement>(null)
   const byId = useMemo(() => new Map(members.map((m) => [m.id, m])), [members])
-  const all = useMemo(() => [...messages, ...sent], [messages, sent])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ block: 'end' })
-  }, [all.length])
+  }, [messages.length])
 
   return (
     <div className="flex flex-1 flex-col gap-2.5 overflow-y-auto p-3.5">
-      {all.map((m) => {
+      {messages.map((m) => {
         // Displayed reactions = this-session overlay if present, else what the server sent.
         const reactions = reactionOverrides[m.id] ?? m.reactions ?? []
         const author = byId.get(m.authorId)
