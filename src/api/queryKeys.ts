@@ -107,6 +107,10 @@ export const campKeys = {
   mapPins: (campId: string) => [...campKeys.all(campId), 'map'] as const,
   /** Chat is per-group within a camp. */
   chat: (campId: string, groupId: string) => [...campKeys.all(campId), 'chat', groupId] as const,
+  /** The organizers channel (camp-wide, organizer-tier). Separate from the group chat. */
+  chatOrganizers: (campId: string) => [...campKeys.all(campId), 'chatOrganizers'] as const,
+  /** The caller's own role + group in this camp (coordinator gating). */
+  myRole: (campId: string) => [...campKeys.all(campId), 'myRole'] as const,
   /** All announcements for a camp — one invalidation refreshes the feed. */
   announcements: (campId: string) => [...campKeys.all(campId), 'announcements'] as const,
   /** A single announcement (detail screen + push deep-link). */
