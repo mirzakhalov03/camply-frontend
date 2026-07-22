@@ -4,7 +4,7 @@ import { useTranslation } from '../../../i18n/useTranslation'
 import { useAuthStore } from '../../../store/useAuthStore'
 import { useOrganizerCamps, useOrganizerSummary } from '../../../api/queries/camps.queries'
 import { useAdmin } from '../adminContext'
-import { Badge } from '../../ui'
+import { Badge, SupportRow } from '../../ui'
 import { LanguageSheet } from '../../participant/profile/LanguageSheet'
 
 /*
@@ -75,8 +75,8 @@ export function AdminProfileScreen() {
             label={p.language}
             hint={(selectedLang ?? 'uz').toUpperCase()}
             onClick={() => setLangOpen(true)}
-            last
           />
+          <SupportRow />
         </div>
 
         <button

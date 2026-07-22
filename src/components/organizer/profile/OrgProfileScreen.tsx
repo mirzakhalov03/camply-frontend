@@ -8,7 +8,7 @@ import { useOrganizerStore } from '../../../store/useOrganizerStore'
 import { useThemeStore } from '../../../store/useThemeStore'
 import { useOrganizerSummary } from '../../../api/queries/camps.queries'
 import { ROLE_EMOJI } from '../roles'
-import { Avatar } from '../../ui'
+import { Avatar, SupportRow } from '../../ui'
 import { LanguageSheet } from '../../participant/profile/LanguageSheet'
 import { SocialLinks } from '../../participant/profile/SocialLinks'
 import { useOrg } from '../orgContext'
@@ -124,7 +124,8 @@ export function OrgProfileScreen() {
             onClick={() => setLangOpen(true)}
           />
           <ThemeRow label={t.profile.appearance} isDark={theme === 'dark'} onToggle={toggleTheme} />
-          <SettingsRow icon="⚙️" label={p.campSettings} onClick={() => {}} last />
+          <SettingsRow icon="⚙️" label={p.campSettings} onClick={() => {}} />
+          <SupportRow />
         </div>
 
         <button
