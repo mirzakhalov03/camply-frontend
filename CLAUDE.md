@@ -93,7 +93,7 @@ data feature should follow:
 > holds only the SOS reason config, which is fixed app config, not a placeholder.
 
 > `src/lib/` is now the shrunken **mock-era transitional zone** — only what hasn't
-> migrated yet: the data-contract modules (`campHome`, `chat`, `leaderboard`,
+> migrated yet: the data-contract modules (`campHome`, `leaderboard`,
 > `membership`, `groups`), the old fetch wrapper `api.ts` (kept only because those
 > modules' commented mock→real seam lines reference it — it goes when the last of
 > them migrates), and `lib/mocks/` (the live fixtures behind the seam). As each
@@ -126,11 +126,17 @@ Real server interaction lives here, split by concern:
   `campKeys.all(campId)`, so one `invalidateQueries({ queryKey: campKeys.all(id) })`
   refreshes an entire camp (roster, schedule, leaderboard, map, chat); narrower keys
   invalidate just their slice.
-- **`api/realtime/realtimeBridge.ts`** — the single WebSocket. Server-pushed events
-  route into the **same** query cache the UI reads: `setQueryData` for high-frequency
-  streams (map pins — _not_ invalidate), `invalidateQueries` for low-frequency nudges
-  (leaderboard), append for chat. No new store, no component changes. Stub today —
-  `connectRealtime(campId)` isn't called yet; wire it from a camp-scoped provider.
+- **`api/realtime/realtimeBridge.ts`** — the single **Socket.IO** client. Server-pushed
+  events route into the **same** query cache the UI reads: `setQueryData` for
+  high-frequency streams (map pins — _not_ invalidate), `invalidateQueries` for
+  low-frequency nudges (leaderboard), append for chat. No new store, no component
+  changes. **Live for chat** (2026-07-22): `connectRealtime(campId)` is wired from
+  `ParticipantDashboard` (on camp resolve) and `OrgChatScreen` (organizer's camp); it
+  emits `chat:connectCamp`, and incoming `chat:message` appends into
+  `campKeys.chat(campId, groupId)` / `campKeys.chatOrganizers(campId)`. `getSocket()`
+  lets the chat stores emit `chat:send`. Auth rides the httpOnly cookie on the
+  handshake (dev needs Vite's `/socket.io` proxy with `ws: true`). Map/leaderboard
+  events are still placeholders.
 
 Flow: **component → query hook → service → axiosInstance → backend**, with realtime
 writing into the cache from the side. Auth is the worked example (`auth.service.ts` +
