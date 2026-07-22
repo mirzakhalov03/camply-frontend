@@ -1,69 +1,69 @@
+import { io, type Socket } from 'socket.io-client'
 import { queryClient } from '@/api/queryClient'
 import { campKeys } from '../queryKeys'
+import type { ChatMessage } from '@/lib/chat'
 
 /*
-  The realtime BRIDGE — the ONE place server-pushed updates enter the app. It
-  holds a single WebSocket and routes incoming events into the SAME React Query
-  cache the UI already reads. It deliberately owns NO copy of the data: a live
-  update is just a setQueryData / invalidate on an existing key, so every hook
-  subscribed to that key re-renders for free. This is why realtime needs no new
-  store and no component changes — and why we don't reach for Redux/sockets-as-state.
-
-  How to pick the cache write per event:
-    • HIGH-FREQUENCY stream (map pins)  → setQueryData directly. Do NOT invalidate;
-      that refetches and defeats the stream. Throttle bursts before writing.
-    • LOW-FREQUENCY nudge (leaderboard) → invalidateQueries; let the server stay the
-      source of truth for ordering/derivation.
-    • APPEND (chat)                     → setQueryData, push onto the cached thread.
-
-  STUB: the socket isn't opened anywhere yet (nothing calls connectRealtime). Wire
-  it from a camp-scoped provider's useEffect — connect on enter, disconnect on
-  leave. Event payload types are placeholders until the backend's event contract
-  is real; a connection-status store (for a "reconnecting…" banner) is a later add.
+  The realtime BRIDGE — the ONE socket, routing server events into the SAME React
+  Query cache the UI reads (append for chat). No parallel state store. Auth rides the
+  httpOnly camply_sid cookie on the handshake (same-origin via the Vite /socket.io
+  proxy), so no token in JS. Sending is the store emitting chat:send via getSocket();
+  the server's chat:message echo lands back here as the single source of truth.
 */
 
-// ---- Event contract (placeholder shapes — match to the backend when real) ----
-export type RealtimeEvent =
-  | { type: 'map:pins'; campId: string; pins: unknown[] }
-  | { type: 'leaderboard:update'; campId: string }
-  | { type: 'chat:message'; campId: string; groupId: string; message: unknown }
+type ChatMessageEvent = {
+  channel: 'group' | 'organizers'
+  groupId: string | null
+  message: ChatMessage
+}
 
-// Default to the same origin (Vite can proxy `/ws` in dev); override in prod.
-const WS_URL =
-  import.meta.env.VITE_WS_URL ??
-  `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`
+// Same-origin by default (Vite proxies /socket.io in dev). Override with VITE_WS_URL.
+const WS_URL = import.meta.env.VITE_WS_URL as string | undefined
 
-let socket: WebSocket | null = null
+let socket: Socket | null = null
+let currentCampId: string | null = null
 
-/** Open the single socket for a camp. No-op if one is already open. */
+/** Append a message into a room's cached history, deduped by id. */
+function appendMessage(key: readonly unknown[], message: ChatMessage) {
+  queryClient.setQueryData(key, (prev: unknown) => {
+    const data = (prev ?? { messages: [] }) as { messages?: ChatMessage[]; [k: string]: unknown }
+    const messages = Array.isArray(data.messages) ? data.messages : []
+    if (messages.some((m) => m.id === message.id)) return data
+    return { ...data, messages: [...messages, message] }
+  })
+}
+
 export function connectRealtime(campId: string) {
-  if (socket) return
-  // Auth rides the httpOnly session cookie on the WS handshake (same-origin via
-  // the dev proxy), so no token goes in the URL.
-  socket = new WebSocket(`${WS_URL}?campId=${campId}`)
-  socket.onmessage = (e) => handleEvent(JSON.parse(e.data) as RealtimeEvent)
-  // TODO (real impl): onclose → backoff-reconnect; onerror → log/monitor.
+  if (socket && currentCampId === campId) return
+  if (socket) disconnectRealtime()
+  currentCampId = campId
+
+  socket = io(WS_URL ?? '', { withCredentials: true })
+
+  socket.on('connect', () => {
+    socket?.emit('chat:connectCamp', { campId })
+  })
+
+  socket.on('chat:message', (evt: ChatMessageEvent) => {
+    if (!currentCampId) return
+    const key =
+      evt.channel === 'group' && evt.groupId
+        ? campKeys.chat(currentCampId, evt.groupId)
+        : campKeys.chatOrganizers(currentCampId)
+    appendMessage(key, evt.message)
+  })
+
+  // Presence is best-effort UI sugar; wire an onlineCount store later if desired.
+  // socket.on('chat:presence', (p) => { ... })
 }
 
-/** Close the socket (call on leaving the camp / logout). */
 export function disconnectRealtime() {
-  socket?.close()
+  socket?.disconnect()
   socket = null
+  currentCampId = null
 }
 
-function handleEvent(event: RealtimeEvent) {
-  switch (event.type) {
-    case 'map:pins':
-      queryClient.setQueryData(campKeys.mapPins(event.campId), event.pins)
-      break
-    case 'leaderboard:update':
-      queryClient.invalidateQueries({ queryKey: campKeys.leaderboard(event.campId) })
-      break
-    case 'chat:message':
-      queryClient.setQueryData(campKeys.chat(event.campId, event.groupId), (prev) => {
-        const list = Array.isArray(prev) ? prev : []
-        return [...list, event.message]
-      })
-      break
-  }
+/** The live socket, so the chat stores can emit chat:send. Null until connected. */
+export function getSocket(): Socket | null {
+  return socket
 }

@@ -1,9 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
-import { groupChatMock } from '@/lib/mocks/mockChat'
-// import { api } from './api' // ← enable when the backend endpoint exists
-
 /*
-  The DATA CONTRACT for the participant group chat. These shapes describe what
+  The DATA CONTRACT for chat. These shapes describe what
   the backend will serve: the group, its members, and the message history the
   organizer's roster + camp fill in. Components depend on these types, never on
   where the data comes from — mirroring lib/campHome.ts.
@@ -81,21 +77,6 @@ export type GroupChat = {
   pinned?: string
   members: ChatMember[]
   messages: ChatMessage[]
-}
-
-/*
-  The single data boundary for the group chat. Returns the mock today; later this
-  becomes `api.get<GroupChat>('/groups/current/chat')` and NOTHING in the UI
-  changes. No component imports the mock directly — they all flow through here.
-*/
-export async function fetchGroupChat(): Promise<GroupChat> {
-  // return api.get<GroupChat>('/groups/current/chat')
-  return groupChatMock
-}
-
-// React Query hook. Cached by queryKey so header + list + composer share one fetch.
-export function useChat() {
-  return useQuery({ queryKey: ['groupChat'], queryFn: fetchGroupChat })
 }
 
 /*
