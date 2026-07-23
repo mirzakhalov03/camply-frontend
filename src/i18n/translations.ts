@@ -200,6 +200,8 @@ type ProfileStrings = {
   locationSharing: string
   appearance: string
   logout: string
+  support: string
+  supportSubtitle: string
 }
 
 // PWA lifecycle prompts (service-worker update / offline-ready toast).
@@ -1095,6 +1097,8 @@ export const translations: Record<
       locationSharing: 'Joylashuvni ulashish',
       appearance: 'Koʻrinish',
       logout: 'Chiqish',
+      support: 'Yordam',
+      supportSubtitle: 'Telegram orqali bogʻlaning',
     },
     chat: {
       membersOnline: '{members} aʼzo · {online} onlayn',
@@ -1678,6 +1682,8 @@ export const translations: Record<
       locationSharing: 'Геолокация',
       appearance: 'Оформление',
       logout: 'Выйти',
+      support: 'Поддержка',
+      supportSubtitle: 'Напишите нам в Telegram',
     },
     chat: {
       membersOnline: '{members} участников · {online} онлайн',
@@ -2248,6 +2254,8 @@ export const translations: Record<
       locationSharing: 'Location sharing',
       appearance: 'Appearance',
       logout: 'Log out',
+      support: 'Support',
+      supportSubtitle: 'Contact us on Telegram',
     },
     chat: {
       membersOnline: '{members} members · {online} online',

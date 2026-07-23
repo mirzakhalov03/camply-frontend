@@ -3,6 +3,7 @@ import { useTranslation } from '../../../i18n/useTranslation'
 import { LANG_LABELS } from '../../../i18n/translations'
 import { LanguageSheet } from './LanguageSheet'
 import { usePushNotifications } from '@/hooks/usePushNotifications'
+import { SupportRow } from '../../ui'
 
 /*
   Profile settings: language, location sharing, and notifications. Language opens
@@ -60,7 +61,7 @@ export function SettingsList() {
         </div>
 
         {/* Notifications — REAL Web Push toggle */}
-        <div className="py-[14px]">
+        <div className="border-b border-line py-[14px]">
           <div className="flex items-center gap-3">
             <span className="w-[22px] text-base">🔔</span>
             <span className="flex-1 text-sm font-semibold text-content">
@@ -75,6 +76,9 @@ export function SettingsList() {
           </div>
           {pushHint && <p className="mt-1.5 pl-[34px] text-xs text-muted">{pushHint}</p>}
         </div>
+
+        {/* Support — external Telegram link, last row (no bottom border) */}
+        <SupportRow />
       </div>
 
       <LanguageSheet
