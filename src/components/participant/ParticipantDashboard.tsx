@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { connectRealtime, disconnectRealtime } from '../../api/realtime/realtimeBridge'
 import { useChatUnreadStore } from '../../store/useChatUnreadStore'
+import { useLanguageSync } from '@/hooks/useLanguageSync'
 import { useMyCamps } from '../../api/queries/me.queries'
 import { useLogout } from '../../api/queries/auth.queries'
 import { NoCampScreen } from './NoCampScreen'
@@ -24,6 +25,7 @@ export function ParticipantDashboard() {
   const location = useLocation()
   const sos = useSos()
   const logout = useLogout()
+  useLanguageSync() // keep the server's language in sync for push localization
 
   /*
     Resolve the camp ONCE, here — the single component wrapping every /camp/* route.

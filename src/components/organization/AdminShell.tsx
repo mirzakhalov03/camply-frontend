@@ -5,6 +5,7 @@ import { useAuthStore } from '../../store/useAuthStore'
 import { authService } from '../../api/services/auth.service'
 import { AdminSidebar, AdminBottomNav } from './AdminNav'
 import type { AdminContext } from './adminContext'
+import { useLanguageSync } from '@/hooks/useLanguageSync'
 
 /*
   The organization admin shell — the layout for every `/admin/*` route, a third
@@ -25,6 +26,7 @@ export function AdminShell() {
   const queryClient = useQueryClient()
   const user = useAuthStore((s) => s.user)
   const clearAuth = useAuthStore((s) => s.clear)
+  useLanguageSync() // keep the server's language in sync for push localization
 
   const isOrg = user?.role === 'organization'
 

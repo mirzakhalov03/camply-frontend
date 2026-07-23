@@ -6,6 +6,7 @@ import { useOrganizerStore } from '../../store/useOrganizerStore'
 import { OrganizerSidebar, OrganizerBottomNav } from './OrganizerNav'
 import type { OrgContext } from './orgContext'
 import { usesOrgSurface } from '@/utils/roles'
+import { useLanguageSync } from '@/hooks/useLanguageSync'
 
 /*
   The organizer app shell — the layout for every `/org/*` route, a sibling surface
@@ -25,6 +26,7 @@ export function OrganizerShell() {
   const clearAuth = useAuthStore((s) => s.clear)
   const resetProfile = useProfileStore((s) => s.reset)
   const resetOrganizer = useOrganizerStore((s) => s.reset)
+  useLanguageSync() // keep the server's language in sync for push localization
 
   // The /org surface is shared by managers (full) and organizers (reduced); the org
   // super-admin can also land here. Capability gating (create camp, invite) is by
