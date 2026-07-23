@@ -137,6 +137,20 @@ Real server interaction lives here, split by concern:
   lets the chat stores emit `chat:send`. Auth rides the httpOnly cookie on the
   handshake (dev needs Vite's `/socket.io` proxy with `ws: true`). Map/leaderboard
   events are still placeholders.
+  - **Chat liveness (2026-07-23):** `connectRealtime` is now StrictMode-safe and
+    re-joins on reconnect (fixed the "needs a refresh" bug). The bridge also handles
+    `chat:reaction` (merges server counts, preserves local `mine`), `chat:read`
+    (raises `othersLastReadAt` on the room's cached history → drives the ✓✓ ticks),
+    and `chat:unread` (seeds **`useChatUnreadStore`**, a client-only badge counter —
+    bumped per inbound message for a room you're not viewing via `setActiveRoom`,
+    cleared on thread open). **Reactions + read receipts are SERVER truth** now
+    (`useChatStore.toggleReaction` emits `chat:react` + optimistic; org chat reuses
+    the same path — its old client-only reaction overlay is gone). The Chat-tab
+    unread badge reads `useChatUnreadStore` (participant shell connects app-wide;
+    the org socket only connects on the chat screen). **Push is live:**
+    `push.service` posts real subscriptions, and **`useLanguageSync`** (mounted in
+    the three shells) PATCHes `/auth/me/language` so server-sent push is localized.
+    Design/plan: `docs/superpowers/{specs,plans}/2026-07-23-chat-reactions-receipts-push*.md`.
 
 Flow: **component → query hook → service → axiosInstance → backend**, with realtime
 writing into the cache from the side. Auth is the worked example (`auth.service.ts` +
