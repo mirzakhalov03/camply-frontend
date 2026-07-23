@@ -2,6 +2,7 @@ import { io, type Socket } from 'socket.io-client'
 import { queryClient } from '@/api/queryClient'
 import { campKeys } from '../queryKeys'
 import { useAuthStore } from '@/store/useAuthStore'
+import { useChatUnreadStore, roomKey } from '@/store/useChatUnreadStore'
 import type { ChatMessage, MessageReaction } from '@/lib/chat'
 
 /*
@@ -36,6 +37,13 @@ const WS_URL = import.meta.env.VITE_WS_URL as string | undefined
 
 let socket: Socket | null = null
 let currentCampId: string | null = null
+
+// The room the user is actively viewing (set by the chat screens); its messages don't
+// count as unread. null = not on a chat screen.
+let activeRoomKey: string | null = null
+export function setActiveRoom(key: string | null) {
+  activeRoomKey = key
+}
 
 /** The cache key for a room's history, or null if we're not connected to a camp. */
 function keyFor(channel: 'group' | 'organizers', groupId: string | null) {
@@ -92,7 +100,22 @@ export function connectRealtime(campId: string) {
   socket.on('chat:message', (evt: ChatMessageEvent) => {
     const key = keyFor(evt.channel, evt.groupId)
     if (key) appendMessage(key, evt.message)
+    // Bump the unread badge for a room the user isn't viewing (and never for my own).
+    const rk = roomKey(evt.channel, evt.groupId)
+    const myId = useAuthStore.getState().user?.id
+    if (rk !== activeRoomKey && evt.message.authorId !== myId) {
+      useChatUnreadStore.getState().bump(rk)
+    }
   })
+
+  socket.on(
+    'chat:unread',
+    (evt: {
+      rooms: { channel: 'group' | 'organizers'; groupId: string | null; count: number }[]
+    }) => {
+      useChatUnreadStore.getState().seed(evt.rooms)
+    },
+  )
 
   socket.on('chat:reaction', (evt: ChatReactionEvent) => {
     const key = keyFor(evt.channel, evt.groupId)

@@ -7,7 +7,9 @@ import {
   connectRealtime,
   disconnectRealtime,
   getSocket,
+  setActiveRoom,
 } from '../../../api/realtime/realtimeBridge'
+import { useChatUnreadStore, roomKey } from '../../../store/useChatUnreadStore'
 import { withMyProfile, type ChatMember, type ChatMessage } from '../../../lib/chat'
 import { useOrgChatStore, type OrgChatChannelId } from '../../../store/useOrgChatStore'
 import { useChatStore } from '../../../store/useChatStore'
@@ -76,6 +78,20 @@ export function OrgChatScreen() {
     if (channel === 'group' && !isCoordinator) return
     getSocket()?.emit('chat:read', { campId, channel })
   }, [campId, channel, isCoordinator, activeCount])
+
+  // The visible channel is the active room (its messages aren't unread); clear its
+  // badge on open. A locked group the caller can't read is never marked active.
+  const clearUnread = useChatUnreadStore((s) => s.clear)
+  useEffect(() => {
+    if (channel === 'group' && !isCoordinator) {
+      setActiveRoom(null)
+      return
+    }
+    const rk = roomKey(channel, channel === 'group' ? coordinatorGroupId : null)
+    setActiveRoom(rk)
+    clearUnread(rk)
+    return () => setActiveRoom(null)
+  }, [channel, isCoordinator, coordinatorGroupId, clearUnread])
 
   // Switching channels drops any in-progress reply and closes the members sheet
   // (both belonged to the old thread; the new one may be locked).

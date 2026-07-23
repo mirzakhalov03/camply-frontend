@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { useCampHome } from '../../lib/campHome'
 import { connectRealtime, disconnectRealtime } from '../../api/realtime/realtimeBridge'
+import { useChatUnreadStore } from '../../store/useChatUnreadStore'
 import { useMyCamps } from '../../api/queries/me.queries'
 import { useLogout } from '../../api/queries/auth.queries'
 import { NoCampScreen } from './NoCampScreen'
@@ -34,8 +34,9 @@ export function ParticipantDashboard() {
   const { data: camps, isPending } = useMyCamps()
   const camp = camps?.[0]
 
-  // Same cached query HomeScreen uses — here just for the Chat tab's unread badge.
-  const { data: home } = useCampHome(camp?.id ?? '')
+  // Live unread total, driven by the socket (seeded on connect, bumped per message,
+  // cleared when the thread opens). Replaces the old mock home.unreadChat.
+  const unreadTotal = useChatUnreadStore((s) => s.total())
 
   // Open the single realtime socket once the camp resolves; close on leave. Chat
   // messages route from here into the query cache (see realtimeBridge).
@@ -48,9 +49,8 @@ export function ParticipantDashboard() {
   const onHome = location.pathname === '/camp/home'
   const onChat = location.pathname === '/camp/chat'
 
-  // Opening Chat "reads" it — clear the unread badge. Real read-state is server-
-  // owned; this is the client stand-in until then.
-  const chatBadge = onChat ? undefined : home?.unreadChat
+  // Opening Chat clears its rooms' counts (see ChatScreen); hide the badge there too.
+  const chatBadge = onChat ? undefined : unreadTotal || undefined
 
   // Gate on resolution so every screen below can treat campId as non-null.
   if (isPending || !camp) {

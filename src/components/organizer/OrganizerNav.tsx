@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from '../../i18n/useTranslation'
-import { useOrganizerSummary } from '../../api/queries/camps.queries'
+import { useChatUnreadStore } from '../../store/useChatUnreadStore'
 
 /*
   Organizer navigation, rendered in TWO responsive forms from one item list:
@@ -17,13 +17,15 @@ type NavItem = { to: string; label: string; icon: ReactNode; badge?: number }
 
 function useNavItems(): NavItem[] {
   const { t } = useTranslation()
-  const { data: summary } = useOrganizerSummary()
+  // Live unread total from the socket (seeded on connect, bumped per message, cleared
+  // on thread open) — replaces the mock summary.unreadChat.
+  const unreadTotal = useChatUnreadStore((s) => s.total())
   return [
     { to: '/org/camps', label: t.org.nav.main, icon: <CampsIcon /> },
     // Team is the camp's ORGANIZER-tier roster (participants live inside a camp's
     // detail screen) — a destination in its own right, not a profile setting.
     { to: '/org/team', label: t.org.nav.team, icon: <TeamIcon /> },
-    { to: '/org/chat', label: t.org.nav.chat, icon: <ChatIcon />, badge: summary?.unreadChat },
+    { to: '/org/chat', label: t.org.nav.chat, icon: <ChatIcon />, badge: unreadTotal || undefined },
     { to: '/org/profile', label: t.org.nav.profile, icon: <ProfileIcon /> },
   ]
 }

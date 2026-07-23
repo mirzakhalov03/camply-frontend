@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { getSocket } from '@/api/realtime/realtimeBridge'
+import { getSocket, setActiveRoom } from '@/api/realtime/realtimeBridge'
+import { useChatUnreadStore, roomKey } from '@/store/useChatUnreadStore'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { withMyProfile, type ChatMember, type ChatMessage, type GroupChat } from '../../../lib/chat'
 import { useChat } from '../../../api/queries/chat.queries'
@@ -62,6 +63,17 @@ export function ChatScreen() {
     if (!campId) return
     getSocket()?.emit('chat:read', { campId, channel: 'group' })
   }, [campId, serverMessages.length])
+
+  // While this thread is open it's the active room (its messages aren't unread); clear
+  // its badge on open and release the active room on unmount.
+  const clearUnread = useChatUnreadStore((s) => s.clear)
+  useEffect(() => {
+    if (!groupId) return
+    const rk = roomKey('group', groupId)
+    setActiveRoom(rk)
+    clearUnread(rk)
+    return () => setActiveRoom(null)
+  }, [groupId, clearUnread])
 
   if (isLoading) {
     return (
