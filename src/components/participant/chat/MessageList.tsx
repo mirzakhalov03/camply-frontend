@@ -4,6 +4,9 @@ import { useChatStore } from '../../../store/useChatStore'
 import { MessageBubble } from './MessageBubble'
 
 type Props = {
+  campId: string
+  /** The group room this thread belongs to (for reaction emits). */
+  groupId: string | null
   members: ChatMember[]
   serverMessages: ChatMessage[]
   /** Open a member's profile sheet when their avatar/name is tapped. */
@@ -19,8 +22,15 @@ type Props = {
   realtimeBridge), so there's one source of truth. Reactions merge as a session
   overlay if present, else what the server sent. Auto-scrolls to the newest message.
 */
-export function MessageList({ members, serverMessages, onMemberTap, onReply, emptyLabel }: Props) {
-  const reactionOverrides = useChatStore((s) => s.reactionOverrides)
+export function MessageList({
+  campId,
+  groupId,
+  members,
+  serverMessages,
+  onMemberTap,
+  onReply,
+  emptyLabel,
+}: Props) {
   const toggleReaction = useChatStore((s) => s.toggleReaction)
   const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -48,7 +58,7 @@ export function MessageList({ members, serverMessages, onMemberTap, onReply, emp
     <div className="flex flex-1 flex-col gap-2.5 overflow-y-auto p-3.5">
       {all.map((m) => {
         const author = byId.get(m.authorId)
-        const reactions = reactionOverrides[m.id] ?? m.reactions ?? []
+        const reactions = m.reactions ?? []
         return (
           <MessageBubble
             key={m.id}
@@ -56,7 +66,7 @@ export function MessageList({ members, serverMessages, onMemberTap, onReply, emp
             author={author}
             onAuthorTap={author ? () => onMemberTap(author) : undefined}
             reactions={reactions}
-            onToggleReaction={(emoji) => toggleReaction(m.id, emoji, reactions)}
+            onToggleReaction={(emoji) => toggleReaction(campId, 'group', groupId, m.id, emoji)}
             onReply={() => onReply(m)}
           />
         )

@@ -57,8 +57,8 @@ export type ChatMessage = {
   sentByMe: boolean
   /** Only meaningful for my own messages; drives the ✓ / ✓✓ indicator. */
   status?: MessageStatus
-  /** Emoji reactions on this message. */
-  reactions?: MessageReaction[]
+  /** Emoji reactions on this message (server truth; always present, possibly empty). */
+  reactions: MessageReaction[]
   /** Snapshot of the message this one replies to (denormalized so it survives
       even if the original is later deleted). */
   replyTo?: { authorName: string; text: string }

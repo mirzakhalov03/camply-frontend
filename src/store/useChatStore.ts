@@ -1,28 +1,41 @@
 import { create } from 'zustand'
 import { getSocket } from '@/api/realtime/realtimeBridge'
-import type { MessageReaction } from '../lib/chat'
+import { queryClient } from '@/api/queryClient'
+import { campKeys } from '@/api/queryKeys'
+import type { ChatMessage, MessageReaction } from '@/lib/chat'
 
 /*
-  CLIENT state for the participant group chat. Message DELIVERY is now real: sendText
-  emits `chat:send` over the socket and the server's `chat:message` echo lands in the
-  React Query cache (see realtimeBridge) — this store no longer holds sent messages.
-  What remains is genuinely client-only cosmetic (per the realtime-chat spec: reactions
-  stay client-side, they don't touch the server): a session overlay of reactions.
+  CLIENT actions for the participant group chat. Message + reaction state are SERVER
+  truth in the React Query cache (see realtimeBridge); this store only holds the emit
+  helpers. Reactions: emit chat:react, optimistically flip the cached message so the
+  tap feels instant, and let the chat:reaction echo reconcile the authoritative counts.
+  Shared by the organizer chat too (it passes channel: 'organizers' | 'group').
 */
 type ChatState = {
-  /** Reactions added this session, keyed by message id (server or local). */
-  reactionOverrides: Record<string, MessageReaction[]>
-  /** Send a group message over the socket. groupId is accepted for call-site clarity
-      but the server re-derives it from membership; only campId + text go on the wire. */
   sendText: (campId: string, groupId: string, text: string) => void
-  /** Toggle my reaction on a message; `current` is its displayed reaction list. */
-  toggleReaction: (messageId: string, emoji: string, current: MessageReaction[]) => void
-  reset: () => void
+  toggleReaction: (
+    campId: string,
+    channel: 'group' | 'organizers',
+    groupId: string | null,
+    messageId: string,
+    emoji: string,
+  ) => void
 }
 
-export const useChatStore = create<ChatState>((set) => ({
-  reactionOverrides: {},
+/** Local optimistic toggle of `current` for my tap (mirrors the server's toggle). */
+function optimistic(current: MessageReaction[], emoji: string): MessageReaction[] {
+  const existing = current.find((r) => r.emoji === emoji)
+  if (!existing) return [...current, { emoji, count: 1, mine: true }]
+  if (existing.mine) {
+    const count = existing.count - 1
+    return count <= 0
+      ? current.filter((r) => r.emoji !== emoji)
+      : current.map((r) => (r.emoji === emoji ? { ...r, count, mine: false } : r))
+  }
+  return current.map((r) => (r.emoji === emoji ? { ...r, count: r.count + 1, mine: true } : r))
+}
 
+export const useChatStore = create<ChatState>(() => ({
   sendText: (campId, _groupId, text) => {
     const clean = text.trim()
     if (!clean) return
@@ -30,22 +43,23 @@ export const useChatStore = create<ChatState>((set) => ({
     getSocket()?.emit('chat:send', { campId, channel: 'group', text: clean })
   },
 
-  toggleReaction: (messageId, emoji, current) => {
-    const existing = current.find((r) => r.emoji === emoji)
-    let next: MessageReaction[]
-    if (!existing) {
-      next = [...current, { emoji, count: 1, mine: true }]
-    } else if (existing.mine) {
-      const count = existing.count - 1
-      next =
-        count <= 0
-          ? current.filter((r) => r.emoji !== emoji)
-          : current.map((r) => (r.emoji === emoji ? { ...r, count, mine: false } : r))
-    } else {
-      next = current.map((r) => (r.emoji === emoji ? { ...r, count: r.count + 1, mine: true } : r))
-    }
-    set((s) => ({ reactionOverrides: { ...s.reactionOverrides, [messageId]: next } }))
+  // The caller passes the tapped `emoji`; the message's current reactions are read
+  // from the cache (the source of truth).
+  toggleReaction: (campId, channel, groupId, messageId, emoji) => {
+    const key =
+      channel === 'group' && groupId
+        ? campKeys.chat(campId, groupId)
+        : campKeys.chatOrganizers(campId)
+    queryClient.setQueryData(key, (prev: unknown) => {
+      const data = prev as { messages?: ChatMessage[] } | undefined
+      if (!data?.messages) return data
+      return {
+        ...data,
+        messages: data.messages.map((m) =>
+          m.id === messageId ? { ...m, reactions: optimistic(m.reactions ?? [], emoji) } : m,
+        ),
+      }
+    })
+    getSocket()?.emit('chat:react', { campId, channel, messageId, emoji })
   },
-
-  reset: () => set({ reactionOverrides: {} }),
 }))

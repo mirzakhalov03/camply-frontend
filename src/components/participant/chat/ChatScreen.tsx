@@ -108,6 +108,8 @@ export function ChatScreen() {
         onChangePhoto={setGroupPhoto}
       />
       <MessageList
+        campId={campId}
+        groupId={groupId}
         members={members}
         serverMessages={serverMessages}
         onMemberTap={setSelected}

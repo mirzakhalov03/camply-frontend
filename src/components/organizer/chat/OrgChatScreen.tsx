@@ -4,13 +4,9 @@ import { interpolate } from '@/utils/interpolate'
 import { useOrganizerCamps } from '../../../api/queries/camps.queries'
 import { useMyRole, useOrgChat, useChat } from '../../../api/queries/chat.queries'
 import { connectRealtime, disconnectRealtime } from '../../../api/realtime/realtimeBridge'
-import {
-  withMyProfile,
-  type ChatMember,
-  type ChatMessage,
-  type MessageReaction,
-} from '../../../lib/chat'
+import { withMyProfile, type ChatMember, type ChatMessage } from '../../../lib/chat'
 import { useOrgChatStore, type OrgChatChannelId } from '../../../store/useOrgChatStore'
+import { useChatStore } from '../../../store/useChatStore'
 import { useGroupStore } from '../../../store/useGroupStore'
 import { useAuthStore } from '../../../store/useAuthStore'
 import { useMe } from '@/hooks/useMe'
@@ -49,9 +45,8 @@ export function OrgChatScreen() {
   // Whose profile peek is open (tapped author avatar / members-list row).
   const [selected, setSelected] = useState<ChatMember | null>(null)
 
-  const reactionOverrides = useOrgChatStore((s) => s.reactionOverrides[channel])
   const sendText = useOrgChatStore((s) => s.sendText)
-  const toggleReaction = useOrgChatStore((s) => s.toggleReaction)
+  const toggleReaction = useChatStore((s) => s.toggleReaction)
   // The Organizers team's own photo (org-chat-local, not the participant group photo).
   const teamPhoto = useOrgChatStore((s) => s.teamPhoto)
   const setTeamPhoto = useOrgChatStore((s) => s.setTeamPhoto)
@@ -210,8 +205,15 @@ export function OrgChatScreen() {
           <MessageThread
             messages={messages}
             members={members}
-            reactionOverrides={reactionOverrides}
-            onToggleReaction={(id, emoji, current) => toggleReaction(channel, id, emoji, current)}
+            onToggleReaction={(id, emoji) =>
+              toggleReaction(
+                campId,
+                channel,
+                channel === 'group' ? coordinatorGroupId : null,
+                id,
+                emoji,
+              )
+            }
             onReply={setReplyingTo}
             onMemberTap={setSelected}
           />
@@ -242,15 +244,13 @@ export function OrgChatScreen() {
 function MessageThread({
   messages,
   members,
-  reactionOverrides,
   onToggleReaction,
   onReply,
   onMemberTap,
 }: {
   messages: ChatMessage[]
   members: ChatMember[]
-  reactionOverrides: Record<string, MessageReaction[]>
-  onToggleReaction: (messageId: string, emoji: string, current: MessageReaction[]) => void
+  onToggleReaction: (messageId: string, emoji: string) => void
   onReply: (message: ChatMessage) => void
   onMemberTap: (member: ChatMember) => void
 }) {
@@ -264,8 +264,7 @@ function MessageThread({
   return (
     <div className="flex flex-1 flex-col gap-2.5 overflow-y-auto p-3.5">
       {messages.map((m) => {
-        // Displayed reactions = this-session overlay if present, else what the server sent.
-        const reactions = reactionOverrides[m.id] ?? m.reactions ?? []
+        const reactions = m.reactions ?? []
         const author = byId.get(m.authorId)
         return (
           <MessageBubble
@@ -274,7 +273,7 @@ function MessageThread({
             author={author}
             onAuthorTap={author ? () => onMemberTap(author) : undefined}
             reactions={reactions}
-            onToggleReaction={(emoji) => onToggleReaction(m.id, emoji, reactions)}
+            onToggleReaction={(emoji) => onToggleReaction(m.id, emoji)}
             onReply={() => onReply(m)}
           />
         )
