@@ -53,6 +53,8 @@ export type ChatMessage = {
   attachment?: { name: string; url: string; size?: number }
   /** 'HH:MM' for display. */
   time: string
+  /** ISO timestamp — used to compare against read markers for the ✓✓ status. */
+  createdAt: string
   /** True when the current participant is the author. */
   sentByMe: boolean
   /** Only meaningful for my own messages; drives the ✓ / ✓✓ indicator. */

@@ -5,10 +5,12 @@ export type GroupHistory = {
   groupId: string | null
   members: ChatMember[]
   messages: ChatMessage[]
+  othersLastReadAt: string | null
 }
 export type OrgHistory = {
   members: ChatMember[]
   messages: ChatMessage[]
+  othersLastReadAt: string | null
 }
 export type MyRole = { role: string | null; groupId: string | null }
 

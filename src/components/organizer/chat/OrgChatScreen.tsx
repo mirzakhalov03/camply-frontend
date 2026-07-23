@@ -3,7 +3,11 @@ import { useTranslation } from '../../../i18n/useTranslation'
 import { interpolate } from '@/utils/interpolate'
 import { useOrganizerCamps } from '../../../api/queries/camps.queries'
 import { useMyRole, useOrgChat, useChat } from '../../../api/queries/chat.queries'
-import { connectRealtime, disconnectRealtime } from '../../../api/realtime/realtimeBridge'
+import {
+  connectRealtime,
+  disconnectRealtime,
+  getSocket,
+} from '../../../api/realtime/realtimeBridge'
 import { withMyProfile, type ChatMember, type ChatMessage } from '../../../lib/chat'
 import { useOrgChatStore, type OrgChatChannelId } from '../../../store/useOrgChatStore'
 import { useChatStore } from '../../../store/useChatStore'
@@ -62,6 +66,17 @@ export function OrgChatScreen() {
     return () => disconnectRealtime()
   }, [campId])
 
+  // Mark the visible channel read on open + on each new message (a locked group the
+  // caller can't read is never marked). Count is read raw so this stays above the
+  // early returns (hooks must run unconditionally).
+  const activeCount =
+    channel === 'organizers' ? (orgData?.messages?.length ?? 0) : (groupData?.messages?.length ?? 0)
+  useEffect(() => {
+    if (!campId) return
+    if (channel === 'group' && !isCoordinator) return
+    getSocket()?.emit('chat:read', { campId, channel })
+  }, [campId, channel, isCoordinator, activeCount])
+
   // Switching channels drops any in-progress reply and closes the members sheet
   // (both belonged to the old thread; the new one may be locked).
   const switchChannel = (next: OrgChatChannelId) => {
@@ -93,7 +108,19 @@ export function OrgChatScreen() {
     channel === 'organizers' ? (orgData?.members ?? []) : (groupData?.members ?? [])
   const rawMessages =
     channel === 'organizers' ? (orgData?.messages ?? []) : (groupData?.messages ?? [])
-  const messages = rawMessages.map((m) => ({ ...m, sentByMe: m.authorId === myId }))
+  const othersLastReadAt =
+    channel === 'organizers'
+      ? (orgData?.othersLastReadAt ?? null)
+      : (groupData?.othersLastReadAt ?? null)
+  const messages: ChatMessage[] = rawMessages.map((m) => {
+    const sentByMe = m.authorId === myId
+    const status = !sentByMe
+      ? undefined
+      : othersLastReadAt && othersLastReadAt >= m.createdAt
+        ? ('read' as const)
+        : ('sent' as const)
+    return { ...m, sentByMe, status }
+  })
   const members = withMyProfile(rawMembers, me)
 
   const title = channel === 'organizers' ? t.org.chat.channelOrganizers : t.org.chat.channelGroup

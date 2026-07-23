@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { getSocket } from '@/api/realtime/realtimeBridge'
 import { useTranslation } from '../../../i18n/useTranslation'
 import { withMyProfile, type ChatMember, type ChatMessage, type GroupChat } from '../../../lib/chat'
 import { useChat } from '../../../api/queries/chat.queries'
@@ -38,11 +39,29 @@ export function ChatScreen() {
   const [membersOpen, setMembersOpen] = useState(false)
   const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null)
 
-  // Server messages carry authorId, not sentByMe — derive it from my server identity.
-  const serverMessages = useMemo(
-    () => (data?.messages ?? []).map((m) => ({ ...m, sentByMe: m.authorId === myId })),
-    [data?.messages, myId],
+  const othersLastReadAt = data?.othersLastReadAt ?? null
+
+  // Server messages carry authorId, not sentByMe — derive it, and for my own messages
+  // derive the read-status ("seen by anyone": read if others' lastReadAt ≥ createdAt).
+  const serverMessages = useMemo<ChatMessage[]>(
+    () =>
+      (data?.messages ?? []).map((m) => {
+        const sentByMe = m.authorId === myId
+        const status = !sentByMe
+          ? undefined
+          : othersLastReadAt && othersLastReadAt >= m.createdAt
+            ? ('read' as const)
+            : ('sent' as const)
+        return { ...m, sentByMe, status }
+      }),
+    [data?.messages, myId, othersLastReadAt],
   )
+
+  // Opening the thread — and each new inbound message while it's open — marks it read.
+  useEffect(() => {
+    if (!campId) return
+    getSocket()?.emit('chat:read', { campId, channel: 'group' })
+  }, [campId, serverMessages.length])
 
   if (isLoading) {
     return (

@@ -1,6 +1,7 @@
 import { io, type Socket } from 'socket.io-client'
 import { queryClient } from '@/api/queryClient'
 import { campKeys } from '../queryKeys'
+import { useAuthStore } from '@/store/useAuthStore'
 import type { ChatMessage, MessageReaction } from '@/lib/chat'
 
 /*
@@ -21,6 +22,13 @@ type ChatReactionEvent = {
   groupId: string | null
   messageId: string
   reactions: { emoji: string; count: number }[]
+}
+
+type ChatReadEvent = {
+  channel: 'group' | 'organizers'
+  groupId: string | null
+  userId: string
+  lastReadAt: string
 }
 
 // Same-origin by default (Vite proxies /socket.io in dev). Override with VITE_WS_URL.
@@ -89,6 +97,19 @@ export function connectRealtime(campId: string) {
   socket.on('chat:reaction', (evt: ChatReactionEvent) => {
     const key = keyFor(evt.channel, evt.groupId)
     if (key) applyReaction(key, evt)
+  })
+
+  socket.on('chat:read', (evt: ChatReadEvent) => {
+    const myId = useAuthStore.getState().user?.id
+    if (evt.userId === myId) return // my own read never advances "others"
+    const key = keyFor(evt.channel, evt.groupId)
+    if (!key) return
+    queryClient.setQueryData(key, (prev: unknown) => {
+      const data = prev as { othersLastReadAt?: string | null } | undefined
+      if (!data) return data
+      const current = data.othersLastReadAt ?? ''
+      return evt.lastReadAt > current ? { ...data, othersLastReadAt: evt.lastReadAt } : data
+    })
   })
 }
 
